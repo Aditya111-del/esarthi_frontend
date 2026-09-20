@@ -162,12 +162,12 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-2.5 sm:p-4 backdrop-blur-sm overflow-y-auto">
-      <div className="relative my-auto w-full max-w-2xl max-h-[92vh] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2.5 sm:p-4 backdrop-blur-md overflow-y-auto">
+      <div className="relative my-auto w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl luxury-card shadow-2xl overflow-hidden border border-white/[0.1]">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-border px-4 sm:px-6 py-3.5 sm:py-4 shrink-0">
+        <div className="flex items-center justify-between border-b border-white/[0.08] px-4 sm:px-6 py-4 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary shadow-xs">
               <UserPlus size={16} />
             </div>
             <div>
@@ -181,7 +181,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer tap-active"
+            className="rounded-xl p-2 text-muted-foreground hover:bg-white/[0.06] hover:text-foreground cursor-pointer tap-active transition-colors"
           >
             <X size={18} />
           </button>
@@ -190,13 +190,13 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
           {error && (
-            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+            <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive animate-in fade-in">
               {error}
             </div>
           )}
 
           {/* Shop Assignment */}
-          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 space-y-2">
             <label className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
               <Store size={14} /> Assigned Shop / Branch *
             </label>
@@ -207,10 +207,10 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                 const s = shops.find((item) => item._id === e.target.value);
                 if (s) setShopName(s.name);
               }}
-              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none font-medium"
+              className="mt-1 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground focus:outline-none font-medium bg-black/60"
             >
               {shops.map((s) => (
-                <option key={s._id} value={s._id}>
+                <option key={s._id} value={s._id} className="bg-neutral-900 text-white">
                   {s.name} ({s.city}) — {s.code}
                 </option>
               ))}
@@ -230,7 +230,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   required
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-medium transition-all outline-none"
                   placeholder="e.g. Aryan"
                 />
               </div>
@@ -242,7 +242,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   required
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-medium transition-all outline-none"
                   placeholder="e.g. Verma"
                 />
               </div>
@@ -253,7 +253,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-medium transition-all outline-none font-mono"
                   placeholder="name@esarthi.internal"
                 />
               </div>
@@ -265,7 +265,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-medium transition-all outline-none font-mono"
                   placeholder="+91 98765 00000"
                 />
               </div>
@@ -273,7 +273,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
           </div>
 
           {/* Employment & Compensation */}
-          <div className="space-y-4 border-t border-border/80 pt-5">
+          <div className="space-y-4 border-t border-white/[0.08] pt-5">
             <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary">
               Employment & Role Details
             </h4>
@@ -284,7 +284,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="text"
                   value={employeeId}
                   onChange={(e) => setEmployeeId(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 font-mono text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 font-mono text-xs text-foreground transition-all outline-none"
                   placeholder="ES-1024"
                 />
               </div>
@@ -294,10 +294,10 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                 <select
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground transition-all outline-none bg-black/60"
                 >
                   {departments.map((d) => (
-                    <option key={d} value={d}>
+                    <option key={d} value={d} className="bg-neutral-900 text-white">
                       {d}
                     </option>
                   ))}
@@ -309,12 +309,12 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as any)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground transition-all outline-none bg-black/60"
                 >
-                  <option value="Active">Active</option>
-                  <option value="Onboarding">Onboarding</option>
-                  <option value="Review">Review</option>
-                  <option value="On Leave">On Leave</option>
+                  <option value="Active" className="bg-neutral-900 text-white">Active</option>
+                  <option value="Onboarding" className="bg-neutral-900 text-white">Onboarding</option>
+                  <option value="Review" className="bg-neutral-900 text-white">Review</option>
+                  <option value="On Leave" className="bg-neutral-900 text-white">On Leave</option>
                 </select>
               </div>
 
@@ -332,7 +332,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                       setLevel(matched.level);
                     }
                   }}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none"
                   placeholder="e.g. Lead Backend Engineer"
                 />
                 <datalist id="roles-list">
@@ -347,13 +347,13 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                 <select
                   value={level}
                   onChange={(e) => setLevel(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground transition-all outline-none bg-black/60"
                 >
-                  <option value="L1">L1 — Associate</option>
-                  <option value="L2">L2 — Mid-Level</option>
-                  <option value="L3">L3 — Senior</option>
-                  <option value="L4">L4 — Staff / Lead</option>
-                  <option value="L5">L5 — Principal / Director</option>
+                  <option value="L1" className="bg-neutral-900 text-white">L1 — Associate</option>
+                  <option value="L2" className="bg-neutral-900 text-white">L2 — Mid-Level</option>
+                  <option value="L3" className="bg-neutral-900 text-white">L3 — Senior</option>
+                  <option value="L4" className="bg-neutral-900 text-white">L4 — Staff / Lead</option>
+                  <option value="L5" className="bg-neutral-900 text-white">L5 — Principal / Director</option>
                 </select>
               </div>
 
@@ -362,12 +362,12 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                 <select
                   value={employmentType}
                   onChange={(e) => setEmploymentType(e.target.value as any)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground transition-all outline-none bg-black/60"
                 >
-                  <option value="Full-time">Full-time</option>
-                  <option value="Part-time">Part-time</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Intern">Intern</option>
+                  <option value="Full-time" className="bg-neutral-900 text-white">Full-time</option>
+                  <option value="Part-time" className="bg-neutral-900 text-white">Part-time</option>
+                  <option value="Contract" className="bg-neutral-900 text-white">Contract</option>
+                  <option value="Intern" className="bg-neutral-900 text-white">Intern</option>
                 </select>
               </div>
 
@@ -377,7 +377,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="text"
                   value={salary}
                   onChange={(e) => setSalary(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none font-mono"
                   placeholder="₹85,000 / mo"
                 />
               </div>
@@ -388,7 +388,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="date"
                   value={joiningDate}
                   onChange={(e) => setJoiningDate(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground transition-all outline-none font-mono"
                 />
               </div>
 
@@ -398,7 +398,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="date"
                   value={dateOfBirth}
                   onChange={(e) => setDateOfBirth(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground transition-all outline-none font-mono"
                 />
               </div>
 
@@ -408,7 +408,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none"
                   placeholder="Apartment, Street, City, State"
                 />
               </div>
@@ -416,7 +416,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
           </div>
 
           {/* Emergency Contacts & Skills */}
-          <div className="space-y-4 border-t border-border/80 pt-5">
+          <div className="space-y-4 border-t border-white/[0.08] pt-5">
             <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary">
               Emergency & Qualifications
             </h4>
@@ -427,7 +427,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="text"
                   value={emergencyName}
                   onChange={(e) => setEmergencyName(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none"
                   placeholder="Kin / Guardian Name"
                 />
               </div>
@@ -438,7 +438,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="tel"
                   value={emergencyPhone}
                   onChange={(e) => setEmergencyPhone(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none font-mono"
                   placeholder="+91 98765 00000"
                 />
               </div>
@@ -449,8 +449,8 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   type="text"
                   value={skills}
                   onChange={(e) => setSkills(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
-                  placeholder="React, Store Management, Sales"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none"
+                  placeholder="High-Voltage Safety, CCS-2 Diagnostics, Multimeter"
                 />
               </div>
 
@@ -460,7 +460,7 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   rows={3}
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-border bg-background p-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl luxury-input p-3 text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none resize-none"
                   placeholder="Summary of experience..."
                 />
               </div>
@@ -468,18 +468,18 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
           </div>
 
           {/* Modal Footer */}
-          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 border-t border-border pt-4 shrink-0">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 border-t border-white/[0.08] pt-4 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer tap-active text-center"
+              className="rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer tap-active text-center transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 cursor-pointer tap-active"
+              className="inline-flex items-center justify-center gap-2 rounded-xl luxury-button px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-md disabled:opacity-50 cursor-pointer tap-active"
             >
               <Save size={14} />
               {isSubmitting ? "Saving..." : initialData ? "Update Employee" : "Register Employee"}

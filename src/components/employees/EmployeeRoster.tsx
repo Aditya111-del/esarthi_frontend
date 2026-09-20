@@ -95,7 +95,7 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
 
           <button
             onClick={onOpenAddModal}
-            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:scale-[1.02] cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-xl luxury-button px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-lg transition-all cursor-pointer select-none"
           >
             <UserPlus size={15} />
             Add EV Technician
@@ -107,13 +107,13 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
       <div className="grid gap-3 sm:grid-cols-12">
         {/* Search */}
         <div className="relative sm:col-span-4">
-          <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-3 size-4 text-muted-foreground/60" />
           <input
             type="text"
             placeholder="Search technician name, ID, role, or bay..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="h-10 w-full rounded-xl border border-border bg-card/80 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/40"
+            className="h-10 w-full rounded-xl luxury-input pl-10 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 transition-all font-sans"
           />
         </div>
 
@@ -122,11 +122,11 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
           <select
             value={selectedShop}
             onChange={(e) => onShopChange(e.target.value)}
-            className="h-10 w-full rounded-xl border border-border bg-card/80 px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none cursor-pointer"
+            className="h-10 w-full rounded-xl luxury-input px-3 text-xs text-foreground transition-all cursor-pointer bg-black/60"
           >
-            <option value="all">All Charging Stations</option>
+            <option value="all" className="bg-neutral-900 text-white">All Charging Stations</option>
             {shops.map((s) => (
-              <option key={s._id} value={s._id}>
+              <option key={s._id} value={s._id} className="bg-neutral-900 text-white">
                 {s.city}: {s.name.replace("ESARTHI ", "")}
               </option>
             ))}
@@ -138,11 +138,11 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
           <select
             value={selectedDepartment}
             onChange={(e) => onDepartmentChange(e.target.value)}
-            className="h-10 w-full rounded-xl border border-border bg-card/80 px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none cursor-pointer"
+            className="h-10 w-full rounded-xl luxury-input px-3 text-xs text-foreground transition-all cursor-pointer bg-black/60"
           >
-            <option value="all">All Disciplines & Divisions</option>
+            <option value="all" className="bg-neutral-900 text-white">All Disciplines & Divisions</option>
             {departments.map((d) => (
-              <option key={d} value={d}>
+              <option key={d} value={d} className="bg-neutral-900 text-white">
                 {d}
               </option>
             ))}
@@ -154,13 +154,13 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
           <select
             value={selectedStatus}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="h-10 w-full rounded-xl border border-border bg-card/80 px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none cursor-pointer"
+            className="h-10 w-full rounded-xl luxury-input px-3 text-xs text-foreground transition-all cursor-pointer bg-black/60"
           >
-            <option value="all">All Status</option>
-            <option value="Active">Active</option>
-            <option value="Onboarding">Onboarding</option>
-            <option value="Review">Review</option>
-            <option value="On Leave">On Leave</option>
+            <option value="all" className="bg-neutral-900 text-white">All Status</option>
+            <option value="Active" className="bg-neutral-900 text-white">Active</option>
+            <option value="Onboarding" className="bg-neutral-900 text-white">Onboarding</option>
+            <option value="Review" className="bg-neutral-900 text-white">Review</option>
+            <option value="On Leave" className="bg-neutral-900 text-white">On Leave</option>
           </select>
         </div>
       </div>
@@ -262,10 +262,10 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
           </div>
 
           {/* Desktop Full Data Table (Hidden on mobile screens) */}
-          <div className="hidden md:block overflow-hidden rounded-2xl border border-border bg-card/70 shadow-sm">
+          <div className="hidden md:block overflow-hidden rounded-2xl luxury-card shadow-sm border border-white/[0.08]">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="border-b border-border bg-secondary/40 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                <thead className="border-b border-white/[0.08] bg-white/[0.02] font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
                   <tr>
                     <th className="px-5 py-3.5">Technician / Specialist</th>
                     <th className="px-5 py-3.5">Assigned Charging Hub</th>

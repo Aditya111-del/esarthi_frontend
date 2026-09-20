@@ -23,7 +23,7 @@ import { ShopModal } from "./components/shops/ShopModal";
 import { QuickOnboardingForm } from "./components/onboarding/QuickOnboardingForm";
 import { MyProfileView } from "./components/profile/MyProfileView";
 import { LoginPage } from "./components/auth/LoginPage";
-import { api, defaultSuperadmin } from "./services/api";
+import { api, defaultSuperadmin, getCached } from "./services/api";
 import { Employee, JobRole, Shop, DashboardStats, UserSession } from "./types";
 
 export function App() {
@@ -46,10 +46,15 @@ export function App() {
     } catch {}
     return null;
   });
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [employees, setEmployees] = useState<Employee[]>([]);
+
+  const cachedStats = getCached<DashboardStats>("stats_all");
+  const cachedShops = getCached<Shop[]>("shops");
+  const cachedEmployees = getCached<Employee[]>("employees_all");
+
+  const [stats, setStats] = useState<DashboardStats | null>(cachedStats);
+  const [employees, setEmployees] = useState<Employee[]>(cachedEmployees || []);
   const [roles, setRoles] = useState<JobRole[]>([]);
-  const [shops, setShops] = useState<Shop[]>([]);
+  const [shops, setShops] = useState<Shop[]>(cachedShops || []);
   const [departments, setDepartments] = useState<string[]>([
     "Engineering",
     "Design & UX",
@@ -58,7 +63,8 @@ export function App() {
     "People Operations",
   ]);
   const [databaseConnected, setDatabaseConnected] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!cachedShops || cachedShops.length === 0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Search & Filters state
   const [searchQuery, setSearchQuery] = useState("");
@@ -81,8 +87,9 @@ export function App() {
   // Active employee profile selection for self-service view
   const [activeProfileEmployee, setActiveProfileEmployee] = useState<Employee | null>(null);
 
-  // Load initial data
+  // Load initial data with stale-while-revalidate smooth transition
   const loadData = async (shopFilter = "all") => {
+    setIsRefreshing(true);
     try {
       const [statsData, employeesData, rolesData, shopsData, deptsData] = await Promise.all([
         api.getStats(shopFilter).catch(() => null),
@@ -115,6 +122,7 @@ export function App() {
       console.error("Error loading ESARTHI data:", err);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -300,8 +308,15 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20 selection:text-primary">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20 selection:text-primary relative">
       <Toaster position="top-right" theme="dark" richColors />
+
+      {/* High-Tech Specular Shimmer Top Bar (Pulse during background data sync) */}
+      {isRefreshing && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-[2px] bg-primary/20 overflow-hidden pointer-events-none">
+          <div className="h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-shimmer-bar" />
+        </div>
+      )}
 
       {/* Modern Top Header Navigation */}
       <Navbar
@@ -329,13 +344,28 @@ export function App() {
       {/* Main Content Area */}
       <main className="flex-1 mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-24 lg:pb-8">
         {isLoading ? (
-          <div className="flex h-96 flex-col items-center justify-center gap-4">
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/20 text-primary animate-pulse">
-              <span className="font-display text-2xl font-bold">E</span>
+          /* Luxury High-Fidelity Skeleton Screen (Prevents Layout Shifts) */
+          <div className="space-y-6">
+            {/* Hero Skeleton */}
+            <div className="h-44 sm:h-52 w-full rounded-2xl luxury-card skeleton-shimmer" />
+
+            {/* KPI Cards Skeleton */}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-24 sm:h-28 rounded-xl luxury-card p-4 flex flex-col justify-between">
+                  <div className="h-3 w-16 rounded bg-white/5 skeleton-shimmer" />
+                  <div className="h-7 w-24 rounded bg-white/10 skeleton-shimmer" />
+                  <div className="h-2.5 w-20 rounded bg-white/5 skeleton-shimmer" />
+                </div>
+              ))}
             </div>
-            <p className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
-              Loading ESARTHI System...
-            </p>
+
+            {/* Hubs Grid Skeleton */}
+            <div className="grid gap-4 md:grid-cols-2 pt-2">
+              {[1, 2].map((i) => (
+                <div key={i} className="h-48 rounded-2xl luxury-card skeleton-shimmer" />
+              ))}
+            </div>
           </div>
         ) : (
           <>

@@ -157,7 +157,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
         </div>
 
         {/* Central Authentication Card */}
-        <div className="w-full max-w-xl rounded-2xl sm:rounded-3xl border border-border/80 bg-card/85 backdrop-blur-2xl p-5 sm:p-8 shadow-2xl shadow-black/50 space-y-6 rise">
+        <div className="w-full max-w-xl rounded-2xl sm:rounded-3xl luxury-card p-5 sm:p-8 space-y-6 rise">
           {/* Identity Input Form */}
           <form
             onSubmit={(e) => {
@@ -167,12 +167,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
             className="space-y-4"
           >
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5 font-mono">
-                  <Lock size={12} className="text-primary" /> Corporate Admin ID
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/90 flex items-center gap-1.5 font-mono">
+                  <div className="size-5 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <Lock size={11} className="text-primary" />
+                  </div>
+                  Corporate Admin ID
                 </label>
-                <span className="text-[10px] text-muted-foreground font-mono">
-                  Must end with @esarthi.com
+                <span className="text-[10px] text-muted-foreground font-mono bg-white/[0.03] border border-white/[0.06] rounded-md px-2 py-0.5">
+                  @esarthi.com
                 </span>
               </div>
 
@@ -185,7 +188,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
                     if (errorMessage) setErrorMessage("");
                   }}
                   placeholder="superadmin@esarthi.com or branch.admin@esarthi.com"
-                  className="w-full h-12 rounded-xl border border-border/90 bg-secondary/50 px-4 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-mono"
+                  className="w-full h-12 rounded-xl luxury-input px-4 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/40 font-mono focus:ring-2 focus:ring-primary/25"
                   autoFocus
                 />
               </div>
@@ -193,7 +196,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
 
             {/* Error Message Box */}
             {errorMessage && (
-              <div className="flex items-start gap-2.5 rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
+              <div className="flex items-start gap-2.5 rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive animate-in fade-in duration-200">
                 <AlertCircle size={16} className="shrink-0 mt-0.5" />
                 <p className="leading-snug">{errorMessage}</p>
               </div>
@@ -203,7 +206,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all cursor-pointer disabled:opacity-50"
+              className="w-full h-12 rounded-xl luxury-button font-bold text-xs sm:text-sm tracking-wider uppercase flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 select-none group"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2 font-mono">
@@ -213,7 +216,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
               ) : (
                 <>
                   <span>Authorize & Launch Dashboard</span>
-                  <ArrowRight size={16} />
+                  <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
                 </>
               )}
             </button>
@@ -222,9 +225,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
           {/* Quick Access Divider */}
           <div className="relative flex items-center justify-center pt-2">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border/70" />
+              <div className="w-full border-t border-white/[0.08]" />
             </div>
-            <span className="relative bg-card px-3 text-[10px] uppercase tracking-wider font-mono font-bold text-muted-foreground">
+            <span className="relative bg-[#0b1016] px-3 text-[10px] uppercase tracking-wider font-mono font-bold text-muted-foreground border border-white/[0.06] rounded-full">
               Or Instant One-Click Login
             </span>
           </div>
@@ -233,11 +236,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
           <div className="space-y-3">
             <button
               onClick={() => handleQuickSelect("superadmin@esarthi.com")}
-              className="w-full group rounded-2xl border border-primary/40 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-3.5 sm:p-4 text-left transition-all hover:border-primary hover:bg-primary/20 cursor-pointer shadow-xs"
+              className="w-full group rounded-2xl border border-primary/40 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-3.5 sm:p-4 text-left transition-all duration-300 hover:border-primary hover:shadow-[0_0_24px_rgba(16,185,129,0.15)] cursor-pointer relative overflow-hidden"
             >
-              <div className="flex items-center justify-between">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/30">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-emerald-600 text-primary-foreground shadow-lg shadow-primary/30 border border-white/20">
                     <ShieldCheck size={20} />
                   </div>
                   <div>
@@ -245,7 +249,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
                       <span className="font-display font-bold text-xs sm:text-sm text-foreground group-hover:text-primary transition-colors">
                         Suraj Sev Sagar
                       </span>
-                      <span className="rounded bg-primary/20 px-1.5 py-0.5 text-[9px] font-mono font-bold text-primary">
+                      <span className="rounded-md bg-primary/20 border border-primary/30 px-1.5 py-0.5 text-[9px] font-mono font-bold text-primary">
                         SUPERADMIN
                       </span>
                     </div>
@@ -259,7 +263,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
                   <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-              <p className="mt-2 text-[10.5px] text-muted-foreground/80 pl-1 border-t border-primary/15 pt-1.5">
+              <p className="mt-2 text-[10.5px] text-muted-foreground/80 pl-1 border-t border-primary/15 pt-1.5 relative z-10">
                 Full platform governance · Multi-station control · Shop admin provisioning
               </p>
             </button>
@@ -275,20 +279,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
                   <button
                     key={branch.code}
                     onClick={() => handleQuickSelect(branch.email)}
-                    className="group rounded-xl border border-border/80 bg-secondary/35 p-3 text-left transition-all hover:border-primary/50 hover:bg-secondary/70 cursor-pointer"
+                    className="group rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05] p-3 text-left transition-all duration-200 hover:border-primary/50 cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-mono font-bold text-primary">
                         {branch.city} Hub
                       </span>
-                      <span className="text-[9px] font-mono text-muted-foreground/70">
+                      <span className="text-[9px] font-mono text-muted-foreground/70 bg-white/[0.04] px-1.5 py-0.5 rounded">
                         {branch.code}
                       </span>
                     </div>
-                    <p className="font-bold text-xs text-foreground mt-1 group-hover:text-primary transition-colors truncate">
+                    <p className="font-bold text-xs text-foreground mt-1 group-hover:text-primary transition-colors truncate font-sans">
                       {branch.adminName}
                     </p>
-                    <p className="font-mono text-[10px] text-muted-foreground truncate">
+                    <p className="font-mono text-[10px] text-muted-foreground truncate mt-0.5">
                       {branch.email}
                     </p>
                   </button>
@@ -307,7 +311,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
                     <button
                       key={s._id}
                       onClick={() => handleQuickSelect(s.adminEmail)}
-                      className="group rounded-xl border border-border/60 bg-secondary/30 p-2.5 text-left transition-all hover:border-primary/50 hover:bg-secondary/60 cursor-pointer"
+                      className="group rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05] p-2.5 text-left transition-all duration-200 hover:border-primary/50 cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold text-foreground truncate">

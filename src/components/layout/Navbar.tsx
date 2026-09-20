@@ -139,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Desktop Centre: Global Employee Search Bar */}
           <div ref={searchRef} className="relative hidden md:flex flex-1 max-w-md mx-auto">
             <div className="relative w-full">
-              <Search className="absolute left-3.5 top-2.5 size-4 text-muted-foreground" />
+              <Search className="absolute left-3.5 top-2.5 size-4 text-muted-foreground/60" />
               <input
                 type="text"
                 placeholder="Search staff by name, role, ID, or station..."
@@ -149,9 +149,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setIsSearchOpen(true);
                 }}
                 onFocus={() => setIsSearchOpen(true)}
-                className="h-9.5 w-full rounded-xl border border-border bg-secondary/40 pl-10 pr-9 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:bg-secondary/70 focus:outline-none transition-all"
+                className="h-9.5 w-full rounded-xl luxury-input pl-10 pr-12 text-xs text-foreground placeholder:text-muted-foreground/50 transition-all font-sans"
               />
-              {searchQuery && (
+              {searchQuery ? (
                 <button
                   onClick={() => {
                     setSearchQuery("");
@@ -161,18 +161,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <X size={14} />
                 </button>
+              ) : (
+                <div className="absolute right-2.5 top-2 hidden lg:flex items-center gap-0.5 text-[9.5px] font-mono text-muted-foreground/50 pointer-events-none bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded-md">
+                  <span>⌘K</span>
+                </div>
               )}
             </div>
 
             {/* Desktop Search Results Dropdown Overlay */}
             {isSearchOpen && searchQuery.trim() && (
-              <div className="absolute left-0 right-0 top-11 rounded-xl border border-border bg-card shadow-2xl overflow-hidden z-50 max-h-80 overflow-y-auto">
-                <div className="p-2 border-b border-border/60 font-mono text-[10px] text-muted-foreground uppercase px-3">
-                  {searchResults.length} {searchResults.length === 1 ? "Employee" : "Employees"} Found
+              <div className="absolute left-0 right-0 top-11 rounded-xl luxury-card shadow-2xl overflow-hidden z-50 max-h-80 overflow-y-auto">
+                <div className="p-2 border-b border-white/[0.08] font-mono text-[10px] text-muted-foreground uppercase px-3 flex items-center justify-between">
+                  <span>{searchResults.length} {searchResults.length === 1 ? "Employee" : "Employees"} Found</span>
+                  <span className="text-[9px] text-primary">Live Search</span>
                 </div>
 
                 {searchResults.length > 0 ? (
-                  <div className="divide-y divide-border/40">
+                  <div className="divide-y divide-white/[0.05]">
                     {searchResults.map((emp) => (
                       <div
                         key={emp._id}
@@ -181,17 +186,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setIsSearchOpen(false);
                           setSearchQuery("");
                         }}
-                        className="flex items-center justify-between p-3 hover:bg-secondary/50 cursor-pointer transition-colors"
+                        className="flex items-center justify-between p-3 hover:bg-white/[0.04] cursor-pointer transition-colors"
                       >
                         <div className="flex items-center gap-3">
                           {emp.image ? (
                             <img
                               src={emp.image}
                               alt={emp.name}
-                              className="size-8.5 rounded-full object-cover border border-border"
+                              className="size-8.5 rounded-full object-cover border border-white/10"
                             />
                           ) : (
-                            <div className="flex size-8.5 items-center justify-center rounded-full bg-secondary text-xs font-bold text-foreground">
+                            <div className="flex size-8.5 items-center justify-center rounded-full bg-white/[0.06] border border-white/10 text-xs font-bold text-foreground">
                               {emp.firstName?.[0] || emp.name?.[0] || "E"}
                             </div>
                           )}
@@ -228,10 +233,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     isActive
-                      ? "bg-primary/15 text-primary font-bold shadow-xs"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                      ? "bg-white/[0.08] text-primary border border-primary/30 shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
                   }`}
                 >
                   <Icon size={14} className={isActive ? "text-primary" : "text-muted-foreground"} />
@@ -246,21 +251,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Mobile Search Trigger Button */}
             <button
               onClick={() => setIsMobileSearchOpen(true)}
-              className="flex md:hidden items-center justify-center size-9 rounded-xl border border-border/80 bg-secondary/50 text-muted-foreground hover:text-foreground cursor-pointer tap-active transition-colors"
+              className="flex md:hidden items-center justify-center size-9 rounded-xl border border-white/10 bg-white/[0.04] text-muted-foreground hover:text-foreground cursor-pointer tap-active transition-colors"
               title="Search Personnel"
             >
               <Search size={16} />
             </button>
 
             {/* Desktop User Status & Switch Persona */}
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-border/80">
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-white/10">
               {user ? (
                 <div className="flex items-center gap-2">
                   <div
                     onClick={() => handleNavClick("profile")}
-                    className="flex items-center gap-2 rounded-lg bg-secondary/40 px-2.5 py-1 border border-border/60 hover:bg-secondary/70 transition-colors cursor-pointer"
+                    className="flex items-center gap-2 rounded-xl bg-white/[0.03] px-2.5 py-1.5 border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
                   >
-                    <div className="flex size-6 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">
+                    <div className="flex size-6 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-emerald-600 text-[10px] font-bold text-primary-foreground shadow-sm">
                       {user.name[0]}
                     </div>
                     <div className="flex flex-col text-left">
@@ -275,7 +280,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <button
                     onClick={() => onSelectPersona(null)}
-                    className="flex items-center gap-1 rounded-lg border border-border bg-secondary/50 px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+                    className="flex items-center justify-center size-8 rounded-xl border border-white/10 bg-white/[0.02] text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors cursor-pointer"
                     title="Log out"
                   >
                     <LogOut size={13} />

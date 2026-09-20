@@ -10,6 +10,40 @@ export const defaultSuperadmin: UserSession = {
   role: "Platform Superadmin",
 };
 
+// Stale-while-revalidate client cache helpers
+export function getCached<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(`esarthi_cache_${key}`);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setCached<T>(key: string, data: T): void {
+  try {
+    localStorage.setItem(`esarthi_cache_${key}`, JSON.stringify(data));
+  } catch {}
+}
+
+// Client keep-alive heartbeat loop (keeps Render free tier awake while app is open)
+let heartbeatStarted = false;
+export function startClientHeartbeat() {
+  if (heartbeatStarted || typeof window === "undefined") return;
+  heartbeatStarted = true;
+
+  // Wake up ping
+  fetch(`${API_BASE}/ping`).catch(() => {});
+
+  // Pulse every 8 minutes
+  setInterval(() => {
+    fetch(`${API_BASE}/ping`).catch(() => {});
+  }, 8 * 60 * 1000);
+}
+
+// Start heartbeat immediately on module load
+startClientHeartbeat();
+
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 9000);
@@ -42,16 +76,22 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  // Stats
+  // Stats with automatic caching
   async getStats(shopId?: string): Promise<DashboardStats> {
     const query = shopId && shopId !== "all" ? `?shopId=${encodeURIComponent(shopId)}` : "";
     const res = await fetchJson<{ success: boolean; stats: DashboardStats }>(`${API_BASE}/stats${query}`);
+    if (res.stats) {
+      setCached(`stats_${shopId || "all"}`, res.stats);
+    }
     return res.stats;
   },
 
-  // Shops
+  // Shops with automatic caching
   async getShops(): Promise<Shop[]> {
     const res = await fetchJson<{ success: boolean; shops: Shop[] }>(`${API_BASE}/shops`);
+    if (res.shops && res.shops.length > 0) {
+      setCached("shops", res.shops);
+    }
     return res.shops;
   },
 
@@ -100,6 +140,9 @@ export const api = {
     const qs = query.toString();
     const url = `${API_BASE}/employees${qs ? `?${qs}` : ""}`;
     const res = await fetchJson<{ success: boolean; employees: Employee[] }>(url);
+    if (!params?.search && (!params?.shopId || params.shopId === "all") && res.employees?.length > 0) {
+      setCached("employees", res.employees);
+    }
     return res.employees;
   },
 

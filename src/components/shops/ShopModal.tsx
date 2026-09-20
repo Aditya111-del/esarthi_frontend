@@ -115,12 +115,12 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-2.5 sm:p-4 backdrop-blur-sm overflow-y-auto">
-      <div className="relative my-auto w-full max-w-xl max-h-[92vh] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2.5 sm:p-4 backdrop-blur-md overflow-y-auto">
+      <div className="relative my-auto w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl luxury-card shadow-2xl overflow-hidden border border-white/[0.1]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border px-4 sm:px-6 py-3.5 sm:py-4 shrink-0">
+        <div className="flex items-center justify-between border-b border-white/[0.08] px-4 sm:px-6 py-4 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary shadow-xs">
               <Store size={16} />
             </div>
             <div>
@@ -134,7 +134,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer tap-active"
+            className="rounded-xl p-2 text-muted-foreground hover:bg-white/[0.06] hover:text-foreground cursor-pointer tap-active transition-colors"
           >
             <X size={18} />
           </button>
@@ -143,7 +143,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
           {error && (
-            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+            <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive animate-in fade-in">
               {error}
             </div>
           )}
@@ -161,7 +161,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-medium transition-all outline-none"
                   placeholder="e.g. ESARTHI Flagship — Connaught Place"
                 />
               </div>
@@ -172,7 +172,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   type="text"
                   value={code}
                   onChange={(e) => setCode(e.target.value.toUpperCase())}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 font-mono text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 font-mono text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none"
                   placeholder="e.g. SHP-DEL-01"
                 />
               </div>
@@ -184,7 +184,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   required
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-medium transition-all outline-none"
                   placeholder="e.g. New Delhi"
                 />
               </div>
@@ -195,7 +195,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none"
                   placeholder="Plot / Street, Landmark, Pincode"
                 />
               </div>
@@ -206,7 +206,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   type="email"
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-mono transition-all outline-none"
                   placeholder="delhi.hub@esarthi.internal"
                 />
               </div>
@@ -217,7 +217,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   type="tel"
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-mono transition-all outline-none"
                   placeholder="+91 11 2345 6789"
                 />
               </div>
@@ -225,7 +225,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
           </div>
 
           {/* EV Charging & Grid Power Specs */}
-          <div className="space-y-4 pt-2 border-t border-border/80">
+          <div className="space-y-4 pt-2 border-t border-white/[0.08]">
             <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
               <Zap size={13} className="fill-primary text-primary" /> EV Charging & Grid Infrastructure
             </h4>
@@ -239,7 +239,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   step="10"
                   value={powerCapacityKw}
                   onChange={(e) => setPowerCapacityKw(Number(e.target.value))}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 font-mono text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 font-mono text-xs text-foreground transition-all outline-none"
                   placeholder="360"
                 />
               </div>
@@ -252,7 +252,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   max="64"
                   value={totalBays}
                   onChange={(e) => setTotalBays(Number(e.target.value))}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 font-mono text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 font-mono text-xs text-foreground transition-all outline-none"
                   placeholder="12"
                 />
               </div>
@@ -262,19 +262,19 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                 <select
                   value={stationType}
                   onChange={(e) => setStationType(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-2 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground transition-all outline-none bg-black/60"
                 >
-                  <option value="Ultra-Fast Highway & Urban Hub">Highway Supercharger</option>
-                  <option value="Hypercharger Matrix & Fleet Terminal">Fleet Hypercharger</option>
-                  <option value="Dual-Cabinet Fleet Supercharger">Dual-Cabinet DC Hub</option>
-                  <option value="Metro Transit & Ride-Hail Hub">Transit & Ride-Hail Hub</option>
+                  <option value="Ultra-Fast Highway & Urban Hub" className="bg-neutral-900 text-white">Highway Supercharger</option>
+                  <option value="Hypercharger Matrix & Fleet Terminal" className="bg-neutral-900 text-white">Fleet Hypercharger</option>
+                  <option value="Dual-Cabinet Fleet Supercharger" className="bg-neutral-900 text-white">Dual-Cabinet DC Hub</option>
+                  <option value="Metro Transit & Ride-Hail Hub" className="bg-neutral-900 text-white">Transit & Ride-Hail Hub</option>
                 </select>
               </div>
             </div>
           </div>
 
           {/* Assigned Shop Admin Details */}
-          <div className="space-y-4 border-t border-border/80 pt-5">
+          <div className="space-y-4 border-t border-white/[0.08] pt-5">
             <div className="flex items-center gap-2">
               <ShieldCheck size={16} className="text-primary" />
               <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary">
@@ -293,7 +293,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   required
                   value={adminName}
                   onChange={(e) => setAdminName(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-medium transition-all outline-none"
                   placeholder="e.g. Rajesh Kumar"
                 />
               </div>
@@ -311,7 +311,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   type="email"
                   value={adminEmail}
                   onChange={(e) => setAdminEmail(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 font-mono text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 font-mono text-xs text-foreground placeholder:text-muted-foreground/40 transition-all outline-none"
                   placeholder="e.g. jaipur.admin@esarthi.com"
                 />
                 <p className="mt-1 text-[10px] text-muted-foreground">
@@ -325,7 +325,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                   type="tel"
                   value={adminPhone}
                   onChange={(e) => setAdminPhone(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground placeholder:text-muted-foreground/40 font-mono transition-all outline-none"
                   placeholder="+91 98100 12345"
                 />
               </div>
@@ -335,28 +335,28 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as any)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  className="mt-1.5 h-10 w-full rounded-xl luxury-input px-3.5 text-xs text-foreground transition-all outline-none bg-black/60"
                 >
-                  <option value="active">Active & Operational</option>
-                  <option value="inactive">Inactive / Setup Mode</option>
+                  <option value="active" className="bg-neutral-900 text-white">Active & Operational</option>
+                  <option value="inactive" className="bg-neutral-900 text-white">Inactive / Setup Mode</option>
                 </select>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 border-t border-border pt-4 shrink-0">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 border-t border-white/[0.08] pt-4 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer tap-active text-center"
+              className="rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer tap-active text-center transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 cursor-pointer tap-active"
+              className="inline-flex items-center justify-center gap-2 rounded-xl luxury-button px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-md disabled:opacity-50 cursor-pointer tap-active"
             >
               <Save size={14} />
               {isSubmitting ? "Saving..." : initialData ? "Update Shop" : "Provision Shop"}
