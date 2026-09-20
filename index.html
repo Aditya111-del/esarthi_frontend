@@ -19,11 +19,13 @@
       rel="stylesheet"
     />
 
-    <!-- Critical CSS to prevent flash of unstyled content -->
+    <!-- Critical CSS to prevent flash of unstyled content & hide scrollbars -->
     <style>
       html { background: #0b0e14; color: #f8fafc; }
       body { margin: 0; font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
       #root { min-height: 100vh; }
+      html, body, *, ::before, ::after { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+      ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
     </style>
   </head>
   <body>
