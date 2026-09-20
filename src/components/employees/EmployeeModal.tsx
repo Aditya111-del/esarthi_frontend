@@ -162,33 +162,33 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm overflow-y-auto">
-      <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-2.5 sm:p-4 backdrop-blur-sm overflow-y-auto">
+      <div className="relative my-auto w-full max-w-2xl max-h-[92vh] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+        <div className="flex items-center justify-between border-b border-border px-4 sm:px-6 py-3.5 sm:py-4 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <UserPlus size={16} />
             </div>
             <div>
-              <h3 className="font-display text-lg font-bold text-foreground">
+              <h3 className="font-display text-base sm:text-lg font-bold text-foreground">
                 {initialData ? "Edit Employee Profile" : "Register Employee (Complete Data)"}
               </h3>
-              <p className="font-mono text-[10px] text-muted-foreground">
+              <p className="font-mono text-[9.5px] sm:text-[10px] text-muted-foreground">
                 ESARTHI Workforce & Shop Directory Record
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+            className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer tap-active"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
           {error && (
             <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
               {error}
@@ -468,18 +468,18 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-end gap-3 border-t border-border pt-4">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 border-t border-border pt-4 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-border bg-card px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer tap-active text-center"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 cursor-pointer tap-active"
             >
               <Save size={14} />
               {isSubmitting ? "Saving..." : initialData ? "Update Employee" : "Register Employee"}

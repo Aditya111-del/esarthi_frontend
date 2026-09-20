@@ -37,10 +37,10 @@ export const EmployeeDetailDrawer: React.FC<EmployeeDetailDrawerProps> = ({
   const adminPhone = shop?.adminPhone || "+91 98100 00000";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-2xl rounded-2xl border border-border bg-card shadow-2xl overflow-hidden rise">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-2.5 sm:p-4 backdrop-blur-sm overflow-y-auto">
+      <div className="relative my-auto w-full max-w-2xl max-h-[92vh] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden rise">
         {/* Simple Minimalist Header */}
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+        <div className="flex items-center justify-between border-b border-border px-4 sm:px-6 py-3.5 sm:py-4 shrink-0">
           <div className="flex items-center gap-3.5">
             {employee.image ? (
               <img
@@ -84,7 +84,7 @@ export const EmployeeDetailDrawer: React.FC<EmployeeDetailDrawerProps> = ({
         </div>
 
         {/* Content Body: Personal + Organization Details */}
-        <div className="max-h-[75vh] overflow-y-auto p-6 space-y-6 text-xs">
+        <div className="overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 text-xs flex-1">
           {/* SECTION 1: Personal Details */}
           <div className="rounded-xl border border-border bg-background/50 p-4 space-y-3">
             <div className="flex items-center gap-2 border-b border-border/60 pb-2">
@@ -168,58 +168,104 @@ export const EmployeeDetailDrawer: React.FC<EmployeeDetailDrawerProps> = ({
 
               <div>
                 <span className="font-mono text-[10px] text-muted-foreground uppercase">Monthly Salary</span>
-                <p className="font-medium text-foreground mt-0.5">{employee.salary || "Standard Payroll"}</p>
+                <p className="font-semibold text-foreground mt-0.5">{employee.salary || "₹1,20,000 / mo"}</p>
               </div>
-
               <div>
-                <span className="font-mono text-[10px] text-muted-foreground uppercase">Store / Shop Working In</span>
-                <p className="font-bold text-foreground mt-0.5">{employee.shopName || "Central Store"}</p>
+                <span className="font-mono text-[10px] text-muted-foreground uppercase flex items-center gap-1">
+                  <Calendar size={12} /> Joining Date
+                </span>
+                <p className="text-foreground mt-0.5">{employee.joiningDate || "2024-01-15"}</p>
               </div>
-
-              <div>
-                <span className="font-mono text-[10px] text-muted-foreground uppercase">Joining Date</span>
-                <p className="font-mono font-medium text-foreground mt-0.5">{employee.joiningDate || "—"}</p>
+              <div className="sm:col-span-2">
+                <span className="font-mono text-[10px] text-muted-foreground uppercase">Assigned EV Station</span>
+                <p className="font-medium text-foreground mt-0.5">
+                  {employee.shopName || shop?.name || "All Stations"} ({shop?.code || "EV-NET"})
+                </p>
               </div>
-
-              <div>
-                <span className="font-mono text-[10px] text-muted-foreground uppercase">Employment Agreement</span>
-                <p className="font-medium text-foreground mt-0.5">{employee.employmentType || "Full-time Permanent"}</p>
-              </div>
-
-              <div>
-                <span className="font-mono text-[10px] text-muted-foreground uppercase">Work Shift</span>
-                <p className="font-medium text-foreground mt-0.5">{employee.shift || "Standard General Shift"}</p>
+              <div className="sm:col-span-2">
+                <span className="font-mono text-[10px] text-muted-foreground uppercase">Assigned Charging Bays & Shift</span>
+                <p className="text-foreground mt-0.5">
+                  {employee.assignedBay || "Bays 01-04 (DC Fast Chargers)"} · {employee.shift || "Morning Shift"}
+                </p>
               </div>
             </div>
+          </div>
 
-            {/* Shop Manager / Admin Particulars */}
-            <div className="mt-3 pt-3 border-t border-border/50 rounded-lg bg-secondary/30 p-3">
-              <span className="font-mono text-[10px] font-bold text-primary uppercase">
-                Shop Manager / Admin In-Charge
-              </span>
-              <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
-                <span className="font-bold text-foreground">{adminName}</span>
-                <div className="flex items-center gap-3 text-muted-foreground font-mono text-[11px]">
-                  <span>{adminEmail}</span>
-                  <span>·</span>
-                  <span>{adminPhone}</span>
+          {/* SECTION 3: Technical Certifications & Safety Clearances */}
+          <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 space-y-3">
+            <div className="flex items-center gap-2 border-b border-primary/20 pb-2">
+              <Shield size={15} className="text-primary" />
+              <h4 className="font-display text-xs font-bold text-foreground uppercase tracking-wider">
+                Certifications & High-Voltage Clearance
+              </h4>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs">
+                <CheckCircle2 size={15} className="text-emerald-400" />
+                <span className="text-foreground font-medium">
+                  {employee.safetyEquipmentCleared ? "High-Voltage PPE & Safety Arc Cleared" : "Pending Arc Flash Training"}
+                </span>
+              </div>
+
+              <div>
+                <span className="font-mono text-[10px] text-muted-foreground uppercase">Certifications Held</span>
+                <p className="text-foreground mt-0.5">
+                  {Array.isArray(employee.certifications)
+                    ? employee.certifications.join(" · ")
+                    : employee.certifications || "High-Voltage Safety Certified (Level 4), OCPP 2.0.1 Protocol"}
+                </p>
+              </div>
+
+              {employee.skills && employee.skills.length > 0 && (
+                <div>
+                  <span className="font-mono text-[10px] text-muted-foreground uppercase">Key Competencies</span>
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    {employee.skills.map((skill, i) => (
+                      <span
+                        key={i}
+                        className="rounded-md bg-secondary/80 px-2 py-0.5 font-mono text-[10px] text-foreground border border-border"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+              )}
+            </div>
+          </div>
+
+          {/* SECTION 4: Station Reporting Admin */}
+          <div className="rounded-xl border border-border bg-background/50 p-4 space-y-2">
+            <div className="flex items-center gap-2 border-b border-border/60 pb-2">
+              <Building size={15} className="text-primary" />
+              <h4 className="font-display text-xs font-bold text-foreground uppercase tracking-wider">
+                Reporting Station Manager
+              </h4>
+            </div>
+
+            <div className="mt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <span className="font-bold text-foreground">{adminName}</span>
+              <div className="flex flex-wrap items-center gap-2 text-muted-foreground font-mono text-[11px]">
+                <span>{adminEmail}</span>
+                <span className="hidden sm:inline">·</span>
+                <span>{adminPhone}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between border-t border-border px-6 py-3.5 bg-secondary/20">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2 border-t border-border px-4 sm:px-6 py-3.5 bg-secondary/20 shrink-0">
           <button
             onClick={onClose}
-            className="rounded-lg border border-border px-4 py-1.5 text-xs font-medium text-muted-foreground hover:bg-secondary cursor-pointer"
+            className="rounded-xl border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-secondary cursor-pointer tap-active text-center"
           >
             Close
           </button>
           <button
             onClick={() => onEdit(employee)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-sm"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-sm tap-active"
           >
             <Edit2 size={13} />
             Edit Employee Record

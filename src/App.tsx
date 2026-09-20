@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Toaster, toast } from "sonner";
-import { X, ShieldCheck, Building2, User } from "lucide-react";
+import {
+  X,
+  ShieldCheck,
+  Building2,
+  User,
+  BarChart3,
+  Users,
+  Store,
+  UserPlus,
+  Briefcase,
+} from "lucide-react";
 import { Navbar } from "./components/layout/Navbar";
 import { AnalyticsOverview } from "./components/analytics/AnalyticsOverview";
 import { EmployeeRoster } from "./components/employees/EmployeeRoster";
@@ -255,10 +265,18 @@ export function App() {
         shops={shops}
         onViewEmployee={(emp) => setInspectingEmployee(emp)}
         onOpenLoginModal={() => setIsLoginModalOpen(true)}
+        onOpenAddEmployee={() => {
+          setEditingEmployee(null);
+          setIsEmployeeModalOpen(true);
+        }}
+        onOpenCreateShop={() => {
+          setEditingShop(null);
+          setIsShopModalOpen(true);
+        }}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="flex-1 mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-24 lg:pb-8">
         {isLoading ? (
           <div className="flex h-96 flex-col items-center justify-center gap-4">
             <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/20 text-primary animate-pulse">
@@ -270,7 +288,7 @@ export function App() {
           </div>
         ) : (
           <>
-            {/* Overview / Stores & Dashboard Tab */}
+            {/* 1. Overview / Stores & Dashboard Tab */}
             {currentTab === "overview" && (
               <AnalyticsOverview
                 stats={stats}
@@ -303,7 +321,84 @@ export function App() {
               />
             )}
 
-            {/* My Profile Workspace Tab */}
+            {/* 2. Technicians & Staff Directory Tab */}
+            {currentTab === "roster" && (
+              <EmployeeRoster
+                employees={filteredEmployees}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                selectedDepartment={selectedDepartment}
+                onDepartmentChange={setSelectedDepartment}
+                selectedStatus={selectedStatus}
+                onStatusChange={setSelectedStatus}
+                selectedShop={selectedShopFilter}
+                onShopChange={setSelectedShopFilter}
+                departments={departments}
+                shops={shops}
+                onViewEmployee={(emp) => setInspectingEmployee(emp)}
+                onEditEmployee={(emp) => {
+                  setEditingEmployee(emp);
+                  setIsEmployeeModalOpen(true);
+                }}
+                onDeleteEmployee={handleDeleteEmployee}
+                onOpenAddModal={() => {
+                  setEditingEmployee(null);
+                  setIsEmployeeModalOpen(true);
+                }}
+              />
+            )}
+
+            {/* 3. Charging Hubs & Stores Management Tab */}
+            {currentTab === "shops" && (
+              <ShopsManagement
+                shops={shops}
+                onOpenCreateShop={() => {
+                  setEditingShop(null);
+                  setIsShopModalOpen(true);
+                }}
+                onEditShop={(shop) => {
+                  setEditingShop(shop);
+                  setIsShopModalOpen(true);
+                }}
+                onDeleteShop={handleDeleteShop}
+                onViewShopStaff={(shopId) => {
+                  setSelectedShopFilter(shopId);
+                  setCurrentTab("roster");
+                }}
+                onSwitchToShopAdmin={(shop) => {
+                  setUser({
+                    id: `admin-${shop._id}`,
+                    name: shop.adminName,
+                    email: shop.adminEmail,
+                    type: "shopadmin",
+                    role: `Store Admin (${shop.city})`,
+                    assignedShopId: shop._id,
+                    assignedShopName: shop.name,
+                  });
+                  setSelectedShopFilter(shop._id);
+                  toast.success(`Switched to Store Admin: ${shop.adminName}`);
+                }}
+              />
+            )}
+
+            {/* 4. Job Roles & Hierarchy Tab */}
+            {currentTab === "roles" && (
+              <RolesManagement
+                roles={roles}
+                onOpenCreateRole={() => {
+                  setEditingRole(null);
+                  setIsRoleModalOpen(true);
+                }}
+                onEditRole={(role) => {
+                  setEditingRole(role);
+                  setIsRoleModalOpen(true);
+                }}
+                onDeleteRole={handleDeleteRole}
+                departments={departments}
+              />
+            )}
+
+            {/* 5. My Profile Workspace Tab */}
             {currentTab === "profile" && (
               <MyProfileView
                 currentUser={user}
@@ -327,9 +422,97 @@ export function App() {
                 }}
               />
             )}
+
+            {/* 6. Quick Onboarding Form Tab */}
+            {currentTab === "onboard" && (
+              <div className="max-w-3xl mx-auto">
+                <QuickOnboardingForm
+                  shops={shops}
+                  roles={roles}
+                  currentUser={user || defaultSuperadmin}
+                  onComplete={handleOnboardingComplete}
+                  onCancel={() => setCurrentTab("overview")}
+                />
+              </div>
+            )}
           </>
         )}
       </main>
+
+      {/* Luxury Frosted Mobile Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden items-center justify-around border-t border-border/80 bg-background/90 backdrop-blur-xl px-1 py-1.5 safe-bottom shadow-2xl">
+        <button
+          onClick={() => {
+            setCurrentTab("overview");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-semibold transition-all tap-active cursor-pointer ${
+            currentTab === "overview"
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <BarChart3 size={18} className={currentTab === "overview" ? "text-primary" : "text-muted-foreground"} />
+          <span>Overview</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setCurrentTab("roster");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-semibold transition-all tap-active cursor-pointer ${
+            currentTab === "roster"
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Users size={18} className={currentTab === "roster" ? "text-primary" : "text-muted-foreground"} />
+          <span>Staff</span>
+        </button>
+
+        {/* Floating Quick Onboard Action Button */}
+        <button
+          onClick={() => {
+            setEditingEmployee(null);
+            setIsEmployeeModalOpen(true);
+          }}
+          className="flex flex-col items-center justify-center -mt-5 size-11 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/35 tap-active cursor-pointer"
+          title="Onboard Technician"
+        >
+          <UserPlus size={20} className="fill-primary-foreground text-primary-foreground" />
+        </button>
+
+        <button
+          onClick={() => {
+            setCurrentTab("shops");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-semibold transition-all tap-active cursor-pointer ${
+            currentTab === "shops"
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Store size={18} className={currentTab === "shops" ? "text-primary" : "text-muted-foreground"} />
+          <span>Hubs</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setCurrentTab("profile");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-semibold transition-all tap-active cursor-pointer ${
+            currentTab === "profile"
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <User size={18} className={currentTab === "profile" ? "text-primary" : "text-muted-foreground"} />
+          <span>Profile</span>
+        </button>
+      </nav>
 
       {/* Footer */}
       <footer className="border-t border-border/60 py-6 text-center text-xs text-muted-foreground">

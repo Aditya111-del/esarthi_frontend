@@ -143,14 +143,15 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
             </div>
 
             {/* Content Overlay */}
-            <div className="relative z-10 p-6 sm:p-8">
-              <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-                <div className="max-w-2xl space-y-2.5">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 font-mono text-[11px] font-semibold text-primary backdrop-blur-md">
-                    <span>ECOPLUG Energy India Limited · National EV Fast-Charging Grid</span>
+            <div className="relative z-10 p-4 sm:p-8">
+              <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
+                <div className="max-w-2xl space-y-2">
+                  <div className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-border bg-card/80 px-2.5 py-1 font-mono text-[9.5px] sm:text-[11px] font-semibold text-primary backdrop-blur-md">
+                    <span className="size-1.5 rounded-full bg-emerald-400 inline-block animate-pulse shrink-0" />
+                    <span className="truncate">ECOPLUG Energy India · National Fast-Charging Grid</span>
                   </div>
 
-                  <h1 className="font-display text-2xl font-bold tracking-tight text-white sm:text-4xl">
+                  <h1 className="font-display text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
                     ESARTHI EV Power Network
                   </h1>
 
@@ -159,35 +160,35 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                   </p>
 
                   {/* Live Telemetry Pills */}
-                  <div className="flex flex-wrap items-center gap-2.5 pt-1">
-                    <div className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
-                      <Zap size={14} className="text-amber-400 fill-amber-400" />
-                      <span className="font-mono text-xs text-white">
-                        <strong>{totalPower} kW</strong> Connected Load
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 pt-1">
+                    <div className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 sm:px-3 sm:py-1.5 backdrop-blur-md">
+                      <Zap size={13} className="text-amber-400 fill-amber-400" />
+                      <span className="font-mono text-[11px] sm:text-xs text-white">
+                        <strong>{totalPower} kW</strong> Load
                       </span>
                     </div>
 
-                    <div className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
-                      <Zap size={14} className="text-emerald-400 fill-emerald-400" />
-                      <span className="font-mono text-xs text-white">
-                        <strong>{totalBays}</strong> Charging Bays
+                    <div className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 sm:px-3 sm:py-1.5 backdrop-blur-md">
+                      <Zap size={13} className="text-emerald-400 fill-emerald-400" />
+                      <span className="font-mono text-[11px] sm:text-xs text-white">
+                        <strong>{totalBays}</strong> Fast Bays
                       </span>
                     </div>
 
-                    <div className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
-                      <span className="size-2 rounded-full bg-emerald-400 inline-block" />
-                      <span className="font-mono text-xs text-white">
-                        <strong>99.9%</strong> Network SLA
+                    <div className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 sm:px-3 sm:py-1.5 backdrop-blur-md">
+                      <span className="size-1.5 rounded-full bg-emerald-400 inline-block" />
+                      <span className="font-mono text-[11px] sm:text-xs text-white">
+                        <strong>99.9%</strong> SLA
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Action */}
-                <div className="flex flex-wrap items-center gap-2.5">
+                {/* Quick Action Buttons */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto pt-2 lg:pt-0">
                   <button
                     onClick={() => onOpenAddEmployeeForShop(shops[0])}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 cursor-pointer tap-active"
                   >
                     <UserPlus size={15} />
                     Onboard Technician
@@ -196,7 +197,7 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                   {isSuperadmin && (
                     <button
                       onClick={onOpenCreateShop}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-black/40 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-md transition-all hover:bg-black/60 cursor-pointer"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-black/50 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-md transition-all hover:bg-black/70 cursor-pointer tap-active"
                     >
                       <Plus size={15} />
                       New Store
@@ -208,29 +209,29 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
           </div>
 
           {/* Top Dashboard Metrics */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-xl border border-border bg-card/60 p-4">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Total Stores</span>
-              <p className="mt-1 font-display text-2xl font-bold text-foreground">{shops.length}</p>
-              <span className="text-[11px] text-muted-foreground">Operating locations</span>
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
+              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Total Stores</span>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-foreground">{shops.length}</p>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">Operating hubs</span>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/60 p-4">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Total Employees</span>
-              <p className="mt-1 font-display text-2xl font-bold text-foreground">{totalEmployees}</p>
-              <span className="text-[11px] text-muted-foreground">Across all stores</span>
+            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
+              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Total Staff</span>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-foreground">{totalEmployees}</p>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">All stations</span>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/60 p-4">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Active On Duty</span>
-              <p className="mt-1 font-display text-2xl font-bold text-emerald-400">{activeEmployees}</p>
-              <span className="text-[11px] text-muted-foreground">Verified staff</span>
+            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
+              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Active Duty</span>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-emerald-400">{activeEmployees}</p>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">Verified staff</span>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/60 p-4">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Network Capacity</span>
-              <p className="mt-1 font-display text-2xl font-bold text-amber-400">{totalPower} kW</p>
-              <span className="text-[11px] text-muted-foreground">{totalBays} Charging Bays</span>
+            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
+              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Connected Power</span>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-amber-400">{totalPower} kW</p>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">{totalBays} Fast Bays</span>
             </div>
           </div>
 
@@ -238,30 +239,30 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
           <div className="space-y-4">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center border-b border-border pb-3">
               <div>
-                <h3 className="font-display text-lg font-bold text-foreground">
+                <h3 className="font-display text-base sm:text-lg font-bold text-foreground">
                   Operating Stores & Hubs
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Select any store to join, view all assigned employees, or add new staff
+                  Select any store to join, view assigned staff, or register technicians
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="relative">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                <div className="relative flex-1 sm:w-56">
                   <Search className="absolute left-3 top-2.5 size-3.5 text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder="Filter stores..."
+                    placeholder="Filter stores by city, code..."
                     value={storeSearch}
                     onChange={(e) => setStoreSearch(e.target.value)}
-                    className="h-9 w-44 sm:w-56 rounded-lg border border-border bg-card pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none"
+                    className="h-9 w-full rounded-xl border border-border bg-card pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none"
                   />
                 </div>
 
                 {isSuperadmin && (
                   <button
                     onClick={onOpenCreateShop}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shadow-sm"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shadow-sm tap-active"
                   >
                     <Plus size={14} />
                     New Store
@@ -361,7 +362,7 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                     </div>
 
                     {/* Store Card Actions */}
-                    <div className="mt-5 pt-3 border-t border-border/50 flex items-center justify-between">
+                    <div className="mt-4 pt-3 border-t border-border/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
                       <span className="font-mono text-xs font-semibold text-primary">
                         {count} {count === 1 ? "Employee" : "Employees"}
                       </span>
@@ -369,13 +370,13 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => onOpenAddEmployeeForShop(shop)}
-                          className="rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-secondary transition-colors cursor-pointer"
+                          className="flex-1 sm:flex-initial rounded-xl border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-secondary transition-colors cursor-pointer tap-active text-center"
                         >
-                          + Add Employee
+                          + Staff
                         </button>
                         <button
                           onClick={() => setSelectedStore(shop)}
-                          className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shadow-sm"
+                          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shadow-sm tap-active"
                         >
                           Join Store <ArrowRight size={12} />
                         </button>
@@ -411,7 +412,7 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
                 </div>
 
-                <div className="relative z-10 p-6 sm:p-8">
+                <div className="relative z-10 p-4 sm:p-8">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div>
                       {!isShopAdmin && (
@@ -420,18 +421,18 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                             setSelectedStore(null);
                             setEmployeeSearch("");
                           }}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-black/40 px-3 py-1.5 text-xs font-medium text-white hover:bg-black/60 transition-colors cursor-pointer mb-3 backdrop-blur-md"
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/40 px-3 py-1.5 text-xs font-medium text-white hover:bg-black/60 transition-colors cursor-pointer mb-3 backdrop-blur-md tap-active"
                         >
                           <ArrowLeft size={14} /> Back to All Stores
                         </button>
                       )}
 
-                      <div className="flex items-center gap-2">
-                        <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="font-display text-xl sm:text-3xl font-bold text-white">
                           {cleanStoreName}
                         </h2>
-                        <span className="rounded bg-primary/20 border border-primary/40 px-2 py-0.5 font-mono text-[10px] text-primary font-bold">
-                          {isShopAdmin ? "Store Admin Portal" : "Joined Store View"} · {activeStore.city}
+                        <span className="rounded-full bg-primary/20 border border-primary/40 px-2.5 py-0.5 font-mono text-[9.5px] sm:text-[10px] text-primary font-bold">
+                          {isShopAdmin ? "Store Admin Portal" : "Joined Store"} · {activeStore.city}
                         </span>
                       </div>
 
@@ -445,24 +446,24 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
-                      <div className="relative">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
+                      <div className="relative flex-1 sm:w-48">
                         <Search className="absolute left-3 top-2.5 size-3.5 text-muted-foreground" />
                         <input
                           type="text"
                           placeholder="Search store staff..."
                           value={employeeSearch}
                           onChange={(e) => setEmployeeSearch(e.target.value)}
-                          className="h-9 w-48 rounded-lg border border-white/20 bg-black/50 pl-8 pr-3 text-xs text-white placeholder:text-slate-400 focus:border-primary/60 focus:outline-none backdrop-blur-md"
+                          className="h-9 w-full rounded-xl border border-white/20 bg-black/50 pl-8 pr-3 text-xs text-white placeholder:text-slate-400 focus:border-primary/60 focus:outline-none backdrop-blur-md"
                         />
                       </div>
 
                       <button
                         onClick={() => onOpenAddEmployeeForShop(activeStore)}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shadow-md"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shadow-md tap-active"
                       >
                         <UserPlus size={14} />
-                        Add Employee to this Store
+                        Add Staff to Store
                       </button>
                     </div>
                   </div>
@@ -472,31 +473,31 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
           })()}
 
           {/* Store Quick Telemetry KPI Cards */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-xl border border-border bg-card/60 p-4">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Store Employees</span>
-              <p className="mt-1 font-display text-2xl font-bold text-foreground">{storeEmployees.length}</p>
-              <span className="text-[11px] text-muted-foreground">Assigned to this store</span>
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
+              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Store Employees</span>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-foreground">{storeEmployees.length}</p>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">Assigned staff</span>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/60 p-4">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Active On Duty</span>
-              <p className="mt-1 font-display text-2xl font-bold text-emerald-400">
+            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
+              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Active On Duty</span>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-emerald-400">
                 {storeEmployees.filter((e) => e.status === "Active").length}
               </p>
-              <span className="text-[11px] text-muted-foreground">Verified staff</span>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">Verified on site</span>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/60 p-4">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Power Capacity</span>
-              <p className="mt-1 font-display text-2xl font-bold text-amber-400">{activeStore.powerCapacityKw || 300} kW</p>
-              <span className="text-[11px] text-muted-foreground">DC Ultra-Fast Load</span>
+            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
+              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Power Capacity</span>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-amber-400">{activeStore.powerCapacityKw || 300} kW</p>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">DC Ultra-Fast</span>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/60 p-4">
-              <span className="font-mono text-[10px] uppercase text-muted-foreground">Charging Bays</span>
-              <p className="mt-1 font-display text-2xl font-bold text-emerald-400">{activeStore.totalBays || 10}</p>
-              <span className="text-[11px] text-muted-foreground">Operating stalls</span>
+            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
+              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Charging Bays</span>
+              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-emerald-400">{activeStore.totalBays || 10}</p>
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">Fast stalls</span>
             </div>
           </div>
 
@@ -514,8 +515,107 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
             </div>
           </div>
 
-          {/* Store Employees Table */}
-          <div className="overflow-hidden rounded-xl border border-border bg-card/70 shadow-sm">
+          {/* MOBILE VIEW: Luxury Card Stack for Personnel (Shown on Mobile screens) */}
+          <div className="block md:hidden space-y-3">
+            {filteredStoreEmployees.length > 0 ? (
+              filteredStoreEmployees.map((emp) => (
+                <div
+                  key={emp._id}
+                  className="rounded-xl border border-border/80 bg-card/80 p-4 space-y-3 shadow-xs"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      {emp.image ? (
+                        <img
+                          src={emp.image}
+                          alt={emp.name}
+                          className="size-10 rounded-full object-cover border border-border"
+                        />
+                      ) : (
+                        <div className="flex size-10 items-center justify-center rounded-full bg-secondary font-bold text-xs text-foreground">
+                          {emp.firstName?.[0] || emp.name?.[0] || "E"}
+                        </div>
+                      )}
+                      <div>
+                        <h4
+                          onClick={() => onViewEmployee(emp)}
+                          className="font-bold text-sm text-foreground hover:text-primary cursor-pointer"
+                        >
+                          {emp.name}
+                        </h4>
+                        <p className="text-xs text-muted-foreground">{emp.roleTitle}</p>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold ${
+                        emp.status === "Active"
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                          : "bg-secondary text-muted-foreground"
+                      }`}
+                    >
+                      {emp.status}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[11px] font-mono">
+                    <div>
+                      <span className="text-muted-foreground uppercase text-[9px]">ID: </span>
+                      <span className="text-primary font-bold">{emp.employeeId}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-[9px]">Level: </span>
+                      <span className="text-foreground">{emp.level || "L3"}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-[9px]">Dept: </span>
+                      <span className="text-foreground truncate block">{emp.department}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-[9px]">Salary: </span>
+                      <span className="text-foreground font-semibold">{emp.salary || "Standard"}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/50">
+                    <button
+                      onClick={() => onViewEmployee(emp)}
+                      className="flex-1 rounded-lg bg-primary/10 border border-primary/20 py-1.5 text-center text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer tap-active"
+                    >
+                      View Details
+                    </button>
+                    <button
+                      onClick={() => onEditEmployee(emp)}
+                      className="rounded-lg p-2 bg-secondary/50 text-muted-foreground hover:text-foreground cursor-pointer tap-active"
+                      title="Edit"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
+                      onClick={() => onDeleteEmployee(emp._id)}
+                      className="rounded-lg p-2 bg-destructive/10 text-destructive hover:bg-destructive/20 cursor-pointer tap-active"
+                      title="Delete"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-xl border border-border bg-card/40 p-8 text-center text-xs text-muted-foreground space-y-2">
+                <p>No employees found in {activeStore?.name || "this store"}.</p>
+                <button
+                  onClick={() => onOpenAddEmployeeForShop(activeStore)}
+                  className="text-xs text-primary font-semibold hover:underline cursor-pointer"
+                >
+                  + Add Staff Now
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* DESKTOP VIEW: Full Data Table (Shown on md+ screens) */}
+          <div className="hidden md:block overflow-hidden rounded-xl border border-border bg-card/70 shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="border-b border-border bg-secondary/40 font-mono text-[10px] uppercase text-muted-foreground">
@@ -594,7 +694,7 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                               className="rounded px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                               title="View Full Details"
                             >
-                              View Full Details
+                              View Details
                             </button>
                             <button
                               onClick={() => onEditEmployee(emp)}
@@ -617,10 +717,10 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                   ) : (
                     <tr>
                       <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
-                        No employees found in {selectedStore.name}.
+                        No employees found in {activeStore?.name || "this store"}.
                         <div className="mt-2">
                           <button
-                            onClick={() => onOpenAddEmployeeForShop(selectedStore)}
+                            onClick={() => onOpenAddEmployeeForShop(activeStore)}
                             className="text-xs text-primary font-semibold hover:underline cursor-pointer"
                           >
                             + Add Employee Now

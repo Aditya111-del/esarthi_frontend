@@ -46,9 +46,9 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
   return (
     <div className="space-y-6 rise">
       {/* Minimal Header */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div>
-          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
+          <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-foreground">
             Charging Hubs
           </h2>
           <p className="text-xs text-muted-foreground">
@@ -58,7 +58,7 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
 
         <button
           onClick={onOpenCreateShop}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors cursor-pointer tap-active w-full sm:w-auto"
         >
           <Plus size={15} />
           New Station
@@ -66,14 +66,14 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
       </div>
 
       {/* Search Filter */}
-      <div className="relative max-w-sm">
+      <div className="relative w-full sm:max-w-sm">
         <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
         <input
           type="text"
           placeholder="Filter stations by city, name, or code..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-9.5 w-full rounded-xl border border-border bg-card/70 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none"
+          className="h-10 w-full rounded-xl border border-border bg-card/70 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none"
         />
       </div>
 
@@ -196,10 +196,10 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
               </div>
 
               {/* Minimal Footer */}
-              <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-xs">
+              <div className="mt-4 pt-3 border-t border-border/50 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <button
                   onClick={() => onViewShopStaff(shop._id)}
-                  className="font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 cursor-pointer tap-active"
                 >
                   <Users size={13} />
                   {shop.employeeCount || 0} Technicians
@@ -211,7 +211,7 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
                   </span>
                   <button
                     onClick={() => onSwitchToShopAdmin(shop)}
-                    className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5 text-xs cursor-pointer"
+                    className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5 text-xs cursor-pointer tap-active"
                   >
                     Manage Station <ArrowRight size={11} />
                   </button>

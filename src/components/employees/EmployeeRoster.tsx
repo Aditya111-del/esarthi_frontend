@@ -167,21 +167,116 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
 
       {/* Table View */}
       {viewMode === "table" ? (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card/70 shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="border-b border-border bg-secondary/40 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="px-5 py-3.5">Technician / Specialist</th>
-                  <th className="px-5 py-3.5">Assigned Charging Hub</th>
-                  <th className="px-5 py-3.5">Specialization & Level</th>
-                  <th className="px-5 py-3.5">Bay & Shift</th>
-                  <th className="px-5 py-3.5">Certifications</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
+        <>
+          {/* Mobile Responsive Cards (Visible on mobile screens) */}
+          <div className="block md:hidden space-y-3">
+            {employees.length > 0 ? (
+              employees.map((emp) => (
+                <div
+                  key={emp._id}
+                  className="rounded-xl border border-border/80 bg-card/80 p-4 space-y-3 shadow-xs"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      {emp.image ? (
+                        <img
+                          src={emp.image}
+                          alt={emp.name}
+                          className="size-10 rounded-full object-cover border border-border"
+                        />
+                      ) : (
+                        <div className="flex size-10 items-center justify-center rounded-full bg-secondary font-bold text-xs text-foreground">
+                          {emp.firstName?.[0] || emp.name?.[0] || "E"}
+                        </div>
+                      )}
+                      <div>
+                        <h4
+                          onClick={() => onViewEmployee(emp)}
+                          className="font-bold text-sm text-foreground hover:text-primary cursor-pointer"
+                        >
+                          {emp.name}
+                        </h4>
+                        <p className="text-xs text-muted-foreground">{emp.roleTitle}</p>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold ${
+                        emp.status === "Active"
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                          : "bg-secondary text-muted-foreground"
+                      }`}
+                    >
+                      {emp.status}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[11px] font-mono">
+                    <div>
+                      <span className="text-muted-foreground uppercase text-[9px]">Station: </span>
+                      <span className="text-foreground truncate block">{emp.shopName?.replace("ESARTHI ", "") || "Hub"}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-[9px]">ID: </span>
+                      <span className="text-primary font-bold">{emp.employeeId}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-[9px]">Bay: </span>
+                      <span className="text-foreground truncate block">{emp.assignedBay || "Bays 01-04"}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-[9px]">Dept: </span>
+                      <span className="text-foreground truncate block">{emp.department}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/50">
+                    <button
+                      onClick={() => onViewEmployee(emp)}
+                      className="flex-1 rounded-lg bg-primary/10 border border-primary/20 py-1.5 text-center text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer tap-active"
+                    >
+                      View Details
+                    </button>
+                    <button
+                      onClick={() => onEditEmployee(emp)}
+                      className="rounded-lg p-2 bg-secondary/50 text-muted-foreground hover:text-foreground cursor-pointer tap-active"
+                      title="Edit"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
+                      onClick={() => onDeleteEmployee(emp._id)}
+                      className="rounded-lg p-2 bg-destructive/10 text-destructive hover:bg-destructive/20 cursor-pointer tap-active"
+                      title="Delete"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-xl border border-border bg-card/40 p-8 text-center text-xs text-muted-foreground">
+                No technicians found matching criteria.
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Full Data Table (Hidden on mobile screens) */}
+          <div className="hidden md:block overflow-hidden rounded-2xl border border-border bg-card/70 shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-border bg-secondary/40 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="px-5 py-3.5">Technician / Specialist</th>
+                    <th className="px-5 py-3.5">Assigned Charging Hub</th>
+                    <th className="px-5 py-3.5">Specialization & Level</th>
+                    <th className="px-5 py-3.5">Bay & Shift</th>
+                    <th className="px-5 py-3.5">Certifications</th>
+                    <th className="px-5 py-3.5">Status</th>
+                    <th className="px-5 py-3.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
                 {employees.length > 0 ? (
                   employees.map((emp) => (
                     <tr key={emp._id} className="transition-colors hover:bg-card/90">
@@ -316,6 +411,7 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
             </table>
           </div>
         </div>
+        </>
       ) : (
         /* Grid Card View */
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
