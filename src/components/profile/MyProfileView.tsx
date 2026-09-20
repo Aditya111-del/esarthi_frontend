@@ -55,7 +55,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                 onLogin({
                   id: "superadmin-esarthi",
                   name: "Suraj Dev Sagar",
-                  email: "superadmin@esarthi.internal",
+                  email: "superadmin@esarthi.com",
                   type: "superadmin",
                   role: "Platform Superadmin",
                 })

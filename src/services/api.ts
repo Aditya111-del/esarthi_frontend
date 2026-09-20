@@ -5,7 +5,7 @@ const API_BASE = (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.re
 export const defaultSuperadmin: UserSession = {
   id: "superadmin-esarthi",
   name: "Suraj Dev Sagar",
-  email: "superadmin@esarthi.internal",
+  email: "superadmin@esarthi.com",
   type: "superadmin",
   role: "Platform Superadmin",
 };
@@ -167,5 +167,71 @@ export const api = {
   // Health
   async getHealth(): Promise<{ status: string; database: string }> {
     return fetchJson<{ status: string; database: string }>(`${API_BASE}/health`);
+  },
+
+  // Auth
+  async login(email: string, localShops: Shop[] = []): Promise<UserSession> {
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Client fast-path / fallback for instant response
+    if (cleanEmail === "superadmin@esarthi.com") {
+      return defaultSuperadmin;
+    }
+
+    try {
+      const res = await fetchJson<{ success: boolean; user: UserSession; message?: string }>(
+        `${API_BASE}/auth/login`,
+        {
+          method: "POST",
+          body: JSON.stringify({ email: cleanEmail }),
+        }
+      );
+      if (res.user) return res.user;
+    } catch (err: any) {
+      // If network fails or API error, test against known shops locally
+      const branchAliasMap: Record<string, string> = {
+        "delhi.admin@esarthi.com": "EV-DEL-01",
+        "rajesh.kumar@esarthi.com": "EV-DEL-01",
+        "bengaluru.admin@esarthi.com": "EV-BLR-01",
+        "vikram.malhotra@esarthi.com": "EV-BLR-01",
+        "mumbai.admin@esarthi.com": "EV-MUM-01",
+        "sneha.patel@esarthi.com": "EV-MUM-01",
+        "hyderabad.admin@esarthi.com": "EV-HYD-01",
+        "karthik.reddy@esarthi.com": "EV-HYD-01",
+      };
+
+      const matchedShop = localShops.find(
+        (s) =>
+          s.adminEmail?.toLowerCase() === cleanEmail ||
+          s.code === branchAliasMap[cleanEmail] ||
+          (cleanEmail.startsWith("delhi.") && s.city.toLowerCase().includes("delhi")) ||
+          (cleanEmail.startsWith("bengaluru.") && s.city.toLowerCase().includes("bengaluru")) ||
+          (cleanEmail.startsWith("mumbai.") && s.city.toLowerCase().includes("mumbai")) ||
+          (cleanEmail.startsWith("hyderabad.") && s.city.toLowerCase().includes("hyderabad"))
+      );
+
+      if (matchedShop) {
+        return {
+          id: `admin-${matchedShop._id}`,
+          name: matchedShop.adminName,
+          email: matchedShop.adminEmail || cleanEmail,
+          type: "shopadmin",
+          role: `Store Admin (${matchedShop.city})`,
+          assignedShopId: matchedShop._id,
+          assignedShopName: matchedShop.name,
+        };
+      }
+
+      throw err;
+    }
+
+    throw new Error("Unable to authenticate with provided ID");
+  },
+
+  async getAuthBranches(): Promise<{
+    superadmin: { name: string; email: string; role: string };
+    branches: Array<{ id: string; name: string; city: string; code: string; adminName: string; adminEmail: string }>;
+  }> {
+    return fetchJson(`${API_BASE}/auth/branches`);
   },
 };

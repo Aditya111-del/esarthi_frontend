@@ -22,12 +22,19 @@ import { ShopsManagement } from "./components/shops/ShopsManagement";
 import { ShopModal } from "./components/shops/ShopModal";
 import { QuickOnboardingForm } from "./components/onboarding/QuickOnboardingForm";
 import { MyProfileView } from "./components/profile/MyProfileView";
+import { LoginPage } from "./components/auth/LoginPage";
 import { api, defaultSuperadmin } from "./services/api";
 import { Employee, JobRole, Shop, DashboardStats, UserSession } from "./types";
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<string>("overview");
-  const [user, setUser] = useState<UserSession | null>(defaultSuperadmin);
+  const [user, setUser] = useState<UserSession | null>(() => {
+    try {
+      const saved = localStorage.getItem("esarthi_user");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return null;
+  });
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [roles, setRoles] = useState<JobRole[]>([]);
@@ -104,18 +111,41 @@ export function App() {
     loadData(selectedShopFilter);
   }, [selectedShopFilter]);
 
-  // Handle persona switching
-  const handleSelectPersona = (persona: UserSession) => {
-    setUser(persona);
-    if (persona.type === "shopadmin" && persona.assignedShopId) {
-      setSelectedShopFilter(persona.assignedShopId);
-      toast.info(`Switched to Shop Admin: ${persona.name} (${persona.assignedShopName || "Shop"})`);
-    } else if (persona.type === "superadmin") {
-      setSelectedShopFilter("all");
-      toast.success("Switched to Superadmin Mode (Full Multi-Shop Authority)");
+  // Handle session authorization
+  const handleLogin = (authenticatedUser: UserSession) => {
+    setUser(authenticatedUser);
+    try {
+      localStorage.setItem("esarthi_user", JSON.stringify(authenticatedUser));
+    } catch {}
+
+    if (authenticatedUser.type === "shopadmin" && authenticatedUser.assignedShopId) {
+      setSelectedShopFilter(authenticatedUser.assignedShopId);
+      toast.success(
+        `Signed in as Store Admin: ${authenticatedUser.name} (${authenticatedUser.assignedShopName || "Store"})`
+      );
     } else {
-      toast.info("Switched to Employee View");
+      setSelectedShopFilter("all");
+      toast.success(`Signed in as ${authenticatedUser.name} (Platform Superadmin)`);
     }
+  };
+
+  // Handle session termination
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem("esarthi_user");
+    } catch {}
+    setUser(null);
+    setSelectedShopFilter("all");
+    toast.info("Logged out. Returned to Enterprise Login Portal.");
+  };
+
+  // Handle persona switching from navbar or modals
+  const handleSelectPersona = (persona: UserSession | null) => {
+    if (!persona) {
+      handleLogout();
+      return;
+    }
+    handleLogin(persona);
   };
 
   // Filtered employees for roster
@@ -248,6 +278,16 @@ export function App() {
 
   const activeShopObj = shops.find((s) => s._id === selectedShopFilter);
 
+  // If no user is authenticated, render the high-end enterprise Login Page
+  if (!user) {
+    return (
+      <>
+        <Toaster position="top-right" theme="dark" richColors />
+        <LoginPage onLogin={handleLogin} shops={shops} />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20 selection:text-primary">
       <Toaster position="top-right" theme="dark" richColors />
@@ -366,17 +406,15 @@ export function App() {
                   setCurrentTab("roster");
                 }}
                 onSwitchToShopAdmin={(shop) => {
-                  setUser({
+                  handleLogin({
                     id: `admin-${shop._id}`,
                     name: shop.adminName,
-                    email: shop.adminEmail,
+                    email: shop.adminEmail || `${shop.city.toLowerCase().replace(/\s+/g, "")}.admin@esarthi.com`,
                     type: "shopadmin",
                     role: `Store Admin (${shop.city})`,
                     assignedShopId: shop._id,
                     assignedShopName: shop.name,
                   });
-                  setSelectedShopFilter(shop._id);
-                  toast.success(`Switched to Store Admin: ${shop.adminName}`);
                 }}
               />
             )}
@@ -407,19 +445,8 @@ export function App() {
                 onUpdateEmployee={async (id, updates) => {
                   await handleSaveEmployee({ _id: id, ...updates });
                 }}
-                onLogin={(persona) => {
-                  setUser(persona);
-                  if (persona.type === "shopadmin" && persona.assignedShopId) {
-                    setSelectedShopFilter(persona.assignedShopId);
-                  } else {
-                    setSelectedShopFilter("all");
-                  }
-                  toast.success(`Logged in as ${persona.name}`);
-                }}
-                onLogout={() => {
-                  setUser(null);
-                  toast.info("Logged out successfully");
-                }}
+                onLogin={handleLogin}
+                onLogout={handleLogout}
               />
             )}
 
@@ -595,10 +622,8 @@ export function App() {
             <div className="space-y-2.5">
               <button
                 onClick={() => {
-                  setUser(defaultSuperadmin);
-                  setSelectedShopFilter("all");
+                  handleLogin(defaultSuperadmin);
                   setIsLoginModalOpen(false);
-                  toast.success("Signed in as Platform Superadmin");
                 }}
                 className="w-full rounded-xl border border-primary/40 bg-primary/10 p-3 text-left transition-all hover:bg-primary/20 cursor-pointer"
               >
@@ -606,7 +631,7 @@ export function App() {
                   <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
                     <ShieldCheck size={14} className="text-primary" /> Platform Superadmin
                   </span>
-                  <span className="text-[10px] font-mono text-primary font-semibold">Full Access</span>
+                  <span className="text-[10px] font-mono text-primary font-semibold">superadmin@esarthi.com</span>
                 </div>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">Suraj Dev Sagar (All Stores & Staff)</p>
               </button>
@@ -615,18 +640,16 @@ export function App() {
                 <button
                   key={shop._id}
                   onClick={() => {
-                    setUser({
+                    handleLogin({
                       id: `admin-${shop._id}`,
                       name: shop.adminName,
-                      email: shop.adminEmail,
+                      email: shop.adminEmail || `${shop.city.toLowerCase().replace(/\s+/g, "")}.admin@esarthi.com`,
                       type: "shopadmin",
                       role: `Store Admin (${shop.city})`,
                       assignedShopId: shop._id,
                       assignedShopName: shop.name,
                     });
-                    setSelectedShopFilter(shop._id);
                     setIsLoginModalOpen(false);
-                    toast.success(`Signed in as Store Admin: ${shop.adminName}`);
                   }}
                   className="w-full rounded-xl border border-border bg-secondary/30 p-3 text-left transition-all hover:bg-secondary/60 cursor-pointer"
                 >
@@ -634,34 +657,25 @@ export function App() {
                     <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
                       <Building2 size={14} className="text-muted-foreground" /> {shop.adminName}
                     </span>
-                    <span className="text-[10px] font-mono text-muted-foreground">{shop.city}</span>
+                    <span className="text-[10px] font-mono text-primary font-semibold truncate max-w-[160px]">
+                      {shop.adminEmail}
+                    </span>
                   </div>
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">Store Manager · {shop.name}</p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">Hub Admin · {shop.name}</p>
                 </button>
               ))}
 
-              <button
-                onClick={() => {
-                  setUser({
-                    id: "emp-sample",
-                    name: "Marcus Webb",
-                    email: "m.webb@esarthi-ev.internal",
-                    type: "employee",
-                    role: "Field Engineer",
-                  });
-                  setIsLoginModalOpen(false);
-                  toast.success("Signed in as Marcus Webb");
-                }}
-                className="w-full rounded-xl border border-border bg-secondary/30 p-3 text-left transition-all hover:bg-secondary/60 cursor-pointer"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
-                    <User size={14} className="text-muted-foreground" /> Marcus Webb
-                  </span>
-                  <span className="text-[10px] font-mono text-muted-foreground">Field Staff</span>
-                </div>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">Senior Field Engineer</p>
-              </button>
+              <div className="pt-2 border-t border-border/60">
+                <button
+                  onClick={() => {
+                    setIsLoginModalOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full rounded-xl border border-border/80 bg-secondary/40 py-2.5 text-center text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary/80 cursor-pointer transition-colors"
+                >
+                  Exit to Full Login Gateway Page →
+                </button>
+              </div>
             </div>
           </div>
         </div>

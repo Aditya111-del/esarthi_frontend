@@ -8,6 +8,7 @@ import {
   MapPin,
   ArrowRight,
   Search,
+  ShieldCheck,
 } from "lucide-react";
 import { Shop } from "../../types";
 import { getStationImage } from "../analytics/AnalyticsOverview";
@@ -161,11 +162,28 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
                   </div>
                 </div>
 
-                {/* Subtitle / Code */}
+                {/* Subtitle / Code & Lead */}
                 <div className="mt-1 flex items-center gap-2 text-[11px] font-mono text-muted-foreground">
                   <span>{shop.code}</span>
                   <span>·</span>
                   <span>Lead: {shop.adminName}</span>
+                </div>
+
+                {/* Shop Admin ID (@esarthi.com) configuration pill */}
+                <div className="mt-2.5 flex items-center justify-between rounded-lg bg-secondary/50 border border-border/70 px-2.5 py-1.5 text-[11px]">
+                  <div className="flex items-center gap-1.5 overflow-hidden">
+                    <ShieldCheck size={13} className="text-primary shrink-0" />
+                    <span className="font-mono text-foreground font-medium truncate">
+                      {shop.adminEmail || `${shop.city.toLowerCase().replace(/\s+/g, "")}.admin@esarthi.com`}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => onSwitchToShopAdmin(shop)}
+                    className="shrink-0 text-[10px] font-mono font-bold text-primary hover:underline ml-2 cursor-pointer"
+                    title="Log in directly as this Hub Admin"
+                  >
+                    Login As Admin →
+                  </button>
                 </div>
 
                 {/* Power & Live Bay Occupancy Bar */}

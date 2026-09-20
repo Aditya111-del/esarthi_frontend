@@ -74,15 +74,20 @@ export const ShopModal: React.FC<ShopModalProps> = ({
     }
 
     setIsSubmitting(true);
-    setError("");
-
     try {
       const generatedCode =
         code.trim() ||
         `EV-${city.slice(0, 3).toUpperCase()}-${Math.floor(10 + Math.random() * 90)}`;
-      const generatedAdminEmail =
-        adminEmail.trim() ||
-        `${adminName.toLowerCase().replace(/\s+/g, ".")}@esarthi-ev.internal`;
+
+      let finalAdminEmail = adminEmail.trim().toLowerCase();
+      if (!finalAdminEmail) {
+        const cleanName = adminName.toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.|\.$/g, "");
+        finalAdminEmail = `${cleanName || "admin"}@esarthi.com`;
+      } else if (!finalAdminEmail.includes("@")) {
+        finalAdminEmail = `${finalAdminEmail}@esarthi.com`;
+      } else if (!finalAdminEmail.endsWith("@esarthi.com")) {
+        finalAdminEmail = `${finalAdminEmail.split("@")[0]}@esarthi.com`;
+      }
 
       await onSave({
         _id: initialData?._id,
@@ -90,10 +95,10 @@ export const ShopModal: React.FC<ShopModalProps> = ({
         code: generatedCode,
         city: city.trim(),
         address: address.trim(),
-        contactEmail: contactEmail.trim() || `station.${generatedCode.toLowerCase()}@esarthi-ev.internal`,
+        contactEmail: contactEmail.trim() || `station.${generatedCode.toLowerCase()}@esarthi.com`,
         contactPhone: contactPhone.trim(),
         adminName: adminName.trim(),
-        adminEmail: generatedAdminEmail,
+        adminEmail: finalAdminEmail,
         adminPhone: adminPhone.trim(),
         stationType,
         powerCapacityKw: Number(powerCapacityKw),
@@ -294,14 +299,24 @@ export const ShopModal: React.FC<ShopModalProps> = ({
               </div>
 
               <div>
-                <label className="text-xs font-medium text-foreground">Shop Admin Email</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-foreground">
+                    Shop Admin Login ID (@esarthi.com)
+                  </label>
+                  <span className="text-[10px] font-mono font-semibold text-primary">
+                    Login Identity
+                  </span>
+                </div>
                 <input
                   type="email"
                   value={adminEmail}
                   onChange={(e) => setAdminEmail(e.target.value)}
-                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none"
-                  placeholder="rajesh.kumar@esarthi.internal"
+                  className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 font-mono text-xs text-foreground focus:border-primary/50 focus:outline-none"
+                  placeholder="e.g. jaipur.admin@esarthi.com"
                 />
+                <p className="mt-1 text-[10px] text-muted-foreground">
+                  Configured with @esarthi.com. This ID can sign into this branch from the Login Page without password or OTP.
+                </p>
               </div>
 
               <div>
