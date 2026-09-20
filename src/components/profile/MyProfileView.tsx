@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   User,
   Mail,
@@ -14,6 +14,8 @@ import {
   Shield,
   ShieldCheck,
   Building2,
+  Zap,
+  Globe,
 } from "lucide-react";
 import { Employee, Shop, UserSession } from "../../types";
 import ecoplugDayImage from "../../assets/ecoplug-day-station.jpeg";
@@ -35,7 +37,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
   onLogin,
   onLogout,
 }) => {
-  // If not logged in, show clean Login Screen
+  // If not logged in, show clean Login Gateway
   if (!currentUser) {
     return (
       <div className="mx-auto max-w-md space-y-6 py-12 rise">
@@ -54,7 +56,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
               onClick={() =>
                 onLogin({
                   id: "superadmin-esarthi",
-                  name: "Suraj Dev Sagar",
+                  name: "Suraj Sev Sagar",
                   email: "superadmin@esarthi.com",
                   type: "superadmin",
                   role: "Platform Superadmin",
@@ -68,7 +70,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                 </span>
                 <span className="text-[10px] font-mono text-primary font-semibold">Full Access</span>
               </div>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">Suraj Dev Sagar (Manage all stores & staff)</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">Suraj Sev Sagar (All Stores & Staff)</p>
             </button>
 
             {shops.map((shop) => (
@@ -78,7 +80,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                   onLogin({
                     id: `admin-${shop._id}`,
                     name: shop.adminName,
-                    email: shop.adminEmail,
+                    email: shop.adminEmail || `${shop.city.toLowerCase().replace(/\s+/g, "")}.admin@esarthi.com`,
                     type: "shopadmin",
                     role: `Store Admin (${shop.city})`,
                     assignedShopId: shop._id,
@@ -91,71 +93,196 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                   <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
                     <Building2 size={14} className="text-muted-foreground" /> {shop.adminName}
                   </span>
-                  <span className="text-[10px] font-mono text-muted-foreground">{shop.city}</span>
+                  <span className="text-[10px] font-mono text-primary font-semibold">{shop.city}</span>
                 </div>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">Store Manager · {shop.name}</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">Hub Admin · {shop.name}</p>
               </button>
             ))}
-
-            <button
-              onClick={() =>
-                onLogin({
-                  id: "emp-sample",
-                  name: "Marcus Webb",
-                  email: "m.webb@esarthi-ev.internal",
-                  type: "employee",
-                  role: "High-Voltage Field Engineer",
-                })
-              }
-              className="w-full rounded-xl border border-border bg-secondary/30 p-3 text-left transition-all hover:bg-secondary/60 cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
-                  <User size={14} className="text-muted-foreground" /> Marcus Webb
-                </span>
-                <span className="text-[10px] font-mono text-muted-foreground">Field Staff</span>
-              </div>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">Senior Field Engineer</p>
-            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  // Find matching employee record for this user session if any
-  const matchedEmp = employees.find(
-    (e) =>
-      e.email.toLowerCase() === currentUser.email.toLowerCase() ||
-      e.name.toLowerCase() === currentUser.name.toLowerCase()
-  ) || employees[0];
+  const isSuperadmin =
+    currentUser.type === "superadmin" ||
+    currentUser.email?.toLowerCase() === "superadmin@esarthi.com";
+  const isShopAdmin = currentUser.type === "shopadmin";
 
-  const matchedShop = shops.find(
-    (s) => s._id === matchedEmp?.shopId || s.name === matchedEmp?.shopName
-  ) || shops[0];
-
+  // Dedicated profile state for Superadmin and Shop Admins
   const [isEditing, setIsEditing] = useState(false);
-  const [phone, setPhone] = useState(matchedEmp?.phone || "");
-  const [address, setAddress] = useState(matchedEmp?.address || "");
-  const [emergencyName, setEmergencyName] = useState(matchedEmp?.emergencyName || "");
-  const [emergencyPhone, setEmergencyPhone] = useState(matchedEmp?.emergencyPhone || "");
-  const [skills, setSkills] = useState(matchedEmp?.skills?.join(", ") || "");
-  const [bio, setBio] = useState(matchedEmp?.bio || "");
   const [isSaving, setIsSaving] = useState(false);
 
+  // Load custom superadmin saved profile from localStorage if any
+  const cachedSuperadminProfile = (() => {
+    if (!isSuperadmin) return null;
+    try {
+      const saved = localStorage.getItem("esarthi_superadmin_profile");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  })();
+
+  // Match employee record ONLY if currentUser is a regular employee or has an exact email/name match
+  const matchedEmp = !isSuperadmin && !isShopAdmin
+    ? employees.find(
+        (e) =>
+          e.email?.toLowerCase() === currentUser.email?.toLowerCase() ||
+          e.name?.toLowerCase() === currentUser.name?.toLowerCase()
+      )
+    : null;
+
+  // Matched shop for shopadmin
+  const matchedShop = isShopAdmin
+    ? shops.find(
+        (s) =>
+          s._id === currentUser.assignedShopId ||
+          s.adminEmail?.toLowerCase() === currentUser.email?.toLowerCase() ||
+          (currentUser.assignedShopName &&
+            s.name.toLowerCase() === currentUser.assignedShopName.toLowerCase())
+      ) || shops[0]
+    : null;
+
+  // Dynamic profile fields based on persona
+  const displayName = isSuperadmin
+    ? currentUser.name || "Suraj Sev Sagar"
+    : isShopAdmin
+    ? currentUser.name || matchedShop?.adminName || "Hub Administrator"
+    : matchedEmp?.name || currentUser.name;
+
+  const displayEmail = isSuperadmin
+    ? "superadmin@esarthi.com"
+    : isShopAdmin
+    ? currentUser.email || matchedShop?.adminEmail || "admin@esarthi.com"
+    : matchedEmp?.email || currentUser.email;
+
+  const displayRoleTitle = isSuperadmin
+    ? "Platform Superadmin"
+    : isShopAdmin
+    ? `Store Administrator (${matchedShop?.city || "Hub"})`
+    : matchedEmp?.roleTitle || currentUser.role;
+
+  const displayLevel = isSuperadmin
+    ? "Executive (L8)"
+    : isShopAdmin
+    ? "Station Lead (L6)"
+    : matchedEmp?.level || "L4";
+
+  const displayDepartment = isSuperadmin
+    ? "Executive Governance & Supergrid Operations"
+    : isShopAdmin
+    ? "Station Management & Regional Operations"
+    : matchedEmp?.department || "Field Engineering";
+
+  const displayEmployeeId = isSuperadmin
+    ? "ES-SUPERADMIN-01"
+    : isShopAdmin
+    ? `ADM-${matchedShop?.code || "EV-01"}`
+    : matchedEmp?.employeeId || "ES-EMP-1001";
+
+  const displayShopName = isSuperadmin
+    ? "All Active Charging Hubs (Delhi, Bengaluru, Mumbai, Hyderabad)"
+    : isShopAdmin
+    ? matchedShop?.name || currentUser.assignedShopName || "Assigned EV Hub"
+    : matchedEmp?.shopName || "Central Operations";
+
+  const displaySalary = isSuperadmin
+    ? "Executive Multi-Hub Compensation"
+    : isShopAdmin
+    ? "₹2,50,000 / mo"
+    : matchedEmp?.salary || "₹1,35,000 / mo";
+
+  const displayJoiningDate = isSuperadmin
+    ? "2021-01-15"
+    : isShopAdmin
+    ? "2022-03-01"
+    : matchedEmp?.joiningDate || "2023-04-10";
+
+  const displayEmploymentType = isSuperadmin
+    ? "Platform Superadministrator (Full Multi-Hub Access)"
+    : isShopAdmin
+    ? "Full-time Station Manager"
+    : matchedEmp?.employmentType || "Full-time Permanent";
+
+  const displayShopManager = isSuperadmin
+    ? {
+        name: `${displayName} (Self)`,
+        email: "superadmin@esarthi.com",
+        phone: "+91 11 2345 0000",
+        label: "National Executive In-Charge",
+      }
+    : isShopAdmin
+    ? {
+        name: `${displayName} (Self)`,
+        email: displayEmail,
+        phone: matchedShop?.adminPhone || "+91 98100 12345",
+        label: "Designated Station Admin In-Charge",
+      }
+    : {
+        name: matchedShop?.adminName || "Rajesh Kumar",
+        email: matchedShop?.adminEmail || "delhi.admin@esarthi.com",
+        phone: matchedShop?.adminPhone || "+91 98100 12345",
+        label: "Shop Manager / Admin In-Charge",
+      };
+
+  // Editable fields with fallbacks
+  const [phone, setPhone] = useState(
+    cachedSuperadminProfile?.phone ||
+      (isSuperadmin ? "+91 98100 00001" : matchedShop?.adminPhone || matchedEmp?.phone || "+91 98111 22334")
+  );
+  const [address, setAddress] = useState(
+    cachedSuperadminProfile?.address ||
+      (isSuperadmin
+        ? "Central Command HQ, Connaught Place, New Delhi, DL 110001"
+        : matchedShop?.address || matchedEmp?.address || "Registered Address on file")
+  );
+  const [emergencyName, setEmergencyName] = useState(
+    cachedSuperadminProfile?.emergencyName ||
+      (isSuperadmin ? "Security Operations Command (SOC)" : matchedEmp?.emergencyName || "Platform Ops Duty")
+  );
+  const [emergencyPhone, setEmergencyPhone] = useState(
+    cachedSuperadminProfile?.emergencyPhone ||
+      (isSuperadmin ? "+91 11 2345 0000" : matchedEmp?.emergencyPhone || "+91 11 2345 6789")
+  );
+  const [bio, setBio] = useState(
+    cachedSuperadminProfile?.bio ||
+      (isSuperadmin
+        ? "Chief Platform Superadministrator for ESARTHI and ECOPLUG EV Network. Full authority across Delhi, Bengaluru, Mumbai, and Hyderabad charging hubs."
+        : isShopAdmin
+        ? `Oversees day-to-day charging bay operations, technician rotas, and power capacity uptime for ${displayShopName}.`
+        : matchedEmp?.bio || "Field Specialist overseeing EV charging operations.")
+  );
+
+  useEffect(() => {
+    if (isSuperadmin) {
+      if (cachedSuperadminProfile?.phone) setPhone(cachedSuperadminProfile.phone);
+      if (cachedSuperadminProfile?.address) setAddress(cachedSuperadminProfile.address);
+      if (cachedSuperadminProfile?.emergencyName) setEmergencyName(cachedSuperadminProfile.emergencyName);
+      if (cachedSuperadminProfile?.emergencyPhone) setEmergencyPhone(cachedSuperadminProfile.emergencyPhone);
+      if (cachedSuperadminProfile?.bio) setBio(cachedSuperadminProfile.bio);
+    }
+  }, [currentUser]);
+
   const handleSave = async () => {
-    if (!matchedEmp) return;
     setIsSaving(true);
     try {
-      await onUpdateEmployee(matchedEmp._id, {
-        phone,
-        address,
-        emergencyName,
-        emergencyPhone,
-        skills: skills.split(",").map((s) => s.trim()).filter(Boolean),
-        bio,
-      });
-      setIsEditing(false);
+      if (isSuperadmin) {
+        const profileData = { phone, address, emergencyName, emergencyPhone, bio };
+        localStorage.setItem("esarthi_superadmin_profile", JSON.stringify(profileData));
+        setIsEditing(false);
+      } else if (matchedEmp) {
+        await onUpdateEmployee(matchedEmp._id, {
+          phone,
+          address,
+          emergencyName,
+          emergencyPhone,
+          bio,
+        });
+        setIsEditing(false);
+      } else {
+        setIsEditing(false);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -179,29 +306,29 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
             {matchedEmp?.image ? (
               <img
                 src={matchedEmp.image}
-                alt={matchedEmp.name}
+                alt={displayName}
                 className="size-16 sm:size-20 rounded-2xl object-cover border-2 border-primary/40 shadow-xl shrink-0"
               />
             ) : (
-              <div className="flex size-16 sm:size-20 items-center justify-center rounded-2xl bg-secondary font-display text-2xl font-bold text-foreground border border-border shadow-xl shrink-0">
-                {currentUser.name?.[0] || "U"}
+              <div className="flex size-16 sm:size-20 items-center justify-center rounded-2xl bg-primary/20 text-primary font-display text-2xl font-black border border-primary/35 shadow-xl shrink-0">
+                {displayName?.[0] || "S"}
               </div>
             )}
 
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <h2 className="font-display text-xl sm:text-2xl font-bold text-white">
-                  {matchedEmp?.name || currentUser.name}
+                  {displayName}
                 </h2>
                 <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-emerald-400">
-                  {matchedEmp?.status || "Active"}
+                  {isSuperadmin ? "Superadmin Active" : "Active"}
                 </span>
               </div>
               <p className="text-xs text-slate-300 font-medium">
-                {matchedEmp?.roleTitle || currentUser.role} · {matchedEmp?.shopName || matchedShop?.name || "Central"}
+                {displayRoleTitle} · {isSuperadmin ? "All 4 Hubs" : displayShopName}
               </p>
               <p className="font-mono text-[11px] text-primary">
-                ID: {matchedEmp?.employeeId || "ES-AUTH-01"} · {matchedEmp?.department || "Operations"}
+                ID: {displayEmployeeId} · {displayDepartment}
               </p>
             </div>
           </div>
@@ -259,12 +386,12 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
           <div className="space-y-3 text-xs">
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Full Name</span>
-              <p className="font-bold text-foreground mt-0.5">{matchedEmp?.name || currentUser.name}</p>
+              <p className="font-bold text-foreground mt-0.5">{displayName}</p>
             </div>
 
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Email Address</span>
-              <p className="font-medium text-foreground mt-0.5">{matchedEmp?.email || currentUser.email}</p>
+              <p className="font-medium text-foreground mt-0.5 font-mono">{displayEmail}</p>
             </div>
 
             <div>
@@ -274,16 +401,18 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="mt-1 h-8 w-full rounded border border-border bg-background px-2 text-xs"
+                  className="mt-1 h-8 w-full rounded border border-border bg-background px-2 text-xs font-mono"
                 />
               ) : (
-                <p className="font-medium text-foreground mt-0.5">{matchedEmp?.phone || "+91 98111 22334"}</p>
+                <p className="font-medium text-foreground mt-0.5 font-mono">{phone}</p>
               )}
             </div>
 
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Date of Birth</span>
-              <p className="font-mono text-foreground mt-0.5">{matchedEmp?.dateOfBirth || "1992-11-14"}</p>
+              <p className="font-mono text-foreground mt-0.5">
+                {isSuperadmin ? "1985-05-18" : matchedEmp?.dateOfBirth || "1990-08-15"}
+              </p>
             </div>
 
             <div>
@@ -296,7 +425,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                   className="mt-1 h-8 w-full rounded border border-border bg-background px-2 text-xs"
                 />
               ) : (
-                <p className="font-medium text-foreground mt-0.5">{matchedEmp?.address || "Registered Address on file"}</p>
+                <p className="font-medium text-foreground mt-0.5">{address}</p>
               )}
             </div>
 
@@ -311,7 +440,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                     className="mt-1 h-8 w-full rounded border border-border bg-background px-2 text-xs"
                   />
                 ) : (
-                  <p className="font-medium text-foreground mt-0.5">{matchedEmp?.emergencyName || "Sarah Webb"}</p>
+                  <p className="font-medium text-foreground mt-0.5">{emergencyName}</p>
                 )}
               </div>
 
@@ -322,10 +451,10 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                     type="text"
                     value={emergencyPhone}
                     onChange={(e) => setEmergencyPhone(e.target.value)}
-                    className="mt-1 h-8 w-full rounded border border-border bg-background px-2 text-xs"
+                    className="mt-1 h-8 w-full rounded border border-border bg-background px-2 text-xs font-mono"
                   />
                 ) : (
-                  <p className="font-mono text-foreground mt-0.5">{matchedEmp?.emergencyPhone || "+91 98111 88990"}</p>
+                  <p className="font-mono text-foreground mt-0.5">{emergencyPhone}</p>
                 )}
               </div>
             </div>
@@ -340,7 +469,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                   className="mt-1 w-full rounded border border-border bg-background p-2 text-xs"
                 />
               ) : (
-                <p className="text-muted-foreground mt-0.5 leading-relaxed">{matchedEmp?.bio || "No bio registered."}</p>
+                <p className="text-muted-foreground mt-0.5 leading-relaxed">{bio}</p>
               )}
             </div>
           </div>
@@ -358,49 +487,51 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
           <div className="space-y-3 text-xs">
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Employee ID</span>
-              <p className="font-mono font-bold text-primary mt-0.5">{matchedEmp?.employeeId || "ES-EMP-1088"}</p>
+              <p className="font-mono font-bold text-primary mt-0.5">{displayEmployeeId}</p>
             </div>
 
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Role & Level</span>
               <p className="font-bold text-foreground mt-0.5">
-                {matchedEmp?.roleTitle || currentUser.role} ({matchedEmp?.level || "L4"})
+                {displayRoleTitle} ({displayLevel})
               </p>
             </div>
 
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Department</span>
-              <p className="font-medium text-foreground mt-0.5">{matchedEmp?.department || "Operations"}</p>
+              <p className="font-medium text-foreground mt-0.5">{displayDepartment}</p>
             </div>
 
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Monthly Salary</span>
-              <p className="font-medium text-foreground mt-0.5">{matchedEmp?.salary || "₹1,35,000 / mo"}</p>
+              <p className="font-medium text-foreground mt-0.5">{displaySalary}</p>
             </div>
 
             <div>
-              <span className="font-mono text-[10px] text-muted-foreground uppercase">Store / Shop Working In</span>
-              <p className="font-bold text-foreground mt-0.5">{matchedEmp?.shopName || matchedShop?.name}</p>
+              <span className="font-mono text-[10px] text-muted-foreground uppercase">
+                {isSuperadmin ? "Multi-Store Authority" : "Store / Shop Working In"}
+              </span>
+              <p className="font-bold text-foreground mt-0.5">{displayShopName}</p>
             </div>
 
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Joining Date</span>
-              <p className="font-mono font-medium text-foreground mt-0.5">{matchedEmp?.joiningDate || "2023-04-10"}</p>
+              <p className="font-mono font-medium text-foreground mt-0.5">{displayJoiningDate}</p>
             </div>
 
             <div>
               <span className="font-mono text-[10px] text-muted-foreground uppercase">Employment Type</span>
-              <p className="font-medium text-foreground mt-0.5">{matchedEmp?.employmentType || "Full-time Permanent"}</p>
+              <p className="font-medium text-foreground mt-0.5">{displayEmploymentType}</p>
             </div>
 
             {/* Shop Admin / Manager */}
             <div className="pt-3 border-t border-border/50 rounded-lg bg-secondary/30 p-3">
               <span className="font-mono text-[10px] font-bold text-primary uppercase">
-                Shop Manager / Admin In-Charge
+                {displayShopManager.label}
               </span>
-              <p className="font-bold text-foreground mt-1">{matchedShop?.adminName || "Rajesh Kumar"}</p>
+              <p className="font-bold text-foreground mt-1">{displayShopManager.name}</p>
               <p className="font-mono text-[11px] text-muted-foreground mt-0.5">
-                {matchedShop?.adminEmail || "rajesh.kumar@esarthi.internal"} · {matchedShop?.adminPhone || "+91 98100 12345"}
+                {displayShopManager.email} · {displayShopManager.phone}
               </p>
             </div>
           </div>

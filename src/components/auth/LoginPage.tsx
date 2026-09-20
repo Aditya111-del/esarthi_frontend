@@ -243,7 +243,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-display font-bold text-xs sm:text-sm text-foreground group-hover:text-primary transition-colors">
-                        Suraj Dev Sagar
+                        Suraj Sev Sagar
                       </span>
                       <span className="rounded bg-primary/20 px-1.5 py-0.5 text-[9px] font-mono font-bold text-primary">
                         SUPERADMIN

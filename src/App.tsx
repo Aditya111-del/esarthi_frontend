@@ -31,7 +31,18 @@ export function App() {
   const [user, setUser] = useState<UserSession | null>(() => {
     try {
       const saved = localStorage.getItem("esarthi_user");
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.type === "superadmin" || parsed.email === "superadmin@esarthi.com") {
+          return {
+            ...parsed,
+            name: "Suraj Sev Sagar",
+            email: "superadmin@esarthi.com",
+            role: "Platform Superadmin",
+          };
+        }
+        return parsed;
+      }
     } catch {}
     return null;
   });
@@ -633,7 +644,7 @@ export function App() {
                   </span>
                   <span className="text-[10px] font-mono text-primary font-semibold">superadmin@esarthi.com</span>
                 </div>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">Suraj Dev Sagar (All Stores & Staff)</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">Suraj Sev Sagar (All Stores & Staff)</p>
               </button>
 
               {shops.map((shop) => (
