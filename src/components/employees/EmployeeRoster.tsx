@@ -156,9 +156,9 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
       </div>
 
       {/* ── Filters ────────────────────────────────────── */}
-      <div style={{ display: "grid", gap: "0.625rem", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+      <div className="es-roster-filters">
         {/* Search */}
-        <div style={{ position: "relative", minWidth: "200px", flex: "2 1 200px" }}>
+        <div className="es-roster-search" style={{ position: "relative" }}>
           <Search size={13} style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: "oklch(0.420 0.012 240)", pointerEvents: "none" }} />
           <input
             type="text"
@@ -170,7 +170,7 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
           />
         </div>
 
-        <select value={selectedShop} onChange={(e) => onShopChange(e.target.value)} className="es-select">
+        <select value={selectedShop} onChange={(e) => onShopChange(e.target.value)} className="es-select es-roster-select-full">
           <option value="all">All Locations</option>
           {shops.map((s) => (
             <option key={s._id} value={s._id}>{s.city}: {s.name}</option>

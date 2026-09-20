@@ -90,8 +90,8 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
           </p>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-          <div className="es-search-wrap" style={{ width: "260px" }}>
+        <div className="es-shops-header-actions" style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+          <div className="es-search-wrap" style={{ flex: "1 1 200px" }}>
             <Search size={14} className="es-search-icon" />
             <input
               type="text"
@@ -106,22 +106,17 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
           <button
             onClick={onOpenCreateShop}
             className="es-btn es-btn-primary"
-            style={{ height: "2.25rem", padding: "0 1rem", fontSize: "0.8125rem" }}
+            style={{ height: "2.25rem", padding: "0 0.875rem", fontSize: "0.8125rem", flexShrink: 0 }}
           >
             <Plus size={14} />
-            New Station
+            <span className="hidden sm:inline">New Station</span>
+            <span className="sm:hidden">New</span>
           </button>
         </div>
       </div>
 
       {/* Stations Cards Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
-          gap: "1.25rem",
-        }}
-      >
+      <div className="es-stores-grid">
         {filteredShops.map((shop, idx) => {
           const cleanName = shop.name
             .replace(/^ESARTHI\s+/i, "")
