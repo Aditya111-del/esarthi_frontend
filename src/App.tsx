@@ -608,7 +608,7 @@ export function App() {
                   </span>
                   <span className="text-[10px] font-mono text-primary font-semibold">Full Access</span>
                 </div>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">Aditya Salgotra (All Stores & Staff)</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">Suraj Dev Sagar (All Stores & Staff)</p>
               </button>
 
               {shops.map((shop) => (

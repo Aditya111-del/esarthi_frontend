@@ -54,7 +54,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
               onClick={() =>
                 onLogin({
                   id: "superadmin-esarthi",
-                  name: "Aditya Salgotra",
+                  name: "Suraj Dev Sagar",
                   email: "superadmin@esarthi.internal",
                   type: "superadmin",
                   role: "Platform Superadmin",
@@ -68,7 +68,7 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                 </span>
                 <span className="text-[10px] font-mono text-primary font-semibold">Full Access</span>
               </div>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">Aditya Salgotra (Manage all stores & staff)</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">Suraj Dev Sagar (Manage all stores & staff)</p>
             </button>
 
             {shops.map((shop) => (

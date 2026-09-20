@@ -4,7 +4,7 @@ const API_BASE = (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.re
 
 export const defaultSuperadmin: UserSession = {
   id: "superadmin-esarthi",
-  name: "Aditya Salgotra",
+  name: "Suraj Dev Sagar",
   email: "superadmin@esarthi.internal",
   type: "superadmin",
   role: "Platform Superadmin",
