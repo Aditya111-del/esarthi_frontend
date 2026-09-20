@@ -124,7 +124,7 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
             onChange={(e) => onShopChange(e.target.value)}
             className="h-10 w-full rounded-xl border border-border bg-card/80 px-3 text-xs text-foreground focus:border-primary/50 focus:outline-none cursor-pointer"
           >
-            <option value="all">⚡ All Charging Stations</option>
+            <option value="all">All Charging Stations</option>
             {shops.map((s) => (
               <option key={s._id} value={s._id}>
                 {s.city}: {s.name.replace("ESARTHI ", "")}
@@ -252,9 +252,10 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
                           {(emp.certifications || ["HV Certified"]).slice(0, 2).map((cert, idx) => (
                             <span
                               key={idx}
-                              className="rounded bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 font-mono text-[8.5px] font-semibold text-emerald-400 truncate max-w-[160px]"
+                              className="rounded bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 font-mono text-[8.5px] font-semibold text-emerald-400 truncate max-w-[160px] inline-flex items-center gap-1"
                             >
-                              ⚡ {cert}
+                              <Zap size={9} className="fill-emerald-400 shrink-0" />
+                              <span className="truncate">{cert}</span>
                             </span>
                           ))}
                         </div>
@@ -385,9 +386,10 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
                   {(emp.certifications || ["HV Safety Level 3", "OCPP 2.0.1"]).slice(0, 2).map((cert, idx) => (
                     <span
                       key={idx}
-                      className="rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 font-mono text-[9px] font-semibold text-emerald-400"
+                      className="rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 font-mono text-[9px] font-semibold text-emerald-400 inline-flex items-center gap-1"
                     >
-                      ⚡ {cert}
+                      <Zap size={9} className="fill-emerald-400 shrink-0" />
+                      <span>{cert}</span>
                     </span>
                   ))}
                 </div>

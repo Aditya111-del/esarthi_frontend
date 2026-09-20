@@ -12,6 +12,8 @@ import {
   LogIn,
   CheckCircle2,
   Shield,
+  ShieldCheck,
+  Building2,
 } from "lucide-react";
 import { Employee, Shop, UserSession } from "../../types";
 import ecoplugDayImage from "../../assets/ecoplug-day-station.jpeg";
@@ -61,7 +63,9 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
               className="w-full rounded-xl border border-primary/40 bg-primary/10 p-3 text-left transition-all hover:bg-primary/20 cursor-pointer"
             >
               <div className="flex items-center justify-between">
-                <span className="font-bold text-xs text-foreground">👑 Platform Superadmin</span>
+                <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-primary" /> Platform Superadmin
+                </span>
                 <span className="text-[10px] font-mono text-primary font-semibold">Full Access</span>
               </div>
               <p className="mt-0.5 text-[11px] text-muted-foreground">Aditya Salgotra (Manage all stores & staff)</p>
@@ -84,7 +88,9 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
                 className="w-full rounded-xl border border-border bg-secondary/30 p-3 text-left transition-all hover:bg-secondary/60 cursor-pointer"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-foreground">🏬 {shop.adminName}</span>
+                  <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                    <Building2 size={14} className="text-muted-foreground" /> {shop.adminName}
+                  </span>
                   <span className="text-[10px] font-mono text-muted-foreground">{shop.city}</span>
                 </div>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">Store Manager · {shop.name}</p>
@@ -104,7 +110,9 @@ export const MyProfileView: React.FC<MyProfileViewProps> = ({
               className="w-full rounded-xl border border-border bg-secondary/30 p-3 text-left transition-all hover:bg-secondary/60 cursor-pointer"
             >
               <div className="flex items-center justify-between">
-                <span className="font-bold text-xs text-foreground">👤 Marcus Webb</span>
+                <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                  <User size={14} className="text-muted-foreground" /> Marcus Webb
+                </span>
                 <span className="text-[10px] font-mono text-muted-foreground">Field Staff</span>
               </div>
               <p className="mt-0.5 text-[11px] text-muted-foreground">Senior Field Engineer</p>

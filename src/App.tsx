@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Toaster, toast } from "sonner";
-import { X } from "lucide-react";
+import { X, ShieldCheck, Building2, User } from "lucide-react";
 import { Navbar } from "./components/layout/Navbar";
 import { AnalyticsOverview } from "./components/analytics/AnalyticsOverview";
 import { EmployeeRoster } from "./components/employees/EmployeeRoster";
@@ -229,7 +229,7 @@ export function App() {
   const handleOnboardingComplete = async (empData: Partial<Employee>) => {
     const created = await api.createEmployee(empData);
     setEmployees((prev) => [created, ...prev]);
-    toast.success(`🎉 Onboarded ${created.name} into ${created.shopName}!`);
+    toast.success(`Successfully onboarded ${created.name} into ${created.shopName}!`);
     setActiveProfileEmployee(created);
     setCurrentTab("roster");
     api.getStats(selectedShopFilter).then(setStats).catch(() => null);
@@ -420,7 +420,9 @@ export function App() {
                 className="w-full rounded-xl border border-primary/40 bg-primary/10 p-3 text-left transition-all hover:bg-primary/20 cursor-pointer"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-foreground">👑 Platform Superadmin</span>
+                  <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                    <ShieldCheck size={14} className="text-primary" /> Platform Superadmin
+                  </span>
                   <span className="text-[10px] font-mono text-primary font-semibold">Full Access</span>
                 </div>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">Aditya Salgotra (All Stores & Staff)</p>
@@ -446,7 +448,9 @@ export function App() {
                   className="w-full rounded-xl border border-border bg-secondary/30 p-3 text-left transition-all hover:bg-secondary/60 cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-foreground">🏬 {shop.adminName}</span>
+                    <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                      <Building2 size={14} className="text-muted-foreground" /> {shop.adminName}
+                    </span>
                     <span className="text-[10px] font-mono text-muted-foreground">{shop.city}</span>
                   </div>
                   <p className="mt-0.5 text-[11px] text-muted-foreground">Store Manager · {shop.name}</p>
@@ -468,7 +472,9 @@ export function App() {
                 className="w-full rounded-xl border border-border bg-secondary/30 p-3 text-left transition-all hover:bg-secondary/60 cursor-pointer"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-foreground">👤 Marcus Webb</span>
+                  <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                    <User size={14} className="text-muted-foreground" /> Marcus Webb
+                  </span>
                   <span className="text-[10px] font-mono text-muted-foreground">Field Staff</span>
                 </div>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">Senior Field Engineer</p>

@@ -107,8 +107,8 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
                   
                   <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                    <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-400 border border-emerald-500/20">
-                      ⚡ {cap} kW DC
+                    <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                      <Zap size={10} className="fill-emerald-400" /> {cap} kW DC
                     </span>
                     <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-0.5 font-mono text-[10px] text-slate-200">
                       {shop.city} Hub

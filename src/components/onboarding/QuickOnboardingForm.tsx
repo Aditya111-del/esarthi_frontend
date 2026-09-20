@@ -242,8 +242,8 @@ export const QuickOnboardingForm: React.FC<QuickOnboardingFormProps> = ({
                           {shop.city}
                         </span>
                       </div>
-                      <span className="rounded bg-amber-500/15 text-amber-400 px-2 py-0.5 font-mono text-[9px] font-bold">
-                        ⚡ {shop.powerCapacityKw || 240} kW
+                      <span className="rounded bg-amber-500/15 text-amber-400 px-2 py-0.5 font-mono text-[9px] font-bold flex items-center gap-1">
+                        <Zap size={10} className="fill-amber-400" /> {shop.powerCapacityKw || 240} kW
                       </span>
                     </div>
 

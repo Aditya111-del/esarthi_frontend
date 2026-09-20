@@ -7,6 +7,7 @@ import {
   Building,
   BarChart3,
   X,
+  Zap,
 } from "lucide-react";
 import { UserSession, Employee, Shop } from "../../types";
 
@@ -68,8 +69,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => onTabChange("overview")}
           className="cursor-pointer select-none shrink-0 flex items-center gap-2.5"
         >
-          <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold shadow-sm">
-            ⚡
+          <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <Zap size={18} className="fill-primary-foreground text-primary-foreground" />
           </div>
           <div className="flex flex-col">
             <span className="font-display text-lg font-black tracking-tight text-foreground hover:text-primary transition-colors leading-none">

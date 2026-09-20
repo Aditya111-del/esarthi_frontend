@@ -168,14 +168,14 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                     </div>
 
                     <div className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
-                      <span className="text-emerald-400 font-bold">⚡</span>
+                      <Zap size={14} className="text-emerald-400 fill-emerald-400" />
                       <span className="font-mono text-xs text-white">
                         <strong>{totalBays}</strong> Charging Bays
                       </span>
                     </div>
 
                     <div className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
-                      <span className="text-emerald-400 font-bold">●</span>
+                      <span className="size-2 rounded-full bg-emerald-400 inline-block" />
                       <span className="font-mono text-xs text-white">
                         <strong>99.9%</strong> Network SLA
                       </span>
@@ -300,8 +300,8 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                         <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                          <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-0.5 font-mono text-[9.5px] font-bold text-emerald-400 border border-emerald-500/20">
-                            ⚡ {shop.powerCapacityKw || 300} kW DC
+                          <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-0.5 font-mono text-[9.5px] font-bold text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                            <Zap size={10} className="fill-emerald-400" /> {shop.powerCapacityKw || 300} kW DC
                           </span>
                           <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-0.5 font-mono text-[9.5px] text-slate-200">
                             {shop.totalBays || 10} Bays

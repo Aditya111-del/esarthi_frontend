@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FormEvent } from "react";
-import { X, Store, Save, ShieldCheck } from "lucide-react";
+import { X, Store, Save, ShieldCheck, Zap } from "lucide-react";
 import { Shop } from "../../types";
 
 interface ShopModalProps {
@@ -221,8 +221,8 @@ export const ShopModal: React.FC<ShopModalProps> = ({
 
           {/* EV Charging & Grid Power Specs */}
           <div className="space-y-4 pt-2 border-t border-border/80">
-            <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary">
-              ⚡ EV Charging & Grid Infrastructure
+            <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
+              <Zap size={13} className="fill-primary text-primary" /> EV Charging & Grid Infrastructure
             </h4>
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
