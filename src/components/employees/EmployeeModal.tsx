@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FormEvent } from "react";
-import { X, UserPlus, Save, Store, DollarSign } from "lucide-react";
+import { X, UserPlus, Save, Store, CreditCard, ScanLine, Camera } from "lucide-react";
 import { Employee, JobRole, Shop } from "../../types";
+import { CloudinaryUpload, UploadedFile } from "../ui/CloudinaryUpload";
 
 interface EmployeeModalProps {
   isOpen: boolean;
@@ -49,6 +50,11 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  // Document upload state
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
+  const [aadhaarCardUrl, setAadhaarCardUrl] = useState("");
+  const [panCardUrl, setPanCardUrl] = useState("");
+
   useEffect(() => {
     if (initialData) {
       setFirstName(initialData.firstName || initialData.name?.split(" ")[0] || "");
@@ -80,6 +86,9 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
           : "High-Voltage Safety Certified (Level 4), OCPP 2.0.1 Protocol"
       );
       setSafetyEquipmentCleared(initialData.safetyEquipmentCleared ?? true);
+      setProfilePhotoUrl((initialData as any).profilePhoto || initialData.image || "");
+      setAadhaarCardUrl((initialData as any).aadhaarCardUrl || "");
+      setPanCardUrl((initialData as any).panCardUrl || "");
     } else {
       setFirstName("");
       setLastName("");
@@ -106,6 +115,9 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
       setShift("Morning Shift (06:00 - 14:00)");
       setCertifications("High-Voltage Safety Certified (Level 4), OCPP 2.0.1 Protocol");
       setSafetyEquipmentCleared(true);
+      setProfilePhotoUrl("");
+      setAadhaarCardUrl("");
+      setPanCardUrl("");
     }
     setError("");
   }, [initialData, isOpen, roles, shops]);
@@ -152,6 +164,10 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
         certifications: certifications.split(",").map((c) => c.trim()).filter(Boolean),
         safetyEquipmentCleared,
         bio,
+        image: profilePhotoUrl || undefined,
+        ...(profilePhotoUrl && { profilePhoto: profilePhotoUrl }),
+        ...(aadhaarCardUrl && { aadhaarCardUrl }),
+        ...(panCardUrl && { panCardUrl }),
       });
       onClose();
     } catch (err: any) {
@@ -464,6 +480,51 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   placeholder="Summary of experience..."
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Document Uploads */}
+          <div className="space-y-4 border-t border-white/[0.08] pt-5">
+            <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
+              <Camera size={13} /> Identity & Document Uploads
+            </h4>
+            <p className="text-[11px] text-muted-foreground/60">
+              Files are securely stored on Cloudinary CDN. Supported: JPG, PNG, WEBP (photos) · PDF (documents)
+            </p>
+
+            {/* Profile Photo */}
+            <CloudinaryUpload
+              label="Profile Photo"
+              folder="employees"
+              accept="image/jpeg,image/png,image/webp"
+              currentUrl={profilePhotoUrl}
+              hint="Max 10 MB · Recommended: square crop"
+              onUploaded={(f: UploadedFile) => setProfilePhotoUrl(f.url)}
+              onClear={() => setProfilePhotoUrl("")}
+            />
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {/* Aadhaar Card */}
+              <CloudinaryUpload
+                label="Aadhaar Card"
+                folder="documents"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                currentUrl={aadhaarCardUrl}
+                hint="Image or PDF · Max 10 MB"
+                onUploaded={(f: UploadedFile) => setAadhaarCardUrl(f.url)}
+                onClear={() => setAadhaarCardUrl("")}
+              />
+
+              {/* PAN Card */}
+              <CloudinaryUpload
+                label="PAN Card"
+                folder="documents"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                currentUrl={panCardUrl}
+                hint="Image or PDF · Max 10 MB"
+                onUploaded={(f: UploadedFile) => setPanCardUrl(f.url)}
+                onClear={() => setPanCardUrl("")}
+              />
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FormEvent } from "react";
-import { X, Store, Save, ShieldCheck, Zap } from "lucide-react";
+import { X, Store, Save, ShieldCheck, Zap, ImagePlus } from "lucide-react";
 import { Shop } from "../../types";
+import { CloudinaryUpload, UploadedFile } from "../ui/CloudinaryUpload";
 
 interface ShopModalProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   const [powerCapacityKw, setPowerCapacityKw] = useState(240);
   const [totalBays, setTotalBays] = useState(8);
   const [status, setStatus] = useState<"active" | "inactive">("active");
+  const [shopImageUrl, setShopImageUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -46,6 +48,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
       setPowerCapacityKw(initialData.powerCapacityKw || 240);
       setTotalBays(initialData.totalBays || 8);
       setStatus(initialData.status || "active");
+      setShopImageUrl((initialData as any).shopImage || "");
     } else {
       setName("");
       setCode("");
@@ -60,6 +63,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
       setPowerCapacityKw(240);
       setTotalBays(8);
       setStatus("active");
+      setShopImageUrl("");
     }
     setError("");
   }, [initialData, isOpen]);
@@ -105,6 +109,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
         totalBays: Number(totalBays),
         activeBays: Math.max(1, Math.round(Number(totalBays) * 0.75)),
         status,
+        ...(shopImageUrl && { shopImage: shopImageUrl }),
       });
       onClose();
     } catch (err: any) {
@@ -222,6 +227,22 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                 />
               </div>
             </div>
+          </div>
+
+          {/* Shop Banner / Photo */}
+          <div className="space-y-3 border-t border-white/[0.08] pt-5">
+            <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
+              <ImagePlus size={13} /> Shop Photo / Banner
+            </h4>
+            <CloudinaryUpload
+              label="Shop Image"
+              folder="shops"
+              accept="image/jpeg,image/png,image/webp"
+              currentUrl={shopImageUrl}
+              hint="Recommended: 16:9 or square · Max 10 MB"
+              onUploaded={(f: UploadedFile) => setShopImageUrl(f.url)}
+              onClear={() => setShopImageUrl("")}
+            />
           </div>
 
           {/* EV Charging & Grid Power Specs */}
