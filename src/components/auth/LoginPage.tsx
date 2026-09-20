@@ -4,7 +4,6 @@ import {
   ShieldCheck,
   Building2,
   ArrowRight,
-  Sparkles,
   AlertCircle,
   Lock,
   Radio,
@@ -12,10 +11,9 @@ import {
   ChevronRight,
   Shield,
   Layers,
-  Fuel,
 } from "lucide-react";
 import { UserSession, Shop } from "../../types";
-import { api, defaultSuperadmin } from "../../services/api";
+import { api } from "../../services/api";
 
 interface LoginPageProps {
   onLogin: (user: UserSession) => void;
@@ -27,7 +25,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Standard preset 4 branch admin IDs
   const presetBranches = [
     {
       code: "EV-DEL-01",
@@ -35,8 +32,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
       stationName: "Connaught Plaza EV Superhub",
       adminName: "Rajesh Kumar",
       email: "delhi.admin@esarthi.com",
-      color: "from-emerald-500/20 to-teal-500/10",
-      accent: "text-emerald-400",
     },
     {
       code: "EV-BLR-01",
@@ -44,8 +39,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
       stationName: "Silicon Expressway Charging Depot",
       adminName: "Vikram Malhotra",
       email: "bengaluru.admin@esarthi.com",
-      color: "from-blue-500/20 to-cyan-500/10",
-      accent: "text-cyan-400",
     },
     {
       code: "EV-MUM-01",
@@ -53,8 +46,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
       stationName: "BKC Green Fleet Supercharger",
       adminName: "Sneha Patel",
       email: "mumbai.admin@esarthi.com",
-      color: "from-purple-500/20 to-indigo-500/10",
-      accent: "text-indigo-400",
     },
     {
       code: "EV-HYD-01",
@@ -62,12 +53,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
       stationName: "HITEC City EV Transit Hub",
       adminName: "Karthik Reddy",
       email: "hyderabad.admin@esarthi.com",
-      color: "from-amber-500/20 to-orange-500/10",
-      accent: "text-amber-400",
     },
   ];
 
-  // Dynamic shops (including newly created ones by superadmin)
   const additionalShops = shops.filter(
     (s) =>
       !["EV-DEL-01", "EV-BLR-01", "EV-MUM-01", "EV-HYD-01"].includes(s.code?.toUpperCase()) &&
@@ -104,252 +92,441 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, shops }) => {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col justify-between bg-[#080d12] text-foreground font-sans overflow-x-hidden selection:bg-primary/20 selection:text-primary">
-      {/* Dynamic Ambient Mesh Glows */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[90vw] max-w-4xl h-[450px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-[-5%] right-[-5%] w-[40vw] h-[300px] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-[20%] left-[-5%] w-[35vw] h-[300px] bg-teal-500/5 rounded-full blur-[120px] pointer-events-none" />
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        background: "oklch(0.095 0.010 240)",
+        color: "oklch(0.970 0.004 240)",
+        position: "relative",
+        overflowX: "hidden",
+      }}
+    >
+      {/* Ambient background glows */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-15%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "80vw",
+          maxWidth: "900px",
+          height: "450px",
+          background: "radial-gradient(ellipse at center, oklch(0.680 0.158 155 / 0.10) 0%, transparent 70%)",
+          filter: "blur(60px)",
+          pointerEvents: "none",
+        }}
+      />
 
       {/* Top Brand Bar */}
-      <header className="relative z-10 w-full border-b border-border/40 bg-background/60 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex size-9 sm:size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-emerald-600 text-primary-foreground shadow-md shadow-primary/25 ring-1 ring-white/20">
-            <Zap size={20} className="fill-primary-foreground text-primary-foreground animate-pulse" />
+      <header
+        style={{
+          position: "relative",
+          zIndex: 10,
+          borderBottom: "1px solid oklch(0.220 0.012 240 / 0.40)",
+          background: "oklch(0.120 0.012 240 / 0.60)",
+          backdropFilter: "blur(16px)",
+          padding: "0.875rem 1.5rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div
+            style={{
+              width: "2.25rem",
+              height: "2.25rem",
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, oklch(0.680 0.158 155) 0%, oklch(0.580 0.160 155) 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "white",
+              boxShadow: "0 0 16px oklch(0.680 0.158 155 / 0.40)",
+            }}
+          >
+            <Zap size={18} style={{ fill: "currentColor" }} />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-display text-base sm:text-lg font-black tracking-tight text-foreground">
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span
+                style={{
+                  fontFamily: '"Outfit", sans-serif',
+                  fontSize: "1.125rem",
+                  fontWeight: 800,
+                  letterSpacing: "-0.03em",
+                  color: "oklch(0.980 0.005 240)",
+                }}
+              >
                 ESARTHI
               </span>
-              <span className="hidden sm:inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary font-mono">
-                <span className="size-1.5 rounded-full bg-emerald-400 inline-block animate-ping" />
-                GRID OS v2.4
+              <span
+                style={{
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontSize: "0.625rem",
+                  fontWeight: 600,
+                  background: "oklch(0.680 0.158 155 / 0.12)",
+                  color: "oklch(0.760 0.150 155)",
+                  border: "1px solid oklch(0.680 0.158 155 / 0.25)",
+                  borderRadius: "9999px",
+                  padding: "1px 6px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.25rem",
+                }}
+              >
+                <span className="es-dot" style={{ width: "4px", height: "4px" }} />
+                GRID OS v2
               </span>
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground font-medium">
-              ECOPLUG Intelligent EV Workforce & Station Network
+            <p style={{ fontSize: "0.6875rem", color: "oklch(0.480 0.012 240)", margin: 0 }}>
+              Workforce Management & Station Operations
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
-          <div className="hidden md:flex items-center gap-2 rounded-lg bg-secondary/50 border border-border/60 px-3 py-1.5">
-            <Radio size={12} className="text-primary animate-pulse" />
-            <span>4 Primary Hubs Online</span>
-          </div>
+        <div
+          style={{
+            fontFamily: '"JetBrains Mono", monospace',
+            fontSize: "0.6875rem",
+            color: "oklch(0.480 0.012 240)",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.375rem",
+          }}
+        >
+          <span className="es-dot" />
+          <span>4 Primary Hubs Connected</span>
         </div>
       </header>
 
-      {/* Main Authentication Core */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 max-w-5xl mx-auto w-full">
-        {/* Hero Title & Subtext */}
-        <div className="text-center max-w-2xl mx-auto mb-8 space-y-2.5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-secondary/60 px-3.5 py-1 text-xs font-semibold text-muted-foreground shadow-xs">
-            <ShieldCheck size={14} className="text-primary" />
-            <span>Authorized Enterprise Access Portal</span>
+      {/* Main Authentication Card Area */}
+      <main
+        style={{
+          position: "relative",
+          zIndex: 10,
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "2rem 1rem",
+          maxWidth: "34rem",
+          width: "100%",
+          margin: "0 auto",
+        }}
+      >
+        {/* Title & Subtitle */}
+        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.375rem",
+              padding: "0.25rem 0.625rem",
+              borderRadius: "9999px",
+              background: "oklch(0.120 0.012 240 / 0.80)",
+              border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+              fontFamily: '"JetBrains Mono", monospace',
+              fontSize: "0.6875rem",
+              color: "oklch(0.760 0.150 155)",
+              marginBottom: "0.625rem",
+            }}
+          >
+            <ShieldCheck size={12} />
+            <span>Authorized Enterprise Access</span>
           </div>
-          <h1 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-            Sign In to <span className="text-primary">ESARTHI</span>
+
+          <h1
+            style={{
+              fontFamily: '"Outfit", sans-serif',
+              fontSize: "1.875rem",
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
+              color: "oklch(0.980 0.005 240)",
+              margin: "0 0 0.375rem",
+            }}
+          >
+            Sign in to <span style={{ color: "oklch(0.760 0.150 155)" }}>ESARTHI</span>
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-            Direct access enabled for verified <span className="font-mono text-foreground font-semibold">@esarthi.com</span> identity IDs. No OTP or password required.
+
+          <p style={{ fontSize: "0.8125rem", color: "oklch(0.500 0.012 240)", margin: 0 }}>
+            Direct access configured for verified <code style={{ fontFamily: '"JetBrains Mono", monospace', color: "oklch(0.850 0.005 240)" }}>@esarthi.com</code> IDs
           </p>
         </div>
 
-        {/* Central Authentication Card */}
-        <div className="w-full max-w-xl rounded-2xl sm:rounded-3xl luxury-card p-5 sm:p-8 space-y-6 rise">
-          {/* Identity Input Form */}
+        {/* Central Card */}
+        <div
+          className="es-card"
+          style={{
+            width: "100%",
+            padding: "1.75rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.25rem",
+          }}
+        >
+          {/* Identity Form */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleAuthorize();
             }}
-            className="space-y-4"
+            style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}
           >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-foreground/90 flex items-center gap-1.5 font-mono">
-                  <div className="size-5 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center">
-                    <Lock size={11} className="text-primary" />
-                  </div>
-                  Corporate Admin ID
+            <div className="es-form-group">
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <label className="es-label" style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                  <Lock size={11} style={{ color: "oklch(0.680 0.158 155)" }} />
+                  Corporate Admin Email
                 </label>
-                <span className="text-[10px] text-muted-foreground font-mono bg-white/[0.03] border border-white/[0.06] rounded-md px-2 py-0.5">
+                <span
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.625rem",
+                    color: "oklch(0.420 0.012 240)",
+                  }}
+                >
                   @esarthi.com
                 </span>
               </div>
 
-              <div className="relative">
-                <input
-                  type="email"
-                  value={emailInput}
-                  onChange={(e) => {
-                    setEmailInput(e.target.value);
-                    if (errorMessage) setErrorMessage("");
-                  }}
-                  placeholder="superadmin@esarthi.com or branch.admin@esarthi.com"
-                  className="w-full h-12 rounded-xl luxury-input px-4 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/40 font-mono focus:ring-2 focus:ring-primary/25"
-                  autoFocus
-                />
-              </div>
+              <input
+                type="email"
+                value={emailInput}
+                onChange={(e) => {
+                  setEmailInput(e.target.value);
+                  if (errorMessage) setErrorMessage("");
+                }}
+                placeholder="superadmin@esarthi.com or branch.admin@esarthi.com"
+                className="es-input"
+                style={{ height: "2.75rem", fontSize: "0.8125rem", fontFamily: '"JetBrains Mono", monospace' }}
+                autoFocus
+              />
             </div>
 
-            {/* Error Message Box */}
             {errorMessage && (
-              <div className="flex items-start gap-2.5 rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive animate-in fade-in duration-200">
-                <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                <p className="leading-snug">{errorMessage}</p>
+              <div
+                style={{
+                  padding: "0.625rem 0.875rem",
+                  borderRadius: "8px",
+                  background: "oklch(0.580 0.230 27 / 0.12)",
+                  border: "1px solid oklch(0.580 0.230 27 / 0.35)",
+                  color: "oklch(0.700 0.200 27)",
+                  fontSize: "0.75rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                <AlertCircle size={14} style={{ flexShrink: 0 }} />
+                <span>{errorMessage}</span>
               </div>
             )}
 
-            {/* Authorize Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 rounded-xl luxury-button font-bold text-xs sm:text-sm tracking-wider uppercase flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 select-none group"
+              className="es-btn es-btn-primary"
+              style={{
+                height: "2.75rem",
+                fontSize: "0.8125rem",
+                justifyContent: "center",
+                fontWeight: 700,
+                letterSpacing: "0.02em",
+              }}
             >
-              {isLoading ? (
-                <div className="flex items-center gap-2 font-mono">
-                  <span className="size-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" />
-                  <span>Authorizing Identity...</span>
-                </div>
-              ) : (
-                <>
-                  <span>Authorize & Launch Dashboard</span>
-                  <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
-                </>
-              )}
+              {isLoading ? "Verifying Authorization..." : "Authorize & Launch Dashboard"}
+              {!isLoading && <ArrowRight size={14} />}
             </button>
           </form>
 
-          {/* Quick Access Divider */}
-          <div className="relative flex items-center justify-center pt-2">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/[0.08]" />
-            </div>
-            <span className="relative bg-[#0b1016] px-3 text-[10px] uppercase tracking-wider font-mono font-bold text-muted-foreground border border-white/[0.06] rounded-full">
-              Or Instant One-Click Login
+          {/* Section Divider */}
+          <div className="es-section-label">
+            <span
+              style={{
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: "0.625rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "oklch(0.420 0.012 240)",
+              }}
+            >
+              One-Click Direct Login
             </span>
           </div>
 
-          {/* Dedicated Superadmin Keypad Card */}
-          <div className="space-y-3">
-            <button
-              onClick={() => handleQuickSelect("superadmin@esarthi.com")}
-              className="w-full group rounded-2xl border border-primary/40 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent p-3.5 sm:p-4 text-left transition-all duration-300 hover:border-primary hover:shadow-[0_0_24px_rgba(16,185,129,0.15)] cursor-pointer relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="flex items-center justify-between relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-emerald-600 text-primary-foreground shadow-lg shadow-primary/30 border border-white/20">
-                    <ShieldCheck size={20} />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-display font-bold text-xs sm:text-sm text-foreground group-hover:text-primary transition-colors">
-                        Suraj Sev Sagar
-                      </span>
-                      <span className="rounded-md bg-primary/20 border border-primary/30 px-1.5 py-0.5 text-[9px] font-mono font-bold text-primary">
-                        SUPERADMIN
-                      </span>
-                    </div>
-                    <p className="font-mono text-[11px] text-muted-foreground mt-0.5">
-                      superadmin@esarthi.com
-                    </p>
-                  </div>
-                </div>
-                <div className="hidden sm:flex items-center gap-1 text-[11px] font-semibold text-primary">
-                  <span>Enter All Hubs</span>
-                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </div>
+          {/* Superadmin Card Button */}
+          <button
+            onClick={() => handleQuickSelect("superadmin@esarthi.com")}
+            className="es-card es-card-hover tap-active"
+            style={{
+              padding: "0.875rem 1rem",
+              cursor: "pointer",
+              border: "1px solid oklch(0.680 0.158 155 / 0.35)",
+              background: "linear-gradient(90deg, oklch(0.680 0.158 155 / 0.10) 0%, oklch(0.120 0.012 240) 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              textAlign: "left",
+              textDecoration: "none",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <div
+                style={{
+                  width: "2.25rem",
+                  height: "2.25rem",
+                  borderRadius: "10px",
+                  background: "oklch(0.680 0.158 155)",
+                  color: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 0 12px oklch(0.680 0.158 155 / 0.40)",
+                }}
+              >
+                <ShieldCheck size={18} />
               </div>
-              <p className="mt-2 text-[10.5px] text-muted-foreground/80 pl-1 border-t border-primary/15 pt-1.5 relative z-10">
-                Full platform governance · Multi-station control · Shop admin provisioning
-              </p>
-            </button>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                  <span style={{ fontFamily: '"Outfit", sans-serif', fontSize: "0.875rem", fontWeight: 700, color: "oklch(0.980 0.005 240)" }}>
+                    Suraj Sev Sagar
+                  </span>
+                  <span className="es-badge es-badge-emerald" style={{ fontSize: "0.5625rem", padding: "1px 5px" }}>
+                    SUPERADMIN
+                  </span>
+                </div>
+                <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.500 0.012 240)", margin: "2px 0 0" }}>
+                  superadmin@esarthi.com
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={15} style={{ color: "oklch(0.680 0.158 155)" }} />
+          </button>
 
-            {/* 4 Branch Hub Admins Grid */}
-            <div className="pt-1">
-              <p className="text-[10.5px] font-mono uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
-                <Building2 size={12} className="text-primary" /> Branch Station Administrators (4 Hubs)
-              </p>
+          {/* 4 Branch Hub Admins */}
+          <div>
+            <p
+              style={{
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: "0.625rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "oklch(0.480 0.012 240)",
+                margin: "0 0 0.5rem 0.25rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.375rem",
+              }}
+            >
+              <Building2 size={11} style={{ color: "oklch(0.680 0.158 155)" }} />
+              Branch Station Managers
+            </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {presetBranches.map((branch) => (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+              {presetBranches.map((branch) => (
+                <button
+                  key={branch.code}
+                  onClick={() => handleQuickSelect(branch.email)}
+                  className="es-card es-card-hover tap-active"
+                  style={{
+                    padding: "0.625rem 0.75rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    background: "oklch(0.100 0.010 240)",
+                    border: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontFamily: '"Outfit", sans-serif', fontSize: "0.75rem", fontWeight: 700, color: "oklch(0.760 0.150 155)" }}>
+                      {branch.city} Hub
+                    </span>
+                    <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", color: "oklch(0.420 0.012 240)" }}>
+                      {branch.code}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "oklch(0.900 0.005 240)", margin: "2px 0 0" }}>
+                    {branch.adminName}
+                  </p>
+                  <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.625rem", color: "oklch(0.420 0.012 240)", margin: "1px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {branch.email}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Additional Dynamic Shops if any */}
+          {additionalShops.length > 0 && (
+            <div>
+              <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.625rem", color: "oklch(0.420 0.012 240)", margin: "0 0 0.375rem 0.25rem", textTransform: "uppercase" }}>
+                Additional Hubs
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                {additionalShops.map((s) => (
                   <button
-                    key={branch.code}
-                    onClick={() => handleQuickSelect(branch.email)}
-                    className="group rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05] p-3 text-left transition-all duration-200 hover:border-primary/50 cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                    key={s._id}
+                    onClick={() => handleQuickSelect(s.adminEmail)}
+                    className="es-card es-card-hover tap-active"
+                    style={{ padding: "0.5rem 0.625rem", textAlign: "left", cursor: "pointer" }}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold text-primary">
-                        {branch.city} Hub
-                      </span>
-                      <span className="text-[9px] font-mono text-muted-foreground/70 bg-white/[0.04] px-1.5 py-0.5 rounded">
-                        {branch.code}
-                      </span>
-                    </div>
-                    <p className="font-bold text-xs text-foreground mt-1 group-hover:text-primary transition-colors truncate font-sans">
-                      {branch.adminName}
-                    </p>
-                    <p className="font-mono text-[10px] text-muted-foreground truncate mt-0.5">
-                      {branch.email}
-                    </p>
+                    <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "oklch(0.900 0.005 240)" }}>{s.name}</span>
+                    <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.625rem", color: "oklch(0.420 0.012 240)", margin: "2px 0 0" }}>{s.adminEmail}</p>
                   </button>
                 ))}
               </div>
             </div>
-
-            {/* Any Additional Configured Shops */}
-            {additionalShops.length > 0 && (
-              <div className="pt-2">
-                <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1.5">
-                  Additional Configured Hubs
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {additionalShops.map((s) => (
-                    <button
-                      key={s._id}
-                      onClick={() => handleQuickSelect(s.adminEmail)}
-                      className="group rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05] p-2.5 text-left transition-all duration-200 hover:border-primary/50 cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-foreground truncate">
-                          {s.name}
-                        </span>
-                        <span className="text-[9px] font-mono text-primary">{s.city}</span>
-                      </div>
-                      <p className="text-[10px] text-muted-foreground font-mono truncate">
-                        {s.adminEmail}
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
-        {/* Security & Audit Certifications */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-muted-foreground font-mono text-[10px] sm:text-[11px]">
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 size={13} className="text-primary" />
-            <span>256-Bit TLS Encrypted</span>
+        {/* Security badges */}
+        <div
+          style={{
+            marginTop: "1.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1.25rem",
+            fontFamily: '"JetBrains Mono", monospace',
+            fontSize: "0.6875rem",
+            color: "oklch(0.420 0.012 240)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+            <CheckCircle2 size={12} style={{ color: "oklch(0.680 0.158 155)" }} />
+            <span>256-Bit TLS</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Shield size={13} className="text-primary" />
-            <span>Role-Scoped Permissions</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+            <Shield size={12} style={{ color: "oklch(0.680 0.158 155)" }} />
+            <span>Role-Scoped</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Layers size={13} className="text-primary" />
-            <span>Multi-Hub Synchronization</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+            <Layers size={12} style={{ color: "oklch(0.680 0.158 155)" }} />
+            <span>Multi-Hub Sync</span>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full border-t border-border/40 py-4 px-4 text-center font-mono text-[10px] text-muted-foreground">
-        <p>ESARTHI Workforce & Grid Operating System · Powered by ECOPLUG Technology</p>
+      <footer
+        style={{
+          position: "relative",
+          zIndex: 10,
+          borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)",
+          padding: "1rem",
+          textAlign: "center",
+          fontFamily: '"JetBrains Mono", monospace',
+          fontSize: "0.6875rem",
+          color: "oklch(0.380 0.010 240)",
+        }}
+      >
+        ESARTHI Workforce & Grid Operating System · Enterprise EV Architecture
       </footer>
     </div>
   );

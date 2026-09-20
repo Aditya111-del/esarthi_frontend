@@ -7,13 +7,8 @@ import {
   Eye,
   LayoutGrid,
   List,
-  Phone,
-  Mail,
-  Calendar,
-  Zap,
-  CheckCircle2,
-  Clock,
-  Shield,
+  ChevronDown,
+  Filter,
 } from "lucide-react";
 import { Employee, Shop } from "../../types";
 
@@ -35,6 +30,54 @@ interface EmployeeRosterProps {
   onOpenAddModal: () => void;
 }
 
+const statusConfig: Record<string, { color: string; bg: string; border: string; dot: string }> = {
+  Active:     { color: "oklch(0.720 0.158 155)", bg: "oklch(0.680 0.158 155 / 0.10)", border: "oklch(0.680 0.158 155 / 0.22)", dot: "oklch(0.680 0.158 155)" },
+  Onboarding: { color: "oklch(0.780 0.160 80)",  bg: "oklch(0.800 0.160 80 / 0.10)",  border: "oklch(0.800 0.160 80 / 0.22)",  dot: "oklch(0.800 0.160 80)" },
+  Review:     { color: "oklch(0.680 0.160 280)", bg: "oklch(0.680 0.160 280 / 0.10)", border: "oklch(0.680 0.160 280 / 0.22)", dot: "oklch(0.680 0.160 280)" },
+  "On Leave": { color: "oklch(0.560 0.014 240)", bg: "oklch(0.220 0.012 240 / 0.40)", border: "oklch(0.240 0.012 240 / 0.50)", dot: "oklch(0.420 0.012 240)" },
+};
+
+function StatusBadge({ status }: { status: string }) {
+  const cfg = statusConfig[status] || statusConfig["On Leave"];
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: "0.3125rem",
+      padding: "0.1875rem 0.5rem", borderRadius: "9999px",
+      fontSize: "0.6875rem", fontWeight: 600,
+      fontFamily: '"JetBrains Mono", monospace',
+      color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.border}`,
+    }}>
+      <span style={{ width: "5px", height: "5px", borderRadius: "9999px", background: cfg.dot, flexShrink: 0 }} />
+      {status}
+    </span>
+  );
+}
+
+function Avatar({ emp, size = 36 }: { emp: Employee; size?: number }) {
+  const initials = `${emp.firstName?.[0] || emp.name?.[0] || ""}${emp.lastName?.[0] || ""}`.toUpperCase();
+  if (emp.image || (emp as any).profilePhoto) {
+    return (
+      <img
+        src={(emp as any).profilePhoto || emp.image}
+        alt={emp.name}
+        style={{ width: size, height: size, borderRadius: "9999px", objectFit: "cover", flexShrink: 0 }}
+      />
+    );
+  }
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: "9999px", flexShrink: 0,
+      background: "oklch(0.680 0.158 155 / 0.14)",
+      border: "1px solid oklch(0.680 0.158 155 / 0.20)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontFamily: '"Outfit", sans-serif', fontSize: size * 0.33, fontWeight: 700,
+      color: "oklch(0.720 0.158 155)",
+    }}>
+      {initials || "—"}
+    </div>
+  );
+}
+
 export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
   employees,
   searchQuery,
@@ -54,471 +97,307 @@ export const EmployeeRoster: React.FC<EmployeeRosterProps> = ({
 }) => {
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
 
+  const activeFilterCount = [
+    selectedDepartment !== "all",
+    selectedStatus !== "all",
+    selectedShop !== "all",
+  ].filter(Boolean).length;
+
   return (
-    <div className="space-y-6 rise">
-      {/* Header bar */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }} className="rise">
+
+      {/* ── Header ─────────────────────────────────────── */}
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
         <div>
-          <div className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-primary uppercase font-bold">
-            <Zap size={12} className="text-amber-400" />
-            FIELD WORKFORCE · CERTIFIED EV TECHNICIANS & LEADS
-          </div>
-          <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-            EV Technicians & Operations Roster
+          <p className="es-overline" style={{ marginBottom: "0.375rem" }}>
+            <span style={{ width: "5px", height: "5px", borderRadius: "9999px", background: "oklch(0.680 0.158 155)", display: "inline-block" }} />
+            Workforce Directory
+          </p>
+          <h2 style={{ fontFamily: '"Outfit", sans-serif', fontSize: "1.625rem", fontWeight: 800, letterSpacing: "-0.03em", color: "oklch(0.970 0.004 240)", margin: 0, lineHeight: 1.1 }}>
+            Employee Roster
           </h2>
-          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-            Total {employees.length} personnel: High-voltage diagnostics engineers, OCPP cloud specialists, station superintendents, and safety auditors
+          <p style={{ marginTop: "0.375rem", fontSize: "0.8125rem", color: "oklch(0.500 0.012 240)" }}>
+            {employees.length} personnel across {shops.length} locations
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center rounded-xl border border-border bg-card p-1 shadow-sm">
-            <button
-              onClick={() => setViewMode("table")}
-              className={`rounded-lg p-1.5 transition-colors cursor-pointer ${
-                viewMode === "table" ? "bg-accent text-primary font-bold" : "text-muted-foreground hover:text-foreground"
-              }`}
-              title="Table View"
-            >
-              <List size={16} />
-            </button>
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`rounded-lg p-1.5 transition-colors cursor-pointer ${
-                viewMode === "grid" ? "bg-accent text-primary font-bold" : "text-muted-foreground hover:text-foreground"
-              }`}
-              title="Grid View"
-            >
-              <LayoutGrid size={16} />
-            </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          {/* View toggle */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: "2px", padding: "3px",
+            background: "oklch(0.118 0.012 240)", border: "1px solid oklch(0.240 0.012 240 / 0.45)",
+            borderRadius: "10px",
+          }}>
+            {(["table", "grid"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                style={{
+                  width: "2rem", height: "1.875rem", display: "flex", alignItems: "center", justifyContent: "center",
+                  borderRadius: "7px", border: "none", cursor: "pointer",
+                  transition: "all 0.12s ease",
+                  background: viewMode === mode ? "oklch(0.680 0.158 155 / 0.15)" : "transparent",
+                  color: viewMode === mode ? "oklch(0.720 0.158 155)" : "oklch(0.420 0.012 240)",
+                }}
+                title={mode === "table" ? "Table view" : "Grid view"}
+              >
+                {mode === "table" ? <List size={14} /> : <LayoutGrid size={14} />}
+              </button>
+            ))}
           </div>
 
-          <button
-            onClick={onOpenAddModal}
-            className="inline-flex items-center gap-2 rounded-xl luxury-button px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-lg transition-all cursor-pointer select-none"
-          >
-            <UserPlus size={15} />
-            Add EV Technician
+          {/* Add button */}
+          <button onClick={onOpenAddModal} className="es-btn es-btn-primary tap-active">
+            <UserPlus size={14} />
+            <span className="hidden sm:inline">Add Employee</span>
+            <span className="sm:hidden">Add</span>
           </button>
         </div>
       </div>
 
-      {/* Filters & Search Controls */}
-      <div className="grid gap-3 sm:grid-cols-12">
+      {/* ── Filters ────────────────────────────────────── */}
+      <div style={{ display: "grid", gap: "0.625rem", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
         {/* Search */}
-        <div className="relative sm:col-span-4">
-          <Search className="absolute left-3.5 top-3 size-4 text-muted-foreground/60" />
+        <div style={{ position: "relative", minWidth: "200px", flex: "2 1 200px" }}>
+          <Search size={13} style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: "oklch(0.420 0.012 240)", pointerEvents: "none" }} />
           <input
             type="text"
-            placeholder="Search technician name, ID, role, or bay..."
+            placeholder="Search by name, ID, role…"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="h-10 w-full rounded-xl luxury-input pl-10 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 transition-all font-sans"
+            className="es-input"
+            style={{ paddingLeft: "2.25rem" }}
           />
         </div>
 
-        {/* Station Filter */}
-        <div className="sm:col-span-3">
-          <select
-            value={selectedShop}
-            onChange={(e) => onShopChange(e.target.value)}
-            className="h-10 w-full rounded-xl luxury-input px-3 text-xs text-foreground transition-all cursor-pointer bg-black/60"
-          >
-            <option value="all" className="bg-neutral-900 text-white">All Charging Stations</option>
-            {shops.map((s) => (
-              <option key={s._id} value={s._id} className="bg-neutral-900 text-white">
-                {s.city}: {s.name.replace("ESARTHI ", "")}
-              </option>
-            ))}
-          </select>
-        </div>
+        <select value={selectedShop} onChange={(e) => onShopChange(e.target.value)} className="es-select">
+          <option value="all">All Locations</option>
+          {shops.map((s) => (
+            <option key={s._id} value={s._id}>{s.city}: {s.name}</option>
+          ))}
+        </select>
 
-        {/* Department Filter */}
-        <div className="sm:col-span-3">
-          <select
-            value={selectedDepartment}
-            onChange={(e) => onDepartmentChange(e.target.value)}
-            className="h-10 w-full rounded-xl luxury-input px-3 text-xs text-foreground transition-all cursor-pointer bg-black/60"
-          >
-            <option value="all" className="bg-neutral-900 text-white">All Disciplines & Divisions</option>
-            {departments.map((d) => (
-              <option key={d} value={d} className="bg-neutral-900 text-white">
-                {d}
-              </option>
-            ))}
-          </select>
-        </div>
+        <select value={selectedDepartment} onChange={(e) => onDepartmentChange(e.target.value)} className="es-select">
+          <option value="all">All Departments</option>
+          {departments.map((d) => <option key={d} value={d}>{d}</option>)}
+        </select>
 
-        {/* Status Filter */}
-        <div className="sm:col-span-2">
-          <select
-            value={selectedStatus}
-            onChange={(e) => onStatusChange(e.target.value)}
-            className="h-10 w-full rounded-xl luxury-input px-3 text-xs text-foreground transition-all cursor-pointer bg-black/60"
-          >
-            <option value="all" className="bg-neutral-900 text-white">All Status</option>
-            <option value="Active" className="bg-neutral-900 text-white">Active</option>
-            <option value="Onboarding" className="bg-neutral-900 text-white">Onboarding</option>
-            <option value="Review" className="bg-neutral-900 text-white">Review</option>
-            <option value="On Leave" className="bg-neutral-900 text-white">On Leave</option>
-          </select>
-        </div>
+        <select value={selectedStatus} onChange={(e) => onStatusChange(e.target.value)} className="es-select">
+          <option value="all">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Onboarding">Onboarding</option>
+          <option value="Review">Review</option>
+          <option value="On Leave">On Leave</option>
+        </select>
       </div>
 
-      {/* Table View */}
+      {/* ── Content ────────────────────────────────────── */}
       {viewMode === "table" ? (
         <>
-          {/* Mobile Responsive Cards (Visible on mobile screens) */}
-          <div className="block md:hidden space-y-3">
-            {employees.length > 0 ? (
-              employees.map((emp) => (
-                <div
-                  key={emp._id}
-                  className="rounded-xl border border-border/80 bg-card/80 p-4 space-y-3 shadow-xs"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      {emp.image ? (
-                        <img
-                          src={emp.image}
-                          alt={emp.name}
-                          className="size-10 rounded-full object-cover border border-border"
-                        />
-                      ) : (
-                        <div className="flex size-10 items-center justify-center rounded-full bg-secondary font-bold text-xs text-foreground">
-                          {emp.firstName?.[0] || emp.name?.[0] || "E"}
-                        </div>
-                      )}
-                      <div>
-                        <h4
-                          onClick={() => onViewEmployee(emp)}
-                          className="font-bold text-sm text-foreground hover:text-primary cursor-pointer"
-                        >
-                          {emp.name}
-                        </h4>
-                        <p className="text-xs text-muted-foreground">{emp.roleTitle}</p>
-                      </div>
-                    </div>
-
-                    <span
-                      className={`rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold ${
-                        emp.status === "Active"
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                          : "bg-secondary text-muted-foreground"
-                      }`}
-                    >
-                      {emp.status}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[11px] font-mono">
-                    <div>
-                      <span className="text-muted-foreground uppercase text-[9px]">Station: </span>
-                      <span className="text-foreground truncate block">{emp.shopName?.replace("ESARTHI ", "") || "Hub"}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground uppercase text-[9px]">ID: </span>
-                      <span className="text-primary font-bold">{emp.employeeId}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground uppercase text-[9px]">Bay: </span>
-                      <span className="text-foreground truncate block">{emp.assignedBay || "Bays 01-04"}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground uppercase text-[9px]">Dept: </span>
-                      <span className="text-foreground truncate block">{emp.department}</span>
+          {/* Mobile cards */}
+          <div className="block md:hidden" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {employees.length > 0 ? employees.map((emp) => (
+              <div
+                key={emp._id}
+                className="es-card"
+                style={{ padding: "1rem", cursor: "pointer" }}
+                onClick={() => onViewEmployee(emp)}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
+                    <Avatar emp={emp} size={40} />
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "oklch(0.970 0.004 240)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{emp.name}</p>
+                      <p style={{ fontSize: "0.75rem", color: "oklch(0.500 0.012 240)", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{emp.roleTitle}</p>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/50">
-                    <button
-                      onClick={() => onViewEmployee(emp)}
-                      className="flex-1 rounded-lg bg-primary/10 border border-primary/20 py-1.5 text-center text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer tap-active"
-                    >
-                      View Details
-                    </button>
-                    <button
-                      onClick={() => onEditEmployee(emp)}
-                      className="rounded-lg p-2 bg-secondary/50 text-muted-foreground hover:text-foreground cursor-pointer tap-active"
-                      title="Edit"
-                    >
-                      <Edit2 size={13} />
-                    </button>
-                    <button
-                      onClick={() => onDeleteEmployee(emp._id)}
-                      className="rounded-lg p-2 bg-destructive/10 text-destructive hover:bg-destructive/20 cursor-pointer tap-active"
-                      title="Delete"
-                    >
-                      <Trash2 size={13} />
-                    </button>
+                  <StatusBadge status={emp.status} />
+                </div>
+                <div style={{ marginTop: "0.75rem", paddingTop: "0.75rem", borderTop: "1px solid oklch(0.220 0.012 240 / 0.35)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.375rem 1rem" }}>
+                  <div>
+                    <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", color: "oklch(0.380 0.010 240)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 2px" }}>Shop</p>
+                    <p style={{ fontSize: "0.75rem", color: "oklch(0.760 0.008 240)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{emp.shopName || "—"}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", color: "oklch(0.380 0.010 240)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 2px" }}>ID</p>
+                    <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.75rem", color: "oklch(0.680 0.158 155)", fontWeight: 600, margin: 0 }}>{emp.employeeId}</p>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="rounded-xl border border-border bg-card/40 p-8 text-center text-xs text-muted-foreground">
-                No technicians found matching criteria.
+                <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }} onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => onViewEmployee(emp)} className="es-btn es-btn-ghost" style={{ flex: 1, justifyContent: "center", height: "2rem", fontSize: "0.75rem" }}>
+                    <Eye size={12} /> View
+                  </button>
+                  <button onClick={() => onEditEmployee(emp)} className="es-btn es-btn-ghost" style={{ height: "2rem", padding: "0 0.625rem" }}><Edit2 size={12} /></button>
+                  <button onClick={() => onDeleteEmployee(emp._id)} className="es-btn es-btn-danger" style={{ height: "2rem", padding: "0 0.625rem" }}><Trash2 size={12} /></button>
+                </div>
+              </div>
+            )) : (
+              <div style={{ textAlign: "center", padding: "3rem 1rem", color: "oklch(0.420 0.012 240)", fontSize: "0.8125rem" }}>
+                No employees match your filters
               </div>
             )}
           </div>
 
-          {/* Desktop Full Data Table (Hidden on mobile screens) */}
-          <div className="hidden md:block overflow-hidden rounded-2xl luxury-card shadow-sm border border-white/[0.08]">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="border-b border-white/[0.08] bg-white/[0.02] font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          {/* Desktop table */}
+          <div className="hidden md:block es-card" style={{ overflow: "hidden" }}>
+            <div style={{ overflowX: "auto" }}>
+              <table className="es-table">
+                <thead>
                   <tr>
-                    <th className="px-5 py-3.5">Technician / Specialist</th>
-                    <th className="px-5 py-3.5">Assigned Charging Hub</th>
-                    <th className="px-5 py-3.5">Specialization & Level</th>
-                    <th className="px-5 py-3.5">Bay & Shift</th>
-                    <th className="px-5 py-3.5">Certifications</th>
-                    <th className="px-5 py-3.5">Status</th>
-                    <th className="px-5 py-3.5 text-right">Actions</th>
+                    <th>Employee</th>
+                    <th>Department</th>
+                    <th>Shop</th>
+                    <th>Level</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: "right" }}>Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/60">
-                {employees.length > 0 ? (
-                  employees.map((emp) => (
-                    <tr key={emp._id} className="transition-colors hover:bg-card/90">
-                      {/* Name & Photo */}
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-3">
-                          {emp.image ? (
-                            <img
-                              src={emp.image}
-                              alt={emp.name}
-                              className="size-9.5 shrink-0 rounded-full object-cover ring-1 ring-primary/40 shadow-sm"
-                            />
-                          ) : (
-                            <div className="flex size-9.5 shrink-0 items-center justify-center rounded-full bg-accent font-display text-xs font-bold text-foreground ring-1 ring-primary/30">
-                              {emp.firstName?.[0] || emp.name?.[0] || "T"}
-                              {emp.lastName?.[0] || ""}
-                            </div>
-                          )}
+                <tbody>
+                  {employees.length > 0 ? employees.map((emp) => (
+                    <tr key={emp._id}>
+                      <td>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                          <Avatar emp={emp} size={34} />
                           <div>
-                            <div
+                            <button
                               onClick={() => onViewEmployee(emp)}
-                              className="cursor-pointer font-bold text-foreground hover:text-primary transition-colors"
+                              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}
                             >
-                              {emp.name}
-                            </div>
-                            <div className="font-mono text-[10px] text-muted-foreground">
-                              {emp.employeeId} · {emp.email}
-                            </div>
+                              <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "oklch(0.970 0.004 240)", margin: 0, transition: "color 0.12s ease" }}
+                                onMouseEnter={(e) => (e.currentTarget.style.color = "oklch(0.720 0.158 155)")}
+                                onMouseLeave={(e) => (e.currentTarget.style.color = "oklch(0.970 0.004 240)")}
+                              >{emp.name}</p>
+                            </button>
+                            <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)", margin: "1px 0 0" }}>{emp.employeeId}</p>
                           </div>
                         </div>
                       </td>
-
-                      {/* Station */}
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-1.5">
-                          <Zap size={13} className="text-amber-400 shrink-0" />
-                          <span className="font-medium text-foreground truncate max-w-[150px]" title={emp.shopName}>
-                            {emp.shopName?.replace("ESARTHI ", "") || "National Fleet"}
-                          </span>
-                        </div>
+                      <td>
+                        <p style={{ fontSize: "0.8125rem", color: "oklch(0.760 0.008 240)", margin: 0 }}>{emp.department}</p>
+                        <p style={{ fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)", margin: "2px 0 0" }}>{emp.roleTitle}</p>
                       </td>
-
-                      {/* Role & Level */}
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-medium text-foreground">{emp.roleTitle}</span>
-                          <span className="rounded bg-primary/15 px-1.5 py-0.5 font-mono text-[9px] font-bold text-primary">
-                            {emp.level || "L1"}
-                          </span>
-                        </div>
-                        <span className="text-[10px] text-muted-foreground block mt-0.5">{emp.department}</span>
+                      <td>
+                        <p style={{ fontSize: "0.8125rem", color: "oklch(0.760 0.008 240)", margin: 0, maxWidth: "160px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{emp.shopName || "—"}</p>
                       </td>
-
-                      {/* Bay & Shift */}
-                      <td className="px-5 py-3.5">
-                        <div className="font-mono text-[11px] font-semibold text-foreground">
-                          {emp.assignedBay || "Bays 01-04 (DC)"}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                          <Clock size={10} />
-                          {emp.shift ? emp.shift.split(" ")[0] : "Day Shift"}
-                        </div>
+                      <td>
+                        <span style={{
+                          fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", fontWeight: 700,
+                          padding: "2px 7px", borderRadius: "5px",
+                          background: "oklch(0.680 0.158 155 / 0.10)", color: "oklch(0.680 0.158 155)",
+                          border: "1px solid oklch(0.680 0.158 155 / 0.18)",
+                        }}>
+                          {emp.level || "L1"}
+                        </span>
                       </td>
-
-                      {/* Certifications */}
-                      <td className="px-5 py-3.5">
-                        <div className="flex flex-wrap gap-1 max-w-[170px]">
-                          {(emp.certifications || ["HV Certified"]).slice(0, 2).map((cert, idx) => (
-                            <span
-                              key={idx}
-                              className="rounded bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 font-mono text-[8.5px] font-semibold text-emerald-400 truncate max-w-[160px] inline-flex items-center gap-1"
+                      <td>
+                        <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.500 0.012 240)" }}>
+                          {emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString("en-IN", { month: "short", year: "numeric" }) : "—"}
+                        </span>
+                      </td>
+                      <td><StatusBadge status={emp.status} /></td>
+                      <td>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px" }}>
+                          {[
+                            { icon: <Eye size={13} />, onClick: () => onViewEmployee(emp), title: "View", danger: false },
+                            { icon: <Edit2 size={13} />, onClick: () => onEditEmployee(emp), title: "Edit", danger: false },
+                            { icon: <Trash2 size={13} />, onClick: () => onDeleteEmployee(emp._id), title: "Delete", danger: true },
+                          ].map((action, i) => (
+                            <button
+                              key={i}
+                              onClick={action.onClick}
+                              title={action.title}
+                              style={{
+                                width: "1.875rem", height: "1.875rem", display: "flex", alignItems: "center", justifyContent: "center",
+                                borderRadius: "7px", border: "1px solid transparent",
+                                background: "transparent", cursor: "pointer",
+                                color: action.danger ? "oklch(0.680 0.200 27)" : "oklch(0.420 0.012 240)",
+                                transition: "all 0.12s ease",
+                              }}
+                              onMouseEnter={(e) => {
+                                const el = e.currentTarget as HTMLElement;
+                                if (action.danger) {
+                                  el.style.background = "oklch(0.580 0.230 27 / 0.10)";
+                                  el.style.borderColor = "oklch(0.580 0.230 27 / 0.25)";
+                                } else {
+                                  el.style.background = "oklch(0.155 0.012 240)";
+                                  el.style.borderColor = "oklch(0.240 0.012 240 / 0.50)";
+                                  el.style.color = "oklch(0.970 0.004 240)";
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                const el = e.currentTarget as HTMLElement;
+                                el.style.background = "transparent";
+                                el.style.borderColor = "transparent";
+                                el.style.color = action.danger ? "oklch(0.680 0.200 27)" : "oklch(0.420 0.012 240)";
+                              }}
                             >
-                              <Zap size={9} className="fill-emerald-400 shrink-0" />
-                              <span className="truncate">{cert}</span>
-                            </span>
+                              {action.icon}
+                            </button>
                           ))}
                         </div>
                       </td>
-
-                      {/* Status */}
-                      <td className="px-5 py-3.5">
-                        <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-mono text-[10px] font-bold ${
-                            emp.status === "Active"
-                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                              : emp.status === "Onboarding"
-                              ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
-                              : "bg-primary/10 text-primary"
-                          }`}
-                        >
-                          <span className="size-1.5 rounded-full bg-current" />
-                          {emp.status}
-                        </span>
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-5 py-3.5 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            onClick={() => onViewEmployee(emp)}
-                            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
-                            title="Inspect Technician Profile"
-                          >
-                            <Eye size={14} />
-                          </button>
-                          <button
-                            onClick={() => onEditEmployee(emp)}
-                            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
-                            title="Edit Record"
-                          >
-                            <Edit2 size={14} />
-                          </button>
-                          <button
-                            onClick={() => onDeleteEmployee(emp._id)}
-                            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive cursor-pointer"
-                            title="Delete Technician"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
+                    </tr>
+                  )) : (
+                    <tr>
+                      <td colSpan={7} style={{ textAlign: "center", padding: "3rem", color: "oklch(0.420 0.012 240)", fontSize: "0.8125rem" }}>
+                        No employees match your filters
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={7} className="px-5 py-12 text-center text-muted-foreground">
-                      No technicians match the selected station or filter criteria.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
         </>
       ) : (
-        /* Grid Card View */
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        /* ── Grid view ─────────────────────────────────── */
+        <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
           {employees.map((emp) => (
             <div
               key={emp._id}
-              className="group flex flex-col justify-between rounded-2xl border border-border bg-card/75 p-5 shadow-sm transition-all hover:border-primary/50 hover:bg-card hover:shadow-lg hover:shadow-primary/5"
+              className="es-card es-card-hover"
+              style={{ padding: "1.25rem", cursor: "pointer", transition: "all 0.20s ease" }}
             >
-              <div>
-                <div className="flex items-start justify-between">
-                  {emp.image ? (
-                    <img
-                      src={emp.image}
-                      alt={emp.name}
-                      className="size-13 rounded-2xl object-cover ring-2 ring-primary/40 shadow-sm"
-                    />
-                  ) : (
-                    <div className="flex size-13 items-center justify-center rounded-2xl bg-accent font-display text-sm font-bold text-foreground ring-2 ring-primary/30">
-                      {emp.firstName?.[0] || emp.name?.[0] || "T"}
-                      {emp.lastName?.[0] || ""}
-                    </div>
-                  )}
-
-                  <div className="flex flex-col items-end gap-1">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 font-mono text-[9px] font-bold ${
-                        emp.status === "Active"
-                          ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                          : "bg-amber-500/15 text-amber-400 border border-amber-500/30"
-                      }`}
-                    >
-                      {emp.status}
-                    </span>
-                    <span className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-mono text-[9px] font-semibold text-primary flex items-center gap-1">
-                      <Zap size={9} className="text-amber-400" />
-                      {emp.shopName?.split("—")[1]?.trim() || emp.shopName?.split("-")[1]?.trim() || "Hub"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-3.5">
-                  <h3
-                    onClick={() => onViewEmployee(emp)}
-                    className="cursor-pointer font-display text-base font-bold text-foreground transition-colors group-hover:text-primary"
-                  >
-                    {emp.name}
-                  </h3>
-                  <p className="text-xs font-semibold text-primary">{emp.roleTitle}</p>
-                  <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
-                    {emp.department} · {emp.level} · {emp.employeeId}
-                  </p>
-                </div>
-
-                {/* Bay & Shift Bar */}
-                <div className="mt-3 rounded-xl border border-border/80 bg-background/50 p-2.5 space-y-1">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-mono text-muted-foreground">Bay:</span>
-                    <span className="font-mono font-semibold text-foreground">{emp.assignedBay || "Bays 01-04"}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-mono text-muted-foreground">Shift:</span>
-                    <span className="font-mono text-emerald-400">{emp.shift || "Morning (06-14h)"}</span>
-                  </div>
-                </div>
-
-                {/* Certifications badges */}
-                <div className="mt-3 flex flex-wrap gap-1">
-                  {(emp.certifications || ["HV Safety Level 3", "OCPP 2.0.1"]).slice(0, 2).map((cert, idx) => (
-                    <span
-                      key={idx}
-                      className="rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 font-mono text-[9px] font-semibold text-emerald-400 inline-flex items-center gap-1"
-                    >
-                      <Zap size={9} className="fill-emerald-400 shrink-0" />
-                      <span>{cert}</span>
-                    </span>
-                  ))}
-                </div>
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.75rem" }}>
+                <Avatar emp={emp} size={44} />
+                <StatusBadge status={emp.status} />
               </div>
 
-              {/* Action buttons footer */}
-              <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-3">
-                <button
+              <div style={{ marginTop: "0.875rem" }}>
+                <h3
                   onClick={() => onViewEmployee(emp)}
-                  className="text-xs font-bold text-primary hover:underline cursor-pointer"
+                  style={{ fontFamily: '"Outfit", sans-serif', fontSize: "0.9375rem", fontWeight: 700, letterSpacing: "-0.02em", color: "oklch(0.970 0.004 240)", margin: "0 0 2px", cursor: "pointer" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "oklch(0.720 0.158 155)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "oklch(0.970 0.004 240)")}
                 >
-                  Inspect Profile →
-                </button>
+                  {emp.name}
+                </h3>
+                <p style={{ fontSize: "0.75rem", color: "oklch(0.680 0.158 155)", margin: 0, fontWeight: 600 }}>{emp.roleTitle}</p>
+                <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)", margin: "4px 0 0" }}>
+                  {emp.employeeId} · {emp.level || "L1"}
+                </p>
+              </div>
 
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => onEditEmployee(emp)}
-                    className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer"
-                    title="Edit Record"
-                  >
-                    <Edit2 size={13} />
-                  </button>
-                  <button
-                    onClick={() => onDeleteEmployee(emp._id)}
-                    className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/15 hover:text-destructive cursor-pointer"
-                    title="Delete Record"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                </div>
+              <div style={{ marginTop: "0.875rem", paddingTop: "0.875rem", borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                <p style={{ fontSize: "0.75rem", color: "oklch(0.500 0.012 240)", margin: 0 }}>{emp.department}</p>
+                <p style={{ fontSize: "0.75rem", color: "oklch(0.500 0.012 240)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{emp.shopName || "—"}</p>
+              </div>
+
+              <div style={{ marginTop: "0.875rem", display: "flex", gap: "0.5rem" }} onClick={(e) => e.stopPropagation()}>
+                <button onClick={() => onViewEmployee(emp)} className="es-btn es-btn-ghost" style={{ flex: 1, justifyContent: "center", height: "2rem", fontSize: "0.75rem" }}>
+                  <Eye size={12} /> View
+                </button>
+                <button onClick={() => onEditEmployee(emp)} className="es-btn es-btn-ghost" style={{ height: "2rem", padding: "0 0.625rem" }}><Edit2 size={12} /></button>
+                <button onClick={() => onDeleteEmployee(emp._id)} className="es-btn es-btn-danger" style={{ height: "2rem", padding: "0 0.625rem" }}><Trash2 size={12} /></button>
               </div>
             </div>
           ))}
+          {employees.length === 0 && (
+            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "3rem", color: "oklch(0.420 0.012 240)", fontSize: "0.8125rem" }}>
+              No employees match your filters
+            </div>
+          )}
         </div>
       )}
     </div>

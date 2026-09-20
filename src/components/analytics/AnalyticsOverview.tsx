@@ -11,9 +11,10 @@ import {
   Edit2,
   Trash2,
   Zap,
-  Phone,
-  Mail,
   CheckCircle2,
+  ShieldCheck,
+  Radio,
+  ExternalLink,
 } from "lucide-react";
 import { DashboardStats, Employee, Shop, UserSession } from "../../types";
 import ecoplugDayImage from "../../assets/ecoplug-day-station.jpeg";
@@ -21,6 +22,8 @@ import ecoplugBusImage from "../../assets/ecoplug-bus-fleet.jpeg";
 import ecoplugNightImage from "../../assets/ecoplug-night-hub.jpeg";
 
 export function getStationImage(shop?: Partial<Shop> | null, index = 0): string {
+  if (shop?.shopImage) return shop.shopImage;
+  if (shop?.image) return shop.image;
   if (!shop) return ecoplugDayImage;
   const text = `${shop.name || ""} ${shop.city || ""}`.toLowerCase();
   if (text.includes("fleet") || text.includes("bus") || text.includes("mumbai") || text.includes("bkc")) {
@@ -65,10 +68,8 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
   onEditEmployee,
   onDeleteEmployee,
 }) => {
-  // Check if current user is Shop Admin
   const isShopAdmin = currentUser?.type === "shopadmin";
 
-  // If Shop Admin, automatically lock to their assigned store
   const assignedShop = isShopAdmin
     ? shops.find(
         (s) =>
@@ -79,14 +80,10 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
       ) || shops[0]
     : null;
 
-  // State for joined store view (Superadmin can join any store)
   const [selectedStore, setSelectedStore] = useState<Shop | null>(null);
   const [storeSearch, setStoreSearch] = useState("");
   const [employeeSearch, setEmployeeSearch] = useState("");
 
-  // Active store:
-  // For a Shop Admin, it is ALWAYS their assigned store (no multi-shop overview)
-  // For a Superadmin, it is whatever store they joined (selectedStore) or null for all shops
   const activeStore = isShopAdmin ? assignedShop : selectedStore;
 
   const totalEmployees = stats?.totalEmployees ?? employees.length;
@@ -94,7 +91,6 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
   const totalPower = stats?.totalPowerCapacityKw ?? 1380;
   const totalBays = stats?.totalChargingBays ?? 46;
 
-  // Filtered stores for Superadmin overview
   const filteredShops = shops.filter(
     (s) =>
       s.name.toLowerCase().includes(storeSearch.toLowerCase()) ||
@@ -103,7 +99,6 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
       s.adminName.toLowerCase().includes(storeSearch.toLowerCase())
   );
 
-  // Employees for currently active store
   const storeEmployees = activeStore
     ? employees.filter(
         (e) =>
@@ -123,84 +118,199 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
   );
 
   return (
-    <div className="space-y-6 rise">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }} className="fade-in">
       {/* ========================================================================= */}
-      {/* MODE 1: ALL STORES & GLOBAL DASHBOARD OVERVIEW (Superadmin Only)          */}
+      {/* MODE 1: ALL STORES & GLOBAL DASHBOARD OVERVIEW (Superadmin View)          */}
       {/* ========================================================================= */}
       {!activeStore ? (
         <>
-          {/* Visual Upper Image Board with EV Charging Hub Showcase */}
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
-            {/* Background Image with Dark Vignette Gradient */}
-            <div className="absolute inset-0 z-0">
+          {/* Executive Network Showcase Hero */}
+          <div
+            className="es-card"
+            style={{
+              position: "relative",
+              overflow: "hidden",
+              padding: 0,
+              minHeight: "280px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+            }}
+          >
+            {/* Background Visual with Film-Grade Vignette */}
+            <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
               <img
                 src={ecoplugNightImage}
-                alt="ECOPLUG Energy India EV Charging Network"
-                className="h-full w-full object-cover object-center brightness-60 contrast-110"
+                alt="ESARTHI EV Charging Infrastructure"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center 40%",
+                  filter: "brightness(0.40) contrast(1.15)",
+                }}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/50" />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(90deg, oklch(0.095 0.010 240 / 0.98) 0%, oklch(0.095 0.010 240 / 0.85) 45%, oklch(0.095 0.010 240 / 0.40) 100%)",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(0deg, oklch(0.095 0.010 240) 0%, transparent 60%)",
+                }}
+              />
             </div>
 
             {/* Content Overlay */}
-            <div className="relative z-10 p-4 sm:p-8">
-              <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
-                <div className="max-w-2xl space-y-2">
-                  <div className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-border bg-card/80 px-2.5 py-1 font-mono text-[9.5px] sm:text-[11px] font-semibold text-primary backdrop-blur-md">
-                    <span className="size-1.5 rounded-full bg-emerald-400 inline-block animate-pulse shrink-0" />
-                    <span className="truncate">ECOPLUG Energy India · National Fast-Charging Grid</span>
+            <div style={{ position: "relative", zIndex: 1, padding: "2rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  gap: "1.25rem",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div style={{ maxWidth: "42rem" }}>
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      padding: "0.25rem 0.625rem",
+                      borderRadius: "9999px",
+                      background: "oklch(0.155 0.012 240 / 0.85)",
+                      border: "1px solid oklch(0.240 0.012 240 / 0.60)",
+                      backdropFilter: "blur(12px)",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <span className="es-dot" />
+                    <span
+                      style={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.6875rem",
+                        fontWeight: 600,
+                        color: "oklch(0.760 0.150 155)",
+                        letterSpacing: "0.02em",
+                      }}
+                    >
+                      ECOPLUG Energy India · National Fast-Charging Grid
+                    </span>
                   </div>
 
-                  <h1 className="font-display text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
-                    ESARTHI EV Power Network
+                  <h1
+                    style={{
+                      fontFamily: '"Outfit", sans-serif',
+                      fontSize: "clamp(1.5rem, 3vw, 2.25rem)",
+                      fontWeight: 800,
+                      letterSpacing: "-0.03em",
+                      color: "oklch(0.980 0.005 240)",
+                      lineHeight: 1.15,
+                      margin: "0 0 0.5rem",
+                    }}
+                  >
+                    ESARTHI Workforce & Grid Operations
                   </h1>
 
-                  <p className="text-xs sm:text-sm leading-relaxed text-slate-300 font-normal max-w-xl">
-                    Enterprise workforce and charging grid operations: Monitor 400V/800V DC fast chargers, dispatch certified high-voltage field technicians, and optimize multi-city store capacity.
+                  <p
+                    style={{
+                      fontSize: "0.875rem",
+                      lineHeight: 1.6,
+                      color: "oklch(0.650 0.012 240)",
+                      margin: "0 0 1.25rem",
+                      maxWidth: "36rem",
+                    }}
+                  >
+                    Enterprise workforce dispatch and charging grid management. Monitor 400V/800V DC fast
+                    chargers, manage certified high-voltage field engineers, and oversee multi-branch store operations.
                   </p>
 
-                  {/* Live Telemetry Pills */}
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 pt-1">
-                    <div className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 sm:px-3 sm:py-1.5 backdrop-blur-md">
-                      <Zap size={13} className="text-amber-400 fill-amber-400" />
-                      <span className="font-mono text-[11px] sm:text-xs text-white">
-                        <strong>{totalPower} kW</strong> Load
-                      </span>
+                  {/* Telemetry Pills */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.375rem",
+                        padding: "0.25rem 0.625rem",
+                        borderRadius: "8px",
+                        background: "oklch(0.120 0.012 240 / 0.80)",
+                        border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.75rem",
+                        color: "oklch(0.850 0.150 80)",
+                      }}
+                    >
+                      <Zap size={13} style={{ fill: "currentColor" }} />
+                      <span><strong>{totalPower} kW</strong> DC Load</span>
                     </div>
 
-                    <div className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 sm:px-3 sm:py-1.5 backdrop-blur-md">
-                      <Zap size={13} className="text-emerald-400 fill-emerald-400" />
-                      <span className="font-mono text-[11px] sm:text-xs text-white">
-                        <strong>{totalBays}</strong> Fast Bays
-                      </span>
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.375rem",
+                        padding: "0.25rem 0.625rem",
+                        borderRadius: "8px",
+                        background: "oklch(0.120 0.012 240 / 0.80)",
+                        border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.75rem",
+                        color: "oklch(0.760 0.150 155)",
+                      }}
+                    >
+                      <span className="es-dot" />
+                      <span><strong>{totalBays}</strong> Ultra-Fast Bays</span>
                     </div>
 
-                    <div className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 sm:px-3 sm:py-1.5 backdrop-blur-md">
-                      <span className="size-1.5 rounded-full bg-emerald-400 inline-block" />
-                      <span className="font-mono text-[11px] sm:text-xs text-white">
-                        <strong>99.9%</strong> SLA
-                      </span>
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.375rem",
+                        padding: "0.25rem 0.625rem",
+                        borderRadius: "8px",
+                        background: "oklch(0.120 0.012 240 / 0.80)",
+                        border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.75rem",
+                        color: "oklch(0.750 0.010 240)",
+                      }}
+                    >
+                      <Radio size={12} />
+                      <span><strong>99.9%</strong> Network SLA</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Action Buttons */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto pt-2 lg:pt-0">
+                {/* Header CTA Buttons */}
+                <div style={{ display: "flex", gap: "0.625rem", alignItems: "center", marginTop: "0.5rem" }}>
                   <button
                     onClick={() => onOpenAddEmployeeForShop(shops[0])}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 cursor-pointer tap-active"
+                    className="es-btn es-btn-primary"
+                    style={{ height: "2.375rem", padding: "0 1.125rem", fontSize: "0.8125rem" }}
                   >
-                    <UserPlus size={15} />
+                    <UserPlus size={14} />
                     Onboard Technician
                   </button>
 
                   {isSuperadmin && (
                     <button
                       onClick={onOpenCreateShop}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-black/50 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-md transition-all hover:bg-black/70 cursor-pointer tap-active"
+                      className="es-btn es-btn-ghost"
+                      style={{ height: "2.375rem", padding: "0 1.125rem", fontSize: "0.8125rem" }}
                     >
-                      <Plus size={15} />
-                      New Store
+                      <Plus size={14} />
+                      New Store Hub
                     </button>
                   )}
                 </div>
@@ -208,116 +318,301 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
             </div>
           </div>
 
-          {/* Top Dashboard Metrics - Ultra Luxury Specular Cards */}
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-4">
-            <div className="rounded-2xl luxury-card luxury-card-hover p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] sm:text-[10.5px] uppercase tracking-wider text-muted-foreground/80 font-bold">
-                  Total Hubs
+          {/* Top KPI Metrics Grid */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+              gap: "0.875rem",
+            }}
+          >
+            {/* KPI 1: Total Hubs */}
+            <div className="es-card es-card-hover" style={{ padding: "1.25rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: "oklch(0.480 0.012 240)",
+                  }}
+                >
+                  Operating Hubs
                 </span>
-                <div className="size-7 sm:size-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-xs">
+                <div
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    borderRadius: "8px",
+                    background: "oklch(0.680 0.158 155 / 0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "oklch(0.760 0.150 155)",
+                  }}
+                >
                   <Building size={14} />
                 </div>
               </div>
-              <div className="mt-3">
-                <p className="font-display text-2xl sm:text-3xl font-black tracking-tight text-foreground tabular-nums">
+              <div style={{ marginTop: "0.75rem" }}>
+                <p
+                  style={{
+                    fontFamily: '"Outfit", sans-serif',
+                    fontSize: "1.875rem",
+                    fontWeight: 800,
+                    letterSpacing: "-0.03em",
+                    color: "oklch(0.980 0.005 240)",
+                    lineHeight: 1,
+                    margin: 0,
+                  }}
+                >
                   {shops.length}
                 </p>
-                <div className="mt-1 flex items-center gap-1.5 font-mono text-[10px] text-emerald-400">
-                  <span className="size-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
-                  <span>100% Operational</span>
+                <div
+                  style={{
+                    marginTop: "0.375rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    color: "oklch(0.760 0.150 155)",
+                  }}
+                >
+                  <span className="es-dot" />
+                  <span>100% Online</span>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl luxury-card luxury-card-hover p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] sm:text-[10.5px] uppercase tracking-wider text-muted-foreground/80 font-bold">
-                  Total Staff
+            {/* KPI 2: Total Staff */}
+            <div className="es-card es-card-hover" style={{ padding: "1.25rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: "oklch(0.480 0.012 240)",
+                  }}
+                >
+                  Total Personnel
                 </span>
-                <div className="size-7 sm:size-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shadow-xs">
+                <div
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    borderRadius: "8px",
+                    background: "oklch(0.680 0.140 220 / 0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "oklch(0.750 0.140 220)",
+                  }}
+                >
                   <Users size={14} />
                 </div>
               </div>
-              <div className="mt-3">
-                <p className="font-display text-2xl sm:text-3xl font-black tracking-tight text-foreground tabular-nums">
+              <div style={{ marginTop: "0.75rem" }}>
+                <p
+                  style={{
+                    fontFamily: '"Outfit", sans-serif',
+                    fontSize: "1.875rem",
+                    fontWeight: 800,
+                    letterSpacing: "-0.03em",
+                    color: "oklch(0.980 0.005 240)",
+                    lineHeight: 1,
+                    margin: 0,
+                  }}
+                >
                   {totalEmployees}
                 </p>
-                <div className="mt-1 flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
-                  <span>Across {shops.length} Hubs</span>
+                <div
+                  style={{
+                    marginTop: "0.375rem",
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    color: "oklch(0.480 0.012 240)",
+                  }}
+                >
+                  Across {shops.length} stations
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl luxury-card luxury-card-hover p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] sm:text-[10.5px] uppercase tracking-wider text-muted-foreground/80 font-bold">
-                  Active Duty
+            {/* KPI 3: Active Duty */}
+            <div className="es-card es-card-hover" style={{ padding: "1.25rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: "oklch(0.480 0.012 240)",
+                  }}
+                >
+                  Active On-Duty
                 </span>
-                <div className="size-7 sm:size-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-xs">
+                <div
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    borderRadius: "8px",
+                    background: "oklch(0.680 0.158 155 / 0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "oklch(0.760 0.150 155)",
+                  }}
+                >
                   <CheckCircle2 size={14} />
                 </div>
               </div>
-              <div className="mt-3">
-                <p className="font-display text-2xl sm:text-3xl font-black tracking-tight text-emerald-400 tabular-nums">
+              <div style={{ marginTop: "0.75rem" }}>
+                <p
+                  style={{
+                    fontFamily: '"Outfit", sans-serif',
+                    fontSize: "1.875rem",
+                    fontWeight: 800,
+                    letterSpacing: "-0.03em",
+                    color: "oklch(0.760 0.150 155)",
+                    lineHeight: 1,
+                    margin: 0,
+                  }}
+                >
                   {activeEmployees}
                 </p>
-                <div className="mt-1 flex items-center gap-1.5 font-mono text-[10px] text-emerald-400/80">
-                  <span>On-Shift Technicians</span>
+                <div
+                  style={{
+                    marginTop: "0.375rem",
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    color: "oklch(0.680 0.158 155 / 0.85)",
+                  }}
+                >
+                  Certified Technicians
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl luxury-card luxury-card-hover p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] sm:text-[10.5px] uppercase tracking-wider text-muted-foreground/80 font-bold">
-                  Fast Grid Power
+            {/* KPI 4: Power Capacity */}
+            <div className="es-card es-card-hover" style={{ padding: "1.25rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: "oklch(0.480 0.012 240)",
+                  }}
+                >
+                  Grid Capacity
                 </span>
-                <div className="size-7 sm:size-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-xs">
-                  <Zap size={14} />
+                <div
+                  style={{
+                    width: "2rem",
+                    height: "2rem",
+                    borderRadius: "8px",
+                    background: "oklch(0.800 0.160 80 / 0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "oklch(0.850 0.150 80)",
+                  }}
+                >
+                  <Zap size={14} style={{ fill: "currentColor" }} />
                 </div>
               </div>
-              <div className="mt-3">
-                <p className="font-display text-2xl sm:text-3xl font-black tracking-tight text-amber-400 tabular-nums">
-                  {totalPower} <span className="text-base font-normal font-sans text-amber-400/70">kW</span>
+              <div style={{ marginTop: "0.75rem" }}>
+                <p
+                  style={{
+                    fontFamily: '"Outfit", sans-serif',
+                    fontSize: "1.875rem",
+                    fontWeight: 800,
+                    letterSpacing: "-0.03em",
+                    color: "oklch(0.850 0.150 80)",
+                    lineHeight: 1,
+                    margin: 0,
+                  }}
+                >
+                  {totalPower}{" "}
+                  <span style={{ fontSize: "1rem", fontWeight: 500, color: "oklch(0.650 0.012 240)" }}>
+                    kW
+                  </span>
                 </p>
-                <div className="mt-1 flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
-                  <span>{totalBays} Fast Bays Online</span>
+                <div
+                  style={{
+                    marginTop: "0.375rem",
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    color: "oklch(0.480 0.012 240)",
+                  }}
+                >
+                  {totalBays} DC Fast Bays
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Stores Directory Section */}
-          <div className="space-y-4">
-            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center border-b border-white/[0.08] pb-3">
+          {/* Operating Hubs & Stores Section */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "1rem",
+                paddingBottom: "0.5rem",
+                borderBottom: "1px solid oklch(0.220 0.012 240 / 0.40)",
+              }}
+            >
               <div>
-                <h3 className="font-display text-base sm:text-lg font-bold text-foreground">
-                  Operating Stores & Hubs
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Select any store to join, view assigned staff, or register technicians
+                <h2
+                  style={{
+                    fontFamily: '"Outfit", sans-serif',
+                    fontSize: "1.125rem",
+                    fontWeight: 700,
+                    letterSpacing: "-0.02em",
+                    color: "oklch(0.980 0.005 240)",
+                    margin: 0,
+                  }}
+                >
+                  Operating Hubs & Stores
+                </h2>
+                <p style={{ fontSize: "0.75rem", color: "oklch(0.480 0.012 240)", margin: "2px 0 0" }}>
+                  Join any station to inspect bay schedules, manage staff roster, or register field engineers
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                <div className="relative flex-1 sm:w-64">
-                  <Search className="absolute left-3 top-2.5 size-3.5 text-muted-foreground/60" />
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <div className="es-search-wrap" style={{ width: "240px" }}>
+                  <Search size={14} className="es-search-icon" />
                   <input
                     type="text"
-                    placeholder="Filter stores by city, code..."
+                    placeholder="Search stores, city, code..."
                     value={storeSearch}
                     onChange={(e) => setStoreSearch(e.target.value)}
-                    className="h-9 w-full rounded-xl luxury-input pl-8.5 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 transition-all font-sans"
+                    className="es-input"
+                    style={{ height: "2.125rem", fontSize: "0.75rem" }}
                   />
                 </div>
 
                 {isSuperadmin && (
                   <button
                     onClick={onOpenCreateShop}
-                    className="inline-flex items-center justify-center gap-1.5 rounded-xl luxury-button px-3.5 py-2 text-xs font-bold text-primary-foreground transition-all cursor-pointer shadow-md tap-active"
+                    className="es-btn es-btn-primary"
+                    style={{ height: "2.125rem", fontSize: "0.75rem", padding: "0 0.75rem" }}
                   >
-                    <Plus size={14} />
+                    <Plus size={13} />
                     New Store
                   </button>
                 )}
@@ -325,7 +620,13 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
             </div>
 
             {/* Stores Cards Grid */}
-            <div className="grid gap-4 md:grid-cols-2">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                gap: "1rem",
+              }}
+            >
               {filteredShops.map((shop, idx) => {
                 const cleanName = shop.name
                   .replace(/^ESARTHI\s+/i, "")
@@ -342,96 +643,255 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                 return (
                   <div
                     key={shop._id}
-                    className="rounded-2xl luxury-card luxury-card-hover p-5 flex flex-col justify-between group overflow-hidden relative"
+                    className="es-card es-card-hover"
+                    style={{
+                      padding: "1.25rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                    }}
                   >
                     <div>
-                      {/* Store Visual Header Banner */}
-                      <div className="relative h-32 w-full overflow-hidden rounded-xl mb-3.5 border border-white/[0.08]">
+                      {/* Store Photo Banner */}
+                      <div
+                        style={{
+                          position: "relative",
+                          height: "140px",
+                          width: "100%",
+                          borderRadius: "10px",
+                          overflow: "hidden",
+                          marginBottom: "1rem",
+                          border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                        }}
+                      >
                         <img
                           src={getStationImage(shop, idx)}
                           alt={shop.name}
-                          className="h-full w-full object-cover brightness-85 group-hover:scale-105 transition-transform duration-500"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            filter: "brightness(0.70) contrast(1.10)",
+                            transition: "transform 0.4s ease",
+                          }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                          <span className="rounded-lg bg-black/70 backdrop-blur-md px-2 py-0.5 font-mono text-[9.5px] font-bold text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                            <Zap size={10} className="fill-emerald-400" /> {shop.powerCapacityKw || 300} kW DC
+                        <div
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            background:
+                              "linear-gradient(0deg, oklch(0.095 0.010 240 / 0.90) 0%, transparent 65%)",
+                          }}
+                        />
+
+                        {/* Top Badges */}
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "0.625rem",
+                            left: "0.625rem",
+                            display: "flex",
+                            gap: "0.375rem",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontFamily: '"JetBrains Mono", monospace',
+                              fontSize: "0.6875rem",
+                              fontWeight: 600,
+                              background: "oklch(0.120 0.012 240 / 0.85)",
+                              color: "oklch(0.760 0.150 155)",
+                              border: "1px solid oklch(0.680 0.158 155 / 0.30)",
+                              backdropFilter: "blur(8px)",
+                              padding: "0.1875rem 0.5rem",
+                              borderRadius: "6px",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.25rem",
+                            }}
+                          >
+                            <Zap size={10} style={{ fill: "currentColor" }} />
+                            {shop.powerCapacityKw || 240} kW DC
                           </span>
-                          <span className="rounded-lg bg-black/70 backdrop-blur-md px-2 py-0.5 font-mono text-[9.5px] text-slate-200 border border-white/10">
-                            {shop.totalBays || 10} Fast Bays
+                          <span
+                            style={{
+                              fontFamily: '"JetBrains Mono", monospace',
+                              fontSize: "0.6875rem",
+                              background: "oklch(0.120 0.012 240 / 0.85)",
+                              color: "oklch(0.850 0.005 240)",
+                              border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                              backdropFilter: "blur(8px)",
+                              padding: "0.1875rem 0.5rem",
+                              borderRadius: "6px",
+                            }}
+                          >
+                            {shop.totalBays || 8} Bays
                           </span>
                         </div>
-                        <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between">
-                          <span className="font-display text-xs sm:text-sm font-bold text-white tracking-wide drop-shadow">
+
+                        {/* Bottom Info inside banner */}
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: "0.625rem",
+                            left: "0.75rem",
+                            right: "0.75rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontFamily: '"Outfit", sans-serif',
+                              fontSize: "0.8125rem",
+                              fontWeight: 700,
+                              color: "oklch(0.980 0.005 240)",
+                            }}
+                          >
                             {shop.city} Station
                           </span>
-                          <span className="font-mono text-[10px] text-emerald-300 font-semibold drop-shadow bg-black/50 px-2 py-0.5 rounded border border-emerald-500/20">
-                            {count} Staff on duty
+                          <span
+                            style={{
+                              fontFamily: '"JetBrains Mono", monospace',
+                              fontSize: "0.6875rem",
+                              color: "oklch(0.760 0.150 155)",
+                              background: "oklch(0.120 0.012 240 / 0.85)",
+                              border: "1px solid oklch(0.680 0.158 155 / 0.25)",
+                              padding: "0.125rem 0.5rem",
+                              borderRadius: "4px",
+                            }}
+                          >
+                            {count} Staff on-site
                           </span>
                         </div>
                       </div>
 
-                      {/* Store Header */}
-                      <div className="flex items-start justify-between">
+                      {/* Store Details Header */}
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                         <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <h3
+                              style={{
+                                fontFamily: '"Outfit", sans-serif',
+                                fontSize: "1rem",
+                                fontWeight: 700,
+                                letterSpacing: "-0.02em",
+                                color: "oklch(0.980 0.005 240)",
+                                margin: 0,
+                              }}
+                            >
                               {cleanName}
-                            </span>
-                            <span className="rounded-md bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 font-mono text-[9.5px] text-primary">
+                            </h3>
+                            <span
+                              style={{
+                                fontFamily: '"JetBrains Mono", monospace',
+                                fontSize: "0.625rem",
+                                background: "oklch(0.155 0.012 240)",
+                                color: "oklch(0.760 0.150 155)",
+                                border: "1px solid oklch(0.680 0.158 155 / 0.20)",
+                                borderRadius: "4px",
+                                padding: "1px 5px",
+                              }}
+                            >
                               {shop.city}
                             </span>
                           </div>
-                          <p className="mt-1 font-mono text-[11px] text-muted-foreground">
-                            {shop.code} · {shop.powerCapacityKw || 240} kW DC · {shop.totalBays || 8} Fast Bays
+                          <p
+                            style={{
+                              fontFamily: '"JetBrains Mono", monospace',
+                              fontSize: "0.6875rem",
+                              color: "oklch(0.480 0.012 240)",
+                              margin: "4px 0 0",
+                            }}
+                          >
+                            {shop.code} · {shop.stationType || "DC Fast Hub"}
                           </p>
                         </div>
 
                         {isSuperadmin && (
-                          <div className="flex items-center gap-1">
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
                             <button
                               onClick={() => onEditShop(shop)}
-                              className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/[0.06] cursor-pointer rounded-lg transition-colors"
-                              title="Edit Store Particulars"
+                              className="es-btn es-btn-ghost"
+                              style={{ width: "1.875rem", height: "1.875rem", padding: 0 }}
+                              title="Edit Store"
                             >
-                              <Edit2 size={13} />
+                              <Edit2 size={12} />
                             </button>
                             <button
                               onClick={() => onDeleteShop(shop._id)}
-                              className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer rounded-lg transition-colors"
+                              className="es-btn es-btn-danger"
+                              style={{ width: "1.875rem", height: "1.875rem", padding: 0 }}
                               title="Delete Store"
                             >
-                              <Trash2 size={13} />
+                              <Trash2 size={12} />
                             </button>
                           </div>
                         )}
                       </div>
 
-                      {/* Store Manager Info */}
-                      <div className="mt-3 pt-3 border-t border-white/[0.06] text-xs text-muted-foreground">
-                        <span className="font-medium text-foreground">Manager / Admin:</span> {shop.adminName}
-                        <span className="ml-2 font-mono text-[11px] text-muted-foreground/80">({shop.adminPhone || shop.adminEmail})</span>
+                      {/* Store Manager row */}
+                      <div
+                        style={{
+                          marginTop: "0.75rem",
+                          paddingTop: "0.75rem",
+                          borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                          fontSize: "0.75rem",
+                          color: "oklch(0.500 0.012 240)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <span style={{ color: "oklch(0.850 0.005 240)", fontWeight: 500 }}>
+                            Manager: {shop.adminName}
+                          </span>
+                        </div>
+                        <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)" }}>
+                          {shop.adminPhone || shop.adminEmail}
+                        </span>
                       </div>
                     </div>
 
-                    {/* Store Card Actions */}
-                    <div className="mt-4 pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                      <span className="font-mono text-xs font-semibold text-primary">
+                    {/* Actions Footer */}
+                    <div
+                      style={{
+                        marginTop: "1rem",
+                        paddingTop: "0.875rem",
+                        borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "0.5rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: '"JetBrains Mono", monospace',
+                          fontSize: "0.75rem",
+                          fontWeight: 600,
+                          color: "oklch(0.760 0.150 155)",
+                        }}
+                      >
                         {count} {count === 1 ? "Employee" : "Employees"}
                       </span>
 
-                      <div className="flex items-center gap-2">
+                      <div style={{ display: "flex", gap: "0.375rem" }}>
                         <button
                           onClick={() => onOpenAddEmployeeForShop(shop)}
-                          className="flex-1 sm:flex-initial rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 px-3 py-2 text-xs font-semibold text-foreground transition-all cursor-pointer tap-active text-center"
+                          className="es-btn es-btn-ghost"
+                          style={{ height: "2rem", padding: "0 0.625rem", fontSize: "0.75rem" }}
                         >
                           + Staff
                         </button>
                         <button
                           onClick={() => setSelectedStore(shop)}
-                          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl luxury-button px-3.5 py-2 text-xs font-bold text-primary-foreground transition-all cursor-pointer shadow-md tap-active"
+                          className="es-btn es-btn-primary"
+                          style={{ height: "2rem", padding: "0 0.75rem", fontSize: "0.75rem" }}
                         >
-                          Join Store <ArrowRight size={13} />
+                          Join Store <ArrowRight size={12} />
                         </button>
                       </div>
                     </div>
@@ -443,10 +903,10 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
         </>
       ) : (
         /* ========================================================================= */
-        /* MODE 2: INSIDE STORE VIEW (Shop Admin Portal OR Superadmin Joined Store)   */
+        /* MODE 2: INSIDE STORE VIEW (Shop Admin View OR Superadmin Joined Store)    */
         /* ========================================================================= */
-        <div className="space-y-6">
-          {/* Back Navigation & Store Upper Image Board */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }} className="fade-in">
+          {/* Store Visual Header */}
           {(() => {
             const cleanStoreName = activeStore.name
               .replace(/^ESARTHI\s+/i, "")
@@ -454,19 +914,57 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
               .trim();
 
             return (
-              <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
-                <div className="absolute inset-0 z-0">
+              <div
+                className="es-card"
+                style={{
+                  position: "relative",
+                  overflow: "hidden",
+                  padding: 0,
+                  minHeight: "220px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
                   <img
                     src={getStationImage(activeStore, 0)}
                     alt={activeStore.name}
-                    className="h-full w-full object-cover object-center brightness-60 contrast-105"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      filter: "brightness(0.40) contrast(1.15)",
+                    }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/50" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background:
+                        "linear-gradient(90deg, oklch(0.095 0.010 240 / 0.98) 0%, oklch(0.095 0.010 240 / 0.85) 50%, oklch(0.095 0.010 240 / 0.40) 100%)",
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background:
+                        "linear-gradient(0deg, oklch(0.095 0.010 240) 0%, transparent 60%)",
+                    }}
+                  />
                 </div>
 
-                <div className="relative z-10 p-4 sm:p-8">
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div style={{ position: "relative", zIndex: 1, padding: "1.75rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "flex-end",
+                      justifyContent: "space-between",
+                      gap: "1rem",
+                    }}
+                  >
                     <div>
                       {!isShopAdmin && (
                         <button
@@ -474,49 +972,89 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                             setSelectedStore(null);
                             setEmployeeSearch("");
                           }}
-                          className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/40 px-3 py-1.5 text-xs font-medium text-white hover:bg-black/60 transition-colors cursor-pointer mb-3 backdrop-blur-md tap-active"
+                          className="es-btn es-btn-ghost"
+                          style={{
+                            height: "1.875rem",
+                            padding: "0 0.625rem",
+                            fontSize: "0.75rem",
+                            marginBottom: "0.75rem",
+                            background: "oklch(0.120 0.012 240 / 0.80)",
+                            border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                            backdropFilter: "blur(8px)",
+                          }}
                         >
-                          <ArrowLeft size={14} /> Back to All Stores
+                          <ArrowLeft size={13} /> Back to All Stores
                         </button>
                       )}
 
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="font-display text-xl sm:text-3xl font-bold text-white">
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", flexWrap: "wrap" }}>
+                        <h1
+                          style={{
+                            fontFamily: '"Outfit", sans-serif',
+                            fontSize: "clamp(1.25rem, 2.5vw, 1.875rem)",
+                            fontWeight: 800,
+                            letterSpacing: "-0.03em",
+                            color: "oklch(0.980 0.005 240)",
+                            margin: 0,
+                          }}
+                        >
                           {cleanStoreName}
-                        </h2>
-                        <span className="rounded-full bg-primary/20 border border-primary/40 px-2.5 py-0.5 font-mono text-[9.5px] sm:text-[10px] text-primary font-bold">
-                          {isShopAdmin ? "Store Admin Portal" : "Joined Store"} · {activeStore.city}
+                        </h1>
+                        <span
+                          style={{
+                            fontFamily: '"JetBrains Mono", monospace',
+                            fontSize: "0.6875rem",
+                            fontWeight: 600,
+                            background: "oklch(0.680 0.158 155 / 0.15)",
+                            color: "oklch(0.760 0.150 155)",
+                            border: "1px solid oklch(0.680 0.158 155 / 0.30)",
+                            borderRadius: "9999px",
+                            padding: "2px 8px",
+                          }}
+                        >
+                          {isShopAdmin ? "Store Admin Portal" : "Joined Station"} · {activeStore.city}
                         </span>
                       </div>
 
-                      <p className="mt-1 text-xs text-slate-300 font-mono">
-                        Station Code: {activeStore.code} · {activeStore.powerCapacityKw || 300} kW DC · {activeStore.totalBays || 10} Fast Bays
+                      <p
+                        style={{
+                          fontFamily: '"JetBrains Mono", monospace',
+                          fontSize: "0.75rem",
+                          color: "oklch(0.650 0.012 240)",
+                          margin: "4px 0 0",
+                        }}
+                      >
+                        Code: {activeStore.code} · {activeStore.powerCapacityKw || 240} kW DC · {activeStore.totalBays || 8} Fast Bays
                       </p>
 
-                      <div className="mt-2 text-xs text-slate-300">
-                        <span className="text-white font-medium">Store Manager:</span> {activeStore.adminName}
-                        <span className="ml-2 font-mono text-[11px] text-slate-400">({activeStore.adminPhone || activeStore.adminEmail})</span>
-                      </div>
+                      <p style={{ fontSize: "0.75rem", color: "oklch(0.500 0.012 240)", margin: "4px 0 0" }}>
+                        Manager: <strong style={{ color: "oklch(0.850 0.005 240)" }}>{activeStore.adminName}</strong>
+                        <span style={{ fontFamily: '"JetBrains Mono", monospace', marginLeft: "0.5rem" }}>
+                          ({activeStore.adminPhone || activeStore.adminEmail})
+                        </span>
+                      </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
-                      <div className="relative flex-1 sm:w-48">
-                        <Search className="absolute left-3 top-2.5 size-3.5 text-muted-foreground" />
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <div className="es-search-wrap" style={{ width: "220px" }}>
+                        <Search size={14} className="es-search-icon" />
                         <input
                           type="text"
                           placeholder="Search store staff..."
                           value={employeeSearch}
                           onChange={(e) => setEmployeeSearch(e.target.value)}
-                          className="h-9 w-full rounded-xl border border-white/20 bg-black/50 pl-8 pr-3 text-xs text-white placeholder:text-slate-400 focus:border-primary/60 focus:outline-none backdrop-blur-md"
+                          className="es-input"
+                          style={{ height: "2.125rem", fontSize: "0.75rem" }}
                         />
                       </div>
 
                       <button
                         onClick={() => onOpenAddEmployeeForShop(activeStore)}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shadow-md tap-active"
+                        className="es-btn es-btn-primary"
+                        style={{ height: "2.125rem", padding: "0 0.875rem", fontSize: "0.75rem" }}
                       >
-                        <UserPlus size={14} />
-                        Add Staff to Store
+                        <UserPlus size={13} />
+                        Add Staff
                       </button>
                     </div>
                   </div>
@@ -525,256 +1063,206 @@ export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
             );
           })()}
 
-          {/* Store Quick Telemetry KPI Cards */}
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-4">
-            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
-              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Store Employees</span>
-              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-foreground">{storeEmployees.length}</p>
-              <span className="text-[10px] sm:text-[11px] text-muted-foreground">Assigned staff</span>
+          {/* Store Telemetry Cards */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+              gap: "0.75rem",
+            }}
+          >
+            <div className="es-card" style={{ padding: "1rem" }}>
+              <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.480 0.012 240)", textTransform: "uppercase" }}>
+                Store Technicians
+              </span>
+              <p style={{ fontFamily: '"Outfit", sans-serif', fontSize: "1.5rem", fontWeight: 800, color: "oklch(0.980 0.005 240)", margin: "4px 0 0" }}>
+                {storeEmployees.length}
+              </p>
+              <span style={{ fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)" }}>Assigned personnel</span>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
-              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Active On Duty</span>
-              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-emerald-400">
+            <div className="es-card" style={{ padding: "1rem" }}>
+              <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.480 0.012 240)", textTransform: "uppercase" }}>
+                Active On Duty
+              </span>
+              <p style={{ fontFamily: '"Outfit", sans-serif', fontSize: "1.5rem", fontWeight: 800, color: "oklch(0.760 0.150 155)", margin: "4px 0 0" }}>
                 {storeEmployees.filter((e) => e.status === "Active").length}
               </p>
-              <span className="text-[10px] sm:text-[11px] text-muted-foreground">Verified on site</span>
+              <span style={{ fontSize: "0.6875rem", color: "oklch(0.760 0.150 155 / 0.70)" }}>Present on shift</span>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
-              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Power Capacity</span>
-              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-amber-400">{activeStore.powerCapacityKw || 300} kW</p>
-              <span className="text-[10px] sm:text-[11px] text-muted-foreground">DC Ultra-Fast</span>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card/70 p-3 sm:p-4">
-              <span className="font-mono text-[9.5px] sm:text-[10px] uppercase text-muted-foreground">Charging Bays</span>
-              <p className="mt-1 font-display text-xl sm:text-2xl font-bold text-emerald-400">{activeStore.totalBays || 10}</p>
-              <span className="text-[10px] sm:text-[11px] text-muted-foreground">Fast stalls</span>
-            </div>
-          </div>
-
-          {/* Store Employees Table Section Header */}
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <div>
-              <h3 className="font-display text-base font-bold text-foreground">
-                Store Employee Roster ({filteredStoreEmployees.length})
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                {isShopAdmin
-                  ? `Viewing personnel assigned to your store: ${activeStore.name}`
-                  : `Personnel assigned exclusively to ${activeStore.name}`}
+            <div className="es-card" style={{ padding: "1rem" }}>
+              <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.480 0.012 240)", textTransform: "uppercase" }}>
+                Power Capacity
+              </span>
+              <p style={{ fontFamily: '"Outfit", sans-serif', fontSize: "1.5rem", fontWeight: 800, color: "oklch(0.850 0.150 80)", margin: "4px 0 0" }}>
+                {activeStore.powerCapacityKw || 240} kW
               </p>
+              <span style={{ fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)" }}>DC Ultra-Fast</span>
+            </div>
+
+            <div className="es-card" style={{ padding: "1rem" }}>
+              <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.480 0.012 240)", textTransform: "uppercase" }}>
+                Charging Bays
+              </span>
+              <p style={{ fontFamily: '"Outfit", sans-serif', fontSize: "1.5rem", fontWeight: 800, color: "oklch(0.760 0.150 155)", margin: "4px 0 0" }}>
+                {activeStore.totalBays || 8}
+              </p>
+              <span style={{ fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)" }}>High-Voltage bays</span>
             </div>
           </div>
 
-          {/* MOBILE VIEW: Luxury Card Stack for Personnel (Shown on Mobile screens) */}
-          <div className="block md:hidden space-y-3">
-            {filteredStoreEmployees.length > 0 ? (
-              filteredStoreEmployees.map((emp) => (
-                <div
-                  key={emp._id}
-                  className="rounded-xl border border-border/80 bg-card/80 p-4 space-y-3 shadow-xs"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      {emp.image ? (
-                        <img
-                          src={emp.image}
-                          alt={emp.name}
-                          className="size-10 rounded-full object-cover border border-border"
-                        />
-                      ) : (
-                        <div className="flex size-10 items-center justify-center rounded-full bg-secondary font-bold text-xs text-foreground">
-                          {emp.firstName?.[0] || emp.name?.[0] || "E"}
-                        </div>
-                      )}
-                      <div>
-                        <h4
-                          onClick={() => onViewEmployee(emp)}
-                          className="font-bold text-sm text-foreground hover:text-primary cursor-pointer"
-                        >
-                          {emp.name}
-                        </h4>
-                        <p className="text-xs text-muted-foreground">{emp.roleTitle}</p>
-                      </div>
-                    </div>
+          {/* Store Staff Table Section */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h3
+                style={{
+                  fontFamily: '"Outfit", sans-serif',
+                  fontSize: "1rem",
+                  fontWeight: 700,
+                  letterSpacing: "-0.02em",
+                  color: "oklch(0.980 0.005 240)",
+                  margin: 0,
+                }}
+              >
+                Station Personnel Roster ({filteredStoreEmployees.length})
+              </h3>
+            </div>
 
-                    <span
-                      className={`rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold ${
-                        emp.status === "Active"
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                          : "bg-secondary text-muted-foreground"
-                      }`}
-                    >
-                      {emp.status}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[11px] font-mono">
-                    <div>
-                      <span className="text-muted-foreground uppercase text-[9px]">ID: </span>
-                      <span className="text-primary font-bold">{emp.employeeId}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground uppercase text-[9px]">Level: </span>
-                      <span className="text-foreground">{emp.level || "L3"}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground uppercase text-[9px]">Dept: </span>
-                      <span className="text-foreground truncate block">{emp.department}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground uppercase text-[9px]">Salary: </span>
-                      <span className="text-foreground font-semibold">{emp.salary || "Standard"}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/50">
-                    <button
-                      onClick={() => onViewEmployee(emp)}
-                      className="flex-1 rounded-lg bg-primary/10 border border-primary/20 py-1.5 text-center text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer tap-active"
-                    >
-                      View Details
-                    </button>
-                    <button
-                      onClick={() => onEditEmployee(emp)}
-                      className="rounded-lg p-2 bg-secondary/50 text-muted-foreground hover:text-foreground cursor-pointer tap-active"
-                      title="Edit"
-                    >
-                      <Edit2 size={13} />
-                    </button>
-                    <button
-                      onClick={() => onDeleteEmployee(emp._id)}
-                      className="rounded-lg p-2 bg-destructive/10 text-destructive hover:bg-destructive/20 cursor-pointer tap-active"
-                      title="Delete"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="rounded-xl border border-border bg-card/40 p-8 text-center text-xs text-muted-foreground space-y-2">
-                <p>No employees found in {activeStore?.name || "this store"}.</p>
-                <button
-                  onClick={() => onOpenAddEmployeeForShop(activeStore)}
-                  className="text-xs text-primary font-semibold hover:underline cursor-pointer"
-                >
-                  + Add Staff Now
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* DESKTOP VIEW: Full Data Table (Shown on md+ screens) */}
-          <div className="hidden md:block overflow-hidden rounded-xl border border-border bg-card/70 shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="border-b border-border bg-secondary/40 font-mono text-[10px] uppercase text-muted-foreground">
+            {/* Desktop Table */}
+            <div className="es-table-wrap">
+              <table className="es-table">
+                <thead>
                   <tr>
-                    <th className="px-4 py-3">Employee Name</th>
-                    <th className="px-4 py-3">Employee ID</th>
-                    <th className="px-4 py-3">Role & Level</th>
-                    <th className="px-4 py-3">Department</th>
-                    <th className="px-4 py-3">Monthly Salary</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3 text-right">Actions</th>
+                    <th>Technician</th>
+                    <th>ID</th>
+                    <th>Role & Level</th>
+                    <th>Department</th>
+                    <th>Monthly Salary</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: "right" }}>Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/50">
-                  {filteredStoreEmployees.length > 0 ? (
-                    filteredStoreEmployees.map((emp) => (
-                      <tr key={emp._id} className="hover:bg-secondary/30 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2.5">
-                            {emp.image ? (
-                              <img
-                                src={emp.image}
-                                alt={emp.name}
-                                className="size-8 rounded-full object-cover border border-border"
-                              />
-                            ) : (
-                              <div className="flex size-8 items-center justify-center rounded-full bg-secondary font-bold text-foreground">
-                                {emp.firstName?.[0] || emp.name?.[0] || "E"}
-                              </div>
-                            )}
-                            <div>
-                              <p
-                                onClick={() => onViewEmployee(emp)}
-                                className="font-bold text-foreground hover:text-primary cursor-pointer transition-colors"
-                              >
-                                {emp.name}
-                              </p>
-                              <p className="font-mono text-[10px] text-muted-foreground">{emp.email}</p>
+                <tbody>
+                  {filteredStoreEmployees.map((emp) => (
+                    <tr key={emp._id}>
+                      <td>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                          {emp.image ? (
+                            <img
+                              src={emp.image}
+                              alt={emp.name}
+                              style={{ width: "2rem", height: "2rem", borderRadius: "9999px", objectFit: "cover" }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: "2rem",
+                                height: "2rem",
+                                borderRadius: "9999px",
+                                background: "oklch(0.180 0.012 240)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "0.75rem",
+                                fontWeight: 700,
+                                color: "oklch(0.760 0.150 155)",
+                              }}
+                            >
+                              {emp.firstName?.[0] || emp.name?.[0] || "E"}
                             </div>
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-3 font-mono text-primary font-semibold">
-                          {emp.employeeId}
-                        </td>
-
-                        <td className="px-4 py-3">
-                          <span className="font-medium text-foreground">{emp.roleTitle}</span>
-                          <span className="ml-1 text-muted-foreground font-mono text-[10px]">({emp.level || "L3"})</span>
-                        </td>
-
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {emp.department}
-                        </td>
-
-                        <td className="px-4 py-3 font-medium text-foreground">
-                          {emp.salary || "Standard"}
-                        </td>
-
-                        <td className="px-4 py-3">
-                          <span
-                            className={`rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold ${
-                              emp.status === "Active"
-                                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                : "bg-secondary text-muted-foreground"
-                            }`}
-                          >
-                            {emp.status}
-                          </span>
-                        </td>
-
-                        <td className="px-4 py-3 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <button
+                          )}
+                          <div>
+                            <p
                               onClick={() => onViewEmployee(emp)}
-                              className="rounded px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors cursor-pointer"
-                              title="View Full Details"
+                              style={{
+                                fontWeight: 600,
+                                color: "oklch(0.970 0.004 240)",
+                                margin: 0,
+                                cursor: "pointer",
+                              }}
                             >
-                              View Details
-                            </button>
-                            <button
-                              onClick={() => onEditEmployee(emp)}
-                              className="rounded p-1 text-muted-foreground hover:text-foreground cursor-pointer"
-                              title="Edit"
+                              {emp.name}
+                            </p>
+                            <p
+                              style={{
+                                fontFamily: '"JetBrains Mono", monospace',
+                                fontSize: "0.6875rem",
+                                color: "oklch(0.420 0.012 240)",
+                                margin: "2px 0 0",
+                              }}
                             >
-                              <Edit2 size={13} />
-                            </button>
-                            <button
-                              onClick={() => onDeleteEmployee(emp._id)}
-                              className="rounded p-1 text-muted-foreground hover:text-destructive cursor-pointer"
-                              title="Delete"
-                            >
-                              <Trash2 size={13} />
-                            </button>
+                              {emp.email}
+                            </p>
                           </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
+                        </div>
+                      </td>
+
+                      <td style={{ fontFamily: '"JetBrains Mono", monospace', color: "oklch(0.760 0.150 155)", fontWeight: 600 }}>
+                        {emp.employeeId}
+                      </td>
+
+                      <td>
+                        <span style={{ fontWeight: 500, color: "oklch(0.900 0.005 240)" }}>{emp.roleTitle}</span>
+                        <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)", marginLeft: "0.375rem" }}>
+                          ({emp.level || "L1"})
+                        </span>
+                      </td>
+
+                      <td style={{ color: "oklch(0.500 0.012 240)" }}>{emp.department}</td>
+
+                      <td style={{ color: "oklch(0.850 0.005 240)", fontWeight: 500 }}>
+                        {emp.salary || "Standard"}
+                      </td>
+
+                      <td>
+                        <span
+                          className={`es-badge ${
+                            emp.status === "Active" ? "es-badge-emerald" : "es-badge-amber"
+                          }`}
+                        >
+                          {emp.status}
+                        </span>
+                      </td>
+
+                      <td style={{ textAlign: "right" }}>
+                        <div style={{ display: "inline-flex", gap: "0.375rem" }}>
+                          <button
+                            onClick={() => onViewEmployee(emp)}
+                            className="es-btn es-btn-ghost"
+                            style={{ height: "1.75rem", padding: "0 0.5rem", fontSize: "0.75rem" }}
+                          >
+                            <Eye size={12} /> View
+                          </button>
+                          <button
+                            onClick={() => onEditEmployee(emp)}
+                            className="es-btn es-btn-ghost"
+                            style={{ height: "1.75rem", width: "1.75rem", padding: 0 }}
+                            title="Edit"
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                          <button
+                            onClick={() => onDeleteEmployee(emp._id)}
+                            className="es-btn es-btn-danger"
+                            style={{ height: "1.75rem", width: "1.75rem", padding: 0 }}
+                            title="Delete"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredStoreEmployees.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
-                        No employees found in {activeStore?.name || "this store"}.
-                        <div className="mt-2">
+                      <td colSpan={7} style={{ textAlign: "center", padding: "3rem 1rem", color: "oklch(0.420 0.012 240)" }}>
+                        No employees found in this store.
+                        <div style={{ marginTop: "0.5rem" }}>
                           <button
                             onClick={() => onOpenAddEmployeeForShop(activeStore)}
-                            className="text-xs text-primary font-semibold hover:underline cursor-pointer"
+                            className="es-btn es-btn-primary"
+                            style={{ height: "2rem", fontSize: "0.75rem", margin: "0 auto" }}
                           >
                             + Add Employee Now
                           </button>

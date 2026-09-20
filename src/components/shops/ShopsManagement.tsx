@@ -5,10 +5,10 @@ import {
   Edit2,
   Trash2,
   Users,
-  MapPin,
-  ArrowRight,
   Search,
   ShieldCheck,
+  ArrowRight,
+  Radio,
 } from "lucide-react";
 import { Shop } from "../../types";
 import { getStationImage } from "../analytics/AnalyticsOverview";
@@ -45,43 +45,84 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
   const activeBays = shops.reduce((sum, s) => sum + (s.activeBays || 6), 0);
 
   return (
-    <div className="space-y-6 rise">
-      {/* Minimal Header */}
-      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }} className="fade-in">
+      {/* Header Bar */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "1rem",
+        }}
+      >
         <div>
-          <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Charging Hubs
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            {shops.length} Active Stations · {totalPower} kW Total Power · {activeBays}/{totalBays} Bays Online
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <h1
+              style={{
+                fontFamily: '"Outfit", sans-serif',
+                fontSize: "1.5rem",
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+                color: "oklch(0.980 0.005 240)",
+                margin: 0,
+              }}
+            >
+              Charging Hubs & Station Stores
+            </h1>
+            <span
+              style={{
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                background: "oklch(0.155 0.012 240)",
+                color: "oklch(0.760 0.150 155)",
+                border: "1px solid oklch(0.680 0.158 155 / 0.20)",
+                borderRadius: "9999px",
+                padding: "2px 8px",
+              }}
+            >
+              {shops.length} Active
+            </span>
+          </div>
+          <p style={{ fontSize: "0.8125rem", color: "oklch(0.500 0.012 240)", margin: "4px 0 0" }}>
+            {totalPower} kW Total Grid Load · {activeBays}/{totalBays} Bays Online · 99.8% Network SLA
           </p>
         </div>
 
-        <button
-          onClick={onOpenCreateShop}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors cursor-pointer tap-active w-full sm:w-auto"
-        >
-          <Plus size={15} />
-          New Station
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+          <div className="es-search-wrap" style={{ width: "260px" }}>
+            <Search size={14} className="es-search-icon" />
+            <input
+              type="text"
+              placeholder="Search station, city, code..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="es-input"
+              style={{ height: "2.25rem", fontSize: "0.8125rem" }}
+            />
+          </div>
+
+          <button
+            onClick={onOpenCreateShop}
+            className="es-btn es-btn-primary"
+            style={{ height: "2.25rem", padding: "0 1rem", fontSize: "0.8125rem" }}
+          >
+            <Plus size={14} />
+            New Station
+          </button>
+        </div>
       </div>
 
-      {/* Search Filter */}
-      <div className="relative w-full sm:max-w-sm">
-        <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
-        <input
-          type="text"
-          placeholder="Filter stations by city, name, or code..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="h-10 w-full rounded-xl border border-border bg-card/70 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none"
-        />
-      </div>
-
-      {/* Minimalist Stations Grid */}
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-2">
+      {/* Stations Cards Grid */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+          gap: "1.25rem",
+        }}
+      >
         {filteredShops.map((shop, idx) => {
-          // Clean name: strip "ESARTHI " and trailing " — City"
           const cleanName = shop.name
             .replace(/^ESARTHI\s+/i, "")
             .replace(/\s*[-—]\s*[^—-]+$/, "")
@@ -95,149 +136,354 @@ export const ShopsManagement: React.FC<ShopsManagementProps> = ({
           return (
             <div
               key={shop._id}
-              className="rounded-2xl border border-border bg-card/80 p-5 transition-all hover:border-primary/50 hover:bg-card shadow-sm flex flex-col justify-between group overflow-hidden"
+              className="es-card es-card-hover"
+              style={{
+                padding: "1.25rem",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
             >
               <div>
-                {/* Station Visual Banner */}
-                <div className="relative h-36 w-full overflow-hidden rounded-xl mb-4">
+                {/* Station Photo Banner */}
+                <div
+                  style={{
+                    position: "relative",
+                    height: "150px",
+                    width: "100%",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                    marginBottom: "1rem",
+                    border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                  }}
+                >
                   <img
                     src={getStationImage(shop, idx)}
                     alt={shop.name}
-                    className="h-full w-full object-cover brightness-85 group-hover:scale-105 transition-transform duration-500"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      filter: "brightness(0.70) contrast(1.10)",
+                      transition: "transform 0.4s ease",
+                    }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                  
-                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                    <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                      <Zap size={10} className="fill-emerald-400" /> {cap} kW DC
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background:
+                        "linear-gradient(0deg, oklch(0.095 0.010 240 / 0.90) 0%, transparent 65%)",
+                    }}
+                  />
+
+                  {/* Top Badges */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "0.625rem",
+                      left: "0.625rem",
+                      display: "flex",
+                      gap: "0.375rem",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.6875rem",
+                        fontWeight: 600,
+                        background: "oklch(0.120 0.012 240 / 0.85)",
+                        color: "oklch(0.850 0.150 80)",
+                        border: "1px solid oklch(0.800 0.160 80 / 0.30)",
+                        backdropFilter: "blur(8px)",
+                        padding: "0.1875rem 0.5rem",
+                        borderRadius: "6px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                      }}
+                    >
+                      <Zap size={10} style={{ fill: "currentColor" }} />
+                      {cap} kW DC
                     </span>
-                    <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-0.5 font-mono text-[10px] text-slate-200">
+                    <span
+                      style={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.6875rem",
+                        background: "oklch(0.120 0.012 240 / 0.85)",
+                        color: "oklch(0.850 0.005 240)",
+                        border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                        backdropFilter: "blur(8px)",
+                        padding: "0.1875rem 0.5rem",
+                        borderRadius: "6px",
+                      }}
+                    >
                       {shop.city} Hub
                     </span>
                   </div>
 
-                  <div className="absolute top-2.5 right-2.5">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-black/60 backdrop-blur-md px-2.5 py-0.5 font-mono text-[10px] text-emerald-400 font-medium border border-white/10">
-                      <span className="size-1.5 rounded-full bg-emerald-400" />
-                      {shop.status === "active" ? "Online" : "Inactive"}
+                  <div style={{ position: "absolute", top: "0.625rem", right: "0.625rem" }}>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.375rem",
+                        padding: "0.1875rem 0.5rem",
+                        borderRadius: "9999px",
+                        background: "oklch(0.120 0.012 240 / 0.85)",
+                        border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                        backdropFilter: "blur(8px)",
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.6875rem",
+                        color: "oklch(0.760 0.150 155)",
+                      }}
+                    >
+                      <span className="es-dot" />
+                      Online
                     </span>
                   </div>
 
-                  <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between">
-                    <span className="font-display text-xs font-bold text-white tracking-wide">
+                  {/* Bottom Info inside banner */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "0.625rem",
+                      left: "0.75rem",
+                      right: "0.75rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: '"Outfit", sans-serif',
+                        fontSize: "0.8125rem",
+                        fontWeight: 700,
+                        color: "oklch(0.980 0.005 240)",
+                      }}
+                    >
                       ECOPLUG · {shop.code}
                     </span>
-                    <span className="font-mono text-[10px] text-emerald-300 font-medium">
+                    <span
+                      style={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.6875rem",
+                        color: "oklch(0.760 0.150 155)",
+                      }}
+                    >
                       SLA: {shop.uptimePercent || 99.8}%
                     </span>
                   </div>
                 </div>
 
-                {/* Station Title & Status Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
-                      {cleanName}
-                    </span>
-                    <span className="rounded bg-secondary px-2 py-0.5 font-mono text-[9.5px] text-muted-foreground">
-                      {shop.city}
-                    </span>
+                {/* Station Title & Status */}
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <h3
+                        style={{
+                          fontFamily: '"Outfit", sans-serif',
+                          fontSize: "1.0625rem",
+                          fontWeight: 700,
+                          letterSpacing: "-0.02em",
+                          color: "oklch(0.980 0.005 240)",
+                          margin: 0,
+                        }}
+                      >
+                        {cleanName}
+                      </h3>
+                      <span
+                        style={{
+                          fontFamily: '"JetBrains Mono", monospace',
+                          fontSize: "0.625rem",
+                          background: "oklch(0.155 0.012 240)",
+                          color: "oklch(0.760 0.150 155)",
+                          border: "1px solid oklch(0.680 0.158 155 / 0.20)",
+                          borderRadius: "4px",
+                          padding: "1px 5px",
+                        }}
+                      >
+                        {shop.city}
+                      </span>
+                    </div>
+
+                    <p
+                      style={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.6875rem",
+                        color: "oklch(0.480 0.012 240)",
+                        margin: "4px 0 0",
+                      }}
+                    >
+                      Code: {shop.code} · Manager: {shop.adminName}
+                    </p>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
                     <button
                       onClick={() => onEditShop(shop)}
-                      className="rounded p-1.5 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
+                      className="es-btn es-btn-ghost"
+                      style={{ width: "1.875rem", height: "1.875rem", padding: 0 }}
                       title="Edit Station"
                     >
-                      <Edit2 size={13} />
+                      <Edit2 size={12} />
                     </button>
                     <button
                       onClick={() => onDeleteShop(shop._id)}
-                      className="rounded p-1.5 text-muted-foreground hover:text-destructive hover:bg-secondary transition-colors cursor-pointer"
+                      className="es-btn es-btn-danger"
+                      style={{ width: "1.875rem", height: "1.875rem", padding: 0 }}
                       title="Delete Station"
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={12} />
                     </button>
                   </div>
                 </div>
 
-                {/* Subtitle / Code & Lead */}
-                <div className="mt-1 flex items-center gap-2 text-[11px] font-mono text-muted-foreground">
-                  <span>{shop.code}</span>
-                  <span>·</span>
-                  <span>Lead: {shop.adminName}</span>
-                </div>
-
-                {/* Shop Admin ID (@esarthi.com) configuration pill */}
-                <div className="mt-2.5 flex items-center justify-between rounded-lg bg-secondary/50 border border-border/70 px-2.5 py-1.5 text-[11px]">
-                  <div className="flex items-center gap-1.5 overflow-hidden">
-                    <ShieldCheck size={13} className="text-primary shrink-0" />
-                    <span className="font-mono text-foreground font-medium truncate">
+                {/* Corporate Admin ID bar */}
+                <div
+                  style={{
+                    marginTop: "0.75rem",
+                    padding: "0.5rem 0.625rem",
+                    borderRadius: "8px",
+                    background: "oklch(0.100 0.010 240)",
+                    border: "1px solid oklch(0.220 0.012 240 / 0.50)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", overflow: "hidden" }}>
+                    <ShieldCheck size={13} style={{ color: "oklch(0.680 0.158 155)", flexShrink: 0 }} />
+                    <span
+                      style={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: "0.6875rem",
+                        color: "oklch(0.900 0.005 240)",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {shop.adminEmail || `${shop.city.toLowerCase().replace(/\s+/g, "")}.admin@esarthi.com`}
                     </span>
                   </div>
                   <button
                     onClick={() => onSwitchToShopAdmin(shop)}
-                    className="shrink-0 text-[10px] font-mono font-bold text-primary hover:underline ml-2 cursor-pointer"
-                    title="Log in directly as this Hub Admin"
+                    style={{
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: "0.6875rem",
+                      fontWeight: 600,
+                      color: "oklch(0.760 0.150 155)",
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      whiteSpace: "nowrap",
+                    }}
                   >
                     Login As Admin →
                   </button>
                 </div>
 
-                {/* Power & Live Bay Occupancy Bar */}
-                <div className="mt-4 pt-3 border-t border-border/50 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-amber-400 font-bold flex items-center gap-1">
-                      <Zap size={13} className="fill-amber-400" />
+                {/* Power & Live Bay Occupancy */}
+                <div
+                  style={{
+                    marginTop: "0.875rem",
+                    paddingTop: "0.875rem",
+                    borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.375rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: "0.6875rem",
+                    }}
+                  >
+                    <span style={{ color: "oklch(0.850 0.150 80)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
+                      <Zap size={11} style={{ fill: "currentColor" }} />
                       {cap} kW DC
                     </span>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <span>{actBays}/{totBays} Bays</span>
-                      <span className={pct > 80 ? "text-amber-400 font-bold" : "text-emerald-400 font-semibold"}>
-                        {pct}%
-                      </span>
-                    </div>
+                    <span style={{ color: "oklch(0.480 0.012 240)" }}>
+                      {actBays}/{totBays} Bays Online ({pct}%)
+                    </span>
                   </div>
 
-                  {/* Slim Progress Bar */}
-                  <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+                  {/* Progress Bar */}
+                  <div
+                    style={{
+                      height: "4px",
+                      width: "100%",
+                      borderRadius: "9999px",
+                      background: "oklch(0.155 0.012 240)",
+                      overflow: "hidden",
+                    }}
+                  >
                     <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        pct > 80 ? "bg-amber-400" : "bg-emerald-400"
-                      }`}
-                      style={{ width: `${pct}%` }}
+                      style={{
+                        height: "100%",
+                        width: `${pct}%`,
+                        borderRadius: "9999px",
+                        background: pct > 80 ? "oklch(0.850 0.150 80)" : "oklch(0.680 0.158 155)",
+                        transition: "width 0.4s ease",
+                      }}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Minimal Footer */}
-              <div className="mt-4 pt-3 border-t border-border/50 flex flex-wrap items-center justify-between gap-2 text-xs">
+              {/* Card Footer */}
+              <div
+                style={{
+                  marginTop: "1rem",
+                  paddingTop: "0.875rem",
+                  borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "0.5rem",
+                }}
+              >
                 <button
                   onClick={() => onViewShopStaff(shop._id)}
-                  className="font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 cursor-pointer tap-active"
+                  className="es-btn es-btn-ghost"
+                  style={{ height: "2rem", padding: "0 0.625rem", fontSize: "0.75rem" }}
                 >
                   <Users size={13} />
                   {shop.employeeCount || 0} Technicians
                 </button>
 
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-[10.5px] text-muted-foreground">
-                    {shop.uptimePercent || 99.8}% Uptime
-                  </span>
-                  <button
-                    onClick={() => onSwitchToShopAdmin(shop)}
-                    className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5 text-xs cursor-pointer tap-active"
-                  >
-                    Manage Station <ArrowRight size={11} />
-                  </button>
-                </div>
+                <button
+                  onClick={() => onSwitchToShopAdmin(shop)}
+                  className="es-btn es-btn-primary"
+                  style={{ height: "2rem", padding: "0 0.75rem", fontSize: "0.75rem" }}
+                >
+                  Manage Station <ArrowRight size={12} />
+                </button>
               </div>
             </div>
           );
         })}
+        {filteredShops.length === 0 && (
+          <div
+            style={{
+              gridColumn: "1 / -1",
+              textAlign: "center",
+              padding: "4rem 1rem",
+              color: "oklch(0.420 0.012 240)",
+              fontSize: "0.8125rem",
+            }}
+          >
+            No charging hubs match your search query
+          </div>
+        )}
       </div>
     </div>
   );

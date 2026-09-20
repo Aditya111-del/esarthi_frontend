@@ -18,6 +18,8 @@ export interface Shop {
   uptimePercent?: number;
   dailyEnergyKwh?: number;
   employeeCount?: number;
+  image?: string;
+  shopImage?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -51,6 +53,9 @@ export interface Employee {
   safetyEquipmentCleared?: boolean;
   bio: string;
   image?: string;
+  profilePhoto?: string;
+  aadhaarCardUrl?: string;
+  panCardUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 }

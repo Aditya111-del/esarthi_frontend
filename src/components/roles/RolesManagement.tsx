@@ -6,7 +6,6 @@ import {
   Trash2,
   CheckCircle2,
   Search,
-  Sparkles,
 } from "lucide-react";
 import { JobRole } from "../../types";
 
@@ -38,63 +37,114 @@ export const RolesManagement: React.FC<RolesManagementProps> = ({
   });
 
   return (
-    <div className="space-y-6 rise">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }} className="fade-in">
       {/* Header */}
-      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "1rem",
+        }}
+      >
         <div>
-          <div className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-primary uppercase">
-            ORGANIZATIONAL STRUCTURE
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <h1
+              style={{
+                fontFamily: '"Outfit", sans-serif',
+                fontSize: "1.5rem",
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+                color: "oklch(0.980 0.005 240)",
+                margin: 0,
+              }}
+            >
+              Job Roles & Competency Standards
+            </h1>
+            <span
+              style={{
+                fontFamily: '"JetBrains Mono", monospace',
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                background: "oklch(0.155 0.012 240)",
+                color: "oklch(0.760 0.150 155)",
+                border: "1px solid oklch(0.680 0.158 155 / 0.20)",
+                borderRadius: "9999px",
+                padding: "2px 8px",
+              }}
+            >
+              {roles.length} Roles
+            </span>
           </div>
-          <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Job Roles & Positions
-          </h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Define roles, seniority levels, required competencies, and responsibility milestones
+          <p style={{ fontSize: "0.8125rem", color: "oklch(0.500 0.012 240)", margin: "4px 0 0" }}>
+            High-voltage engineering certifications, seniority bands, and operational responsibilities
           </p>
         </div>
 
         <button
           onClick={onOpenCreateRole}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors cursor-pointer tap-active w-full sm:w-auto"
+          className="es-btn es-btn-primary"
+          style={{ height: "2.25rem", padding: "0 1rem", fontSize: "0.8125rem" }}
         >
-          <Plus size={15} />
+          <Plus size={14} />
           Create New Role
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
+      {/* Filters & Department Tabs */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "0.75rem",
+        }}
+      >
+        <div className="es-search-wrap" style={{ width: "260px" }}>
+          <Search size={14} className="es-search-icon" />
           <input
             type="text"
-            placeholder="Search roles or skills..."
+            placeholder="Search roles or competencies..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 w-full rounded-lg border border-border bg-card/70 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
+            className="es-input"
+            style={{ height: "2.125rem", fontSize: "0.75rem" }}
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", overflowX: "auto", maxWidth: "100%", paddingBottom: "2px" }}>
           <button
             onClick={() => setSelectedDept("all")}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-              selectedDept === "all"
-                ? "bg-primary text-primary-foreground font-semibold"
-                : "border border-border bg-card/80 text-muted-foreground hover:text-foreground"
-            }`}
+            className="es-btn"
+            style={{
+              height: "2rem",
+              padding: "0 0.75rem",
+              fontSize: "0.75rem",
+              borderRadius: "8px",
+              ...(selectedDept === "all"
+                ? { background: "oklch(0.680 0.158 155)", color: "white", fontWeight: 600 }
+                : { background: "oklch(0.120 0.012 240)", color: "oklch(0.500 0.012 240)" }),
+            }}
           >
-            All Vertical
+            All Verticals
           </button>
           {departments.map((d) => (
             <button
               key={d}
               onClick={() => setSelectedDept(d)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
-                selectedDept === d
-                  ? "bg-primary text-primary-foreground font-semibold"
-                  : "border border-border bg-card/80 text-muted-foreground hover:text-foreground"
-              }`}
+              className="es-btn"
+              style={{
+                height: "2rem",
+                padding: "0 0.75rem",
+                fontSize: "0.75rem",
+                borderRadius: "8px",
+                whiteSpace: "nowrap",
+                ...(selectedDept === d
+                  ? { background: "oklch(0.680 0.158 155)", color: "white", fontWeight: 600 }
+                  : { background: "oklch(0.120 0.012 240)", color: "oklch(0.500 0.012 240)" }),
+              }}
             >
               {d}
             </button>
@@ -103,83 +153,168 @@ export const RolesManagement: React.FC<RolesManagementProps> = ({
       </div>
 
       {/* Roles Cards Grid */}
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "1rem",
+        }}
+      >
         {filteredRoles.map((role) => (
           <div
             key={role._id}
-            className="group flex flex-col justify-between rounded-xl border border-border bg-card/60 p-6 transition-all hover:border-primary/50 hover:bg-card hover:shadow-lg hover:shadow-primary/5"
+            className="es-card es-card-hover"
+            style={{
+              padding: "1.25rem",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
           >
             <div>
-              <div className="flex items-start justify-between">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Briefcase size={18} />
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                <div
+                  style={{
+                    width: "2.25rem",
+                    height: "2.25rem",
+                    borderRadius: "10px",
+                    background: "oklch(0.680 0.158 155 / 0.12)",
+                    color: "oklch(0.760 0.150 155)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Briefcase size={16} />
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="rounded-md border border-primary/30 bg-accent px-2 py-0.5 font-mono text-[10px] font-bold text-primary">
+
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span
+                    style={{
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: "0.6875rem",
+                      fontWeight: 600,
+                      background: "oklch(0.155 0.012 240)",
+                      color: "oklch(0.760 0.150 155)",
+                      border: "1px solid oklch(0.680 0.158 155 / 0.20)",
+                      borderRadius: "6px",
+                      padding: "2px 6px",
+                    }}
+                  >
                     {role.level}
                   </span>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => onEditRole(role)}
-                      className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
-                      title="Edit Role"
-                    >
-                      <Edit2 size={13} />
-                    </button>
-                    <button
-                      onClick={() => onDeleteRole(role._id)}
-                      className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      title="Delete Role"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
+
+                  <button
+                    onClick={() => onEditRole(role)}
+                    className="es-btn es-btn-ghost"
+                    style={{ width: "1.75rem", height: "1.75rem", padding: 0 }}
+                    title="Edit Role"
+                  >
+                    <Edit2 size={12} />
+                  </button>
+                  <button
+                    onClick={() => onDeleteRole(role._id)}
+                    className="es-btn es-btn-danger"
+                    style={{ width: "1.75rem", height: "1.75rem", padding: 0 }}
+                    title="Delete Role"
+                  >
+                    <Trash2 size={12} />
+                  </button>
                 </div>
               </div>
 
-              <div className="mt-4">
-                <h3 className="font-display text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+              <div style={{ marginTop: "1rem" }}>
+                <h3
+                  style={{
+                    fontFamily: '"Outfit", sans-serif',
+                    fontSize: "1.0625rem",
+                    fontWeight: 700,
+                    letterSpacing: "-0.02em",
+                    color: "oklch(0.980 0.005 240)",
+                    margin: 0,
+                  }}
+                >
                   {role.title}
                 </h3>
-                <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                <p
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.6875rem",
+                    color: "oklch(0.480 0.012 240)",
+                    textTransform: "uppercase",
+                    margin: "2px 0 0",
+                  }}
+                >
                   {role.department}
                 </p>
               </div>
 
-              <p className="mt-3 line-clamp-3 text-xs leading-relaxed text-muted-foreground">
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  lineHeight: 1.5,
+                  color: "oklch(0.600 0.012 240)",
+                  marginTop: "0.75rem",
+                }}
+              >
                 {role.description}
               </p>
 
-              {/* Responsibilities list */}
               {role.responsibilities && role.responsibilities.length > 0 && (
-                <div className="mt-4 space-y-1 border-t border-border/60 pt-3">
-                  <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-                    Core Mandate
-                  </p>
-                  <ul className="space-y-1 text-xs text-foreground/80">
-                    {role.responsibilities.slice(0, 2).map((resp, i) => (
-                      <li key={i} className="flex items-start gap-1.5 truncate text-[11px]">
-                        <CheckCircle2 size={12} className="shrink-0 text-primary mt-0.5" />
-                        <span className="truncate">{resp}</span>
-                      </li>
-                    ))}
-                    {role.responsibilities.length > 2 && (
-                      <p className="font-mono text-[9px] text-primary">
-                        +{role.responsibilities.length - 2} more responsibilities
-                      </p>
-                    )}
-                  </ul>
+                <div
+                  style={{
+                    marginTop: "0.875rem",
+                    paddingTop: "0.75rem",
+                    borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.375rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: "0.625rem",
+                      color: "oklch(0.420 0.012 240)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                    }}
+                  >
+                    Key Responsibilities
+                  </span>
+                  {role.responsibilities.slice(0, 2).map((resp, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.75rem", color: "oklch(0.800 0.005 240)" }}>
+                      <CheckCircle2 size={12} style={{ color: "oklch(0.680 0.158 155)", flexShrink: 0 }} />
+                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{resp}</span>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
 
-            {/* Skills */}
             {role.skills && role.skills.length > 0 && (
-              <div className="mt-5 flex flex-wrap gap-1.5 border-t border-border/60 pt-3">
+              <div
+                style={{
+                  marginTop: "1rem",
+                  paddingTop: "0.75rem",
+                  borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "0.375rem",
+                }}
+              >
                 {role.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="rounded border border-border bg-secondary/50 px-2 py-0.5 font-mono text-[10px] text-muted-foreground"
+                    style={{
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: "0.625rem",
+                      background: "oklch(0.155 0.012 240)",
+                      color: "oklch(0.700 0.010 240)",
+                      borderRadius: "4px",
+                      padding: "2px 6px",
+                      border: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                    }}
                   >
                     {skill}
                   </span>
@@ -188,16 +323,17 @@ export const RolesManagement: React.FC<RolesManagementProps> = ({
             )}
           </div>
         ))}
-
         {filteredRoles.length === 0 && (
-          <div className="col-span-full rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
-            <Briefcase size={28} className="mx-auto text-muted-foreground/60" />
-            <h4 className="mt-3 font-display text-base font-semibold text-foreground">
-              No matching job roles
-            </h4>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Try adjusting your filter or create a new job role.
-            </p>
+          <div
+            style={{
+              gridColumn: "1 / -1",
+              textAlign: "center",
+              padding: "4rem 1rem",
+              color: "oklch(0.420 0.012 240)",
+              fontSize: "0.8125rem",
+            }}
+          >
+            No job roles found matching your filter
           </div>
         )}
       </div>

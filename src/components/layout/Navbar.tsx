@@ -4,18 +4,17 @@ import {
   User,
   LogOut,
   LogIn,
-  Building,
   BarChart3,
   X,
-  Zap,
   Menu,
   Users,
   Briefcase,
   Store,
   ChevronRight,
-  ShieldCheck,
   UserPlus,
   Plus,
+  Zap,
+  ShieldCheck,
 } from "lucide-react";
 import { UserSession, Employee, Shop } from "../../types";
 
@@ -51,7 +50,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const searchRef = useRef<HTMLDivElement>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
-  // Filter employees for search
   const searchResults = searchQuery.trim()
     ? employees.filter((emp) => {
         const q = searchQuery.toLowerCase();
@@ -65,7 +63,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       })
     : [];
 
-  // Close search dropdown on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -76,19 +73,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Lock body scroll when mobile menu or mobile search is open
   useEffect(() => {
-    if (isMobileMenuOpen || isMobileSearchOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = isMobileMenuOpen || isMobileSearchOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [isMobileMenuOpen, isMobileSearchOpen]);
 
-  // Focus mobile input on open
   useEffect(() => {
     if (isMobileSearchOpen && mobileSearchInputRef.current) {
       mobileSearchInputRef.current.focus();
@@ -96,11 +85,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, [isMobileSearchOpen]);
 
   const navItems = [
-    { id: "overview", label: "Overview", icon: BarChart3, badge: "Live" },
-    { id: "roster", label: "Technicians", icon: Users, count: employees.length },
-    { id: "shops", label: "Charging Hubs", icon: Store, count: shops.length },
-    { id: "roles", label: "Roles", icon: Briefcase },
-    { id: "profile", label: "My Profile", icon: User },
+    { id: "overview",  label: "Overview",   icon: BarChart3 },
+    { id: "roster",    label: "Staff",       icon: Users,    count: employees.length },
+    { id: "shops",     label: "Shops",       icon: Store,    count: shops.length },
+    { id: "roles",     label: "Roles",       icon: Briefcase },
+    { id: "profile",   label: "Profile",     icon: User },
   ];
 
   const handleNavClick = (tabId: string) => {
@@ -109,123 +98,226 @@ export const Navbar: React.FC<NavbarProps> = ({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const initials = (name: string) =>
+    name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
+
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-background/90 backdrop-blur-md transition-all">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3.5 sm:px-6 lg:px-8 gap-3">
-          {/* Brand & Logo */}
+      {/* ───────────────────────────── TOPBAR ───────────────────────────── */}
+      <header
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
+          width: "100%",
+          borderBottom: "1px solid oklch(0.220 0.012 240 / 0.40)",
+          background: "oklch(0.085 0.010 240 / 0.92)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1280px",
+            margin: "0 auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0 1.25rem",
+            height: "3.75rem",
+            gap: "1rem",
+          }}
+        >
+          {/* Brand */}
           <div
             onClick={() => handleNavClick("overview")}
-            className="cursor-pointer select-none shrink-0 flex items-center gap-2.5 tap-active"
+            style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.625rem", flexShrink: 0, userSelect: "none" }}
+            className="tap-active"
           >
-            <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
-              <Zap size={18} className="fill-primary-foreground text-primary-foreground" />
+            <div
+              style={{
+                width: "2.125rem",
+                height: "2.125rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "10px",
+                background: "oklch(0.680 0.158 155)",
+                boxShadow: "0 2px 10px oklch(0.680 0.158 155 / 0.35)",
+                flexShrink: 0,
+              }}
+            >
+              <Zap size={16} style={{ color: "white", fill: "white" }} />
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="font-display text-lg font-black tracking-tight text-foreground hover:text-primary transition-colors leading-none">
+            <div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "0.375rem" }}>
+                <span
+                  style={{
+                    fontFamily: '"Outfit", sans-serif',
+                    fontSize: "1.0625rem",
+                    fontWeight: 800,
+                    letterSpacing: "-0.03em",
+                    color: "oklch(0.970 0.004 240)",
+                    lineHeight: 1,
+                  }}
+                >
                   ESARTHI
                 </span>
-                <span className="hidden sm:inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 font-mono text-[8.5px] font-bold text-primary border border-primary/20">
-                  EV-OPS
+                <span
+                  className="hidden sm:inline-flex"
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: "0.625rem",
+                    fontWeight: 600,
+                    color: "oklch(0.680 0.158 155)",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    background: "oklch(0.680 0.158 155 / 0.10)",
+                    border: "1px solid oklch(0.680 0.158 155 / 0.22)",
+                    borderRadius: "4px",
+                    padding: "1px 5px",
+                  }}
+                >
+                  v2
                 </span>
               </div>
-              <span className="font-mono text-[9px] text-muted-foreground tracking-wider uppercase">
-                ECOPLUG EV Network
-              </span>
+              <div
+                className="hidden sm:block"
+                style={{
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontSize: "0.5625rem",
+                  fontWeight: 500,
+                  color: "oklch(0.420 0.012 240)",
+                  letterSpacing: "0.05em",
+                  marginTop: "1px",
+                  textTransform: "uppercase",
+                }}
+              >
+                Workforce Management
+              </div>
             </div>
           </div>
 
-          {/* Desktop Centre: Global Employee Search Bar */}
-          <div ref={searchRef} className="relative hidden md:flex flex-1 max-w-md mx-auto">
-            <div className="relative w-full">
-              <Search className="absolute left-3.5 top-2.5 size-4 text-muted-foreground/60" />
+          {/* Desktop search */}
+          <div ref={searchRef} className="relative hidden md:flex flex-1" style={{ maxWidth: "28rem" }}>
+            <div style={{ position: "relative", width: "100%" }}>
+              <Search
+                size={14}
+                style={{
+                  position: "absolute",
+                  left: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "oklch(0.420 0.012 240)",
+                  pointerEvents: "none",
+                }}
+              />
               <input
                 type="text"
-                placeholder="Search staff by name, role, ID, or station..."
+                placeholder="Search by name, ID, role…"
                 value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setIsSearchOpen(true);
-                }}
+                onChange={(e) => { setSearchQuery(e.target.value); setIsSearchOpen(true); }}
                 onFocus={() => setIsSearchOpen(true)}
-                className="h-9.5 w-full rounded-xl luxury-input pl-10 pr-12 text-xs text-foreground placeholder:text-muted-foreground/50 transition-all font-sans"
+                className="es-input"
+                style={{ paddingLeft: "2.25rem", paddingRight: searchQuery ? "2rem" : "3.5rem" }}
               />
               {searchQuery ? (
                 <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setIsSearchOpen(false);
+                  onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}
+                  style={{
+                    position: "absolute", right: "0.625rem", top: "50%", transform: "translateY(-50%)",
+                    color: "oklch(0.420 0.012 240)", cursor: "pointer", border: "none", background: "none", padding: 0,
+                    display: "flex",
                   }}
-                  className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
                 >
-                  <X size={14} />
+                  <X size={13} />
                 </button>
               ) : (
-                <div className="absolute right-2.5 top-2 hidden lg:flex items-center gap-0.5 text-[9.5px] font-mono text-muted-foreground/50 pointer-events-none bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded-md">
-                  <span>⌘K</span>
+                <div
+                  className="hidden lg:flex"
+                  style={{
+                    position: "absolute", right: "0.625rem", top: "50%", transform: "translateY(-50%)",
+                    fontFamily: '"JetBrains Mono", monospace', fontSize: "0.625rem",
+                    color: "oklch(0.380 0.010 240)",
+                    background: "oklch(0.140 0.010 240)",
+                    border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                    borderRadius: "4px", padding: "1px 5px", pointerEvents: "none",
+                    alignItems: "center",
+                  }}
+                >
+                  ⌘K
                 </div>
               )}
             </div>
 
-            {/* Desktop Search Results Dropdown Overlay */}
+            {/* Search dropdown */}
             {isSearchOpen && searchQuery.trim() && (
-              <div className="absolute left-0 right-0 top-11 rounded-xl luxury-card shadow-2xl overflow-hidden z-50 max-h-80 overflow-y-auto">
-                <div className="p-2 border-b border-white/[0.08] font-mono text-[10px] text-muted-foreground uppercase px-3 flex items-center justify-between">
-                  <span>{searchResults.length} {searchResults.length === 1 ? "Employee" : "Employees"} Found</span>
-                  <span className="text-[9px] text-primary">Live Search</span>
+              <div
+                style={{
+                  position: "absolute", left: 0, right: 0, top: "calc(100% + 6px)",
+                  background: "oklch(0.118 0.012 240)",
+                  border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                  borderRadius: "12px",
+                  boxShadow: "0 16px 48px -8px oklch(0 0 0 / 0.60)",
+                  overflow: "hidden", zIndex: 50, maxHeight: "20rem", overflowY: "auto",
+                }}
+                className="scale-in"
+              >
+                <div style={{
+                  padding: "0.5rem 0.875rem",
+                  borderBottom: "1px solid oklch(0.220 0.012 240 / 0.40)",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                }}>
+                  <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.625rem", color: "oklch(0.420 0.012 240)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}
+                  </span>
+                  <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", color: "oklch(0.680 0.158 155)" }}>
+                    LIVE
+                  </span>
                 </div>
-
                 {searchResults.length > 0 ? (
-                  <div className="divide-y divide-white/[0.05]">
+                  <div>
                     {searchResults.map((emp) => (
                       <div
                         key={emp._id}
-                        onClick={() => {
-                          onViewEmployee(emp);
-                          setIsSearchOpen(false);
-                          setSearchQuery("");
+                        onClick={() => { onViewEmployee(emp); setIsSearchOpen(false); setSearchQuery(""); }}
+                        style={{
+                          display: "flex", alignItems: "center", justifyContent: "space-between",
+                          padding: "0.625rem 0.875rem", cursor: "pointer",
+                          borderBottom: "1px solid oklch(0.200 0.010 240 / 0.30)",
+                          transition: "background 0.10s ease",
                         }}
-                        className="flex items-center justify-between p-3 hover:bg-white/[0.04] cursor-pointer transition-colors"
+                        onMouseEnter={(e) => (e.currentTarget.style.background = "oklch(0.145 0.012 240 / 0.80)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                       >
-                        <div className="flex items-center gap-3">
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
                           {emp.image ? (
-                            <img
-                              src={emp.image}
-                              alt={emp.name}
-                              className="size-8.5 rounded-full object-cover border border-white/10"
-                            />
+                            <img src={emp.image} alt={emp.name} style={{ width: "2rem", height: "2rem", borderRadius: "9999px", objectFit: "cover" }} />
                           ) : (
-                            <div className="flex size-8.5 items-center justify-center rounded-full bg-white/[0.06] border border-white/10 text-xs font-bold text-foreground">
-                              {emp.firstName?.[0] || emp.name?.[0] || "E"}
-                            </div>
+                            <div className="es-avatar es-avatar-sm">{(emp.firstName?.[0] || emp.name?.[0] || "E").toUpperCase()}</div>
                           )}
                           <div>
-                            <p className="text-xs font-bold text-foreground">{emp.name}</p>
-                            <p className="text-[11px] text-muted-foreground">
-                              {emp.roleTitle} · {emp.shopName}
-                            </p>
+                            <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "oklch(0.970 0.004 240)", margin: 0, lineHeight: 1.3 }}>{emp.name}</p>
+                            <p style={{ fontSize: "0.6875rem", color: "oklch(0.500 0.012 240)", margin: 0, marginTop: "1px" }}>{emp.roleTitle} · {emp.shopName}</p>
                           </div>
                         </div>
-
-                        <div className="text-right font-mono text-[10.5px]">
-                          <span className="text-primary font-semibold">{emp.employeeId}</span>
-                          <p className="text-[10px] text-muted-foreground">{emp.department}</p>
-                        </div>
+                        <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.680 0.158 155)", fontWeight: 600 }}>
+                          {emp.employeeId}
+                        </span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="p-6 text-center text-xs text-muted-foreground">
-                    No employee matches "{searchQuery}"
+                  <div style={{ padding: "1.5rem", textAlign: "center", fontSize: "0.8125rem", color: "oklch(0.420 0.012 240)" }}>
+                    No matches for "{searchQuery}"
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1">
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex" style={{ alignItems: "center", gap: "2px" }}>
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentTab === item.id;
@@ -233,55 +325,99 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    isActive
-                      ? "bg-white/[0.08] text-primary border border-primary/30 shadow-[0_0_12px_rgba(16,185,129,0.1)]"
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
-                  }`}
+                  className="es-nav-item tap-active"
+                  style={isActive ? {
+                    background: "oklch(0.680 0.158 155 / 0.10)",
+                    color: "oklch(0.760 0.150 155)",
+                    border: "1px solid oklch(0.680 0.158 155 / 0.20)",
+                    fontWeight: 600,
+                  } : {}}
                 >
-                  <Icon size={14} className={isActive ? "text-primary" : "text-muted-foreground"} />
+                  <Icon size={14} />
                   <span>{item.label}</span>
+                  {item.count !== undefined && (
+                    <span style={{
+                      fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", fontWeight: 600,
+                      padding: "1px 5px", borderRadius: "4px",
+                      background: isActive ? "oklch(0.680 0.158 155 / 0.18)" : "oklch(0.155 0.012 240)",
+                      color: isActive ? "oklch(0.760 0.150 155)" : "oklch(0.420 0.012 240)",
+                    }}>
+                      {item.count}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </nav>
 
-          {/* Right Header Actions */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Mobile Search Trigger Button */}
+          {/* Right actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
+            {/* Mobile search */}
             <button
               onClick={() => setIsMobileSearchOpen(true)}
-              className="flex md:hidden items-center justify-center size-9 rounded-xl border border-white/10 bg-white/[0.04] text-muted-foreground hover:text-foreground cursor-pointer tap-active transition-colors"
-              title="Search Personnel"
+              className="flex md:hidden tap-active"
+              style={{
+                width: "2.25rem", height: "2.25rem", display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: "9px", border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                background: "oklch(0.118 0.012 240)", color: "oklch(0.560 0.014 240)", cursor: "pointer",
+              }}
             >
-              <Search size={16} />
+              <Search size={15} />
             </button>
 
-            {/* Desktop User Status & Switch Persona */}
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-white/10">
+            {/* User pill */}
+            <div className="hidden sm:flex" style={{ alignItems: "center", gap: "0.5rem", paddingLeft: "0.5rem", borderLeft: "1px solid oklch(0.220 0.012 240 / 0.40)" }}>
               {user ? (
-                <div className="flex items-center gap-2">
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <div
                     onClick={() => handleNavClick("profile")}
-                    className="flex items-center gap-2 rounded-xl bg-white/[0.03] px-2.5 py-1.5 border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                    style={{
+                      display: "flex", alignItems: "center", gap: "0.5rem",
+                      background: "oklch(0.118 0.012 240)",
+                      border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                      borderRadius: "9px", padding: "0.3125rem 0.625rem",
+                      cursor: "pointer", transition: "border-color 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "oklch(0.300 0.012 240 / 0.70)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "oklch(0.240 0.012 240 / 0.50)")}
                   >
-                    <div className="flex size-6 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-emerald-600 text-[10px] font-bold text-primary-foreground shadow-sm">
-                      {user.name[0]}
+                    <div style={{
+                      width: "1.625rem", height: "1.625rem", borderRadius: "7px", flexShrink: 0,
+                      background: "linear-gradient(135deg, oklch(0.680 0.158 155), oklch(0.580 0.158 170))",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: "0.625rem", fontWeight: 700, color: "white",
+                      fontFamily: '"Outfit", sans-serif',
+                    }}>
+                      {initials(user.name)}
                     </div>
-                    <div className="flex flex-col text-left">
-                      <span className="text-xs font-semibold text-foreground leading-tight">
+                    <div>
+                      <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "oklch(0.970 0.004 240)", lineHeight: 1.2 }}>
                         {user.name.split(" ")[0]}
-                      </span>
-                      <span className="text-[9.5px] text-muted-foreground font-mono leading-none">
-                        {user.type === "superadmin" ? "Superadmin" : user.type === "shopadmin" ? "Store Admin" : "Staff"}
-                      </span>
+                      </div>
+                      <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", color: "oklch(0.420 0.012 240)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                        {user.type === "superadmin" ? "Super Admin" : user.type === "shopadmin" ? "Store Admin" : "Staff"}
+                      </div>
                     </div>
                   </div>
-
                   <button
                     onClick={() => onSelectPersona(null)}
-                    className="flex items-center justify-center size-8 rounded-xl border border-white/10 bg-white/[0.02] text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors cursor-pointer"
-                    title="Log out"
+                    title="Sign out"
+                    style={{
+                      width: "2rem", height: "2rem", display: "flex", alignItems: "center", justifyContent: "center",
+                      borderRadius: "8px", border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                      background: "oklch(0.118 0.012 240)", color: "oklch(0.420 0.012 240)",
+                      cursor: "pointer", transition: "all 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = "oklch(0.580 0.230 27 / 0.10)";
+                      (e.currentTarget as HTMLElement).style.borderColor = "oklch(0.580 0.230 27 / 0.30)";
+                      (e.currentTarget as HTMLElement).style.color = "oklch(0.680 0.200 27)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = "oklch(0.118 0.012 240)";
+                      (e.currentTarget as HTMLElement).style.borderColor = "oklch(0.240 0.012 240 / 0.50)";
+                      (e.currentTarget as HTMLElement).style.color = "oklch(0.420 0.012 240)";
+                    }}
                   >
                     <LogOut size={13} />
                   </button>
@@ -289,307 +425,264 @@ export const Navbar: React.FC<NavbarProps> = ({
               ) : (
                 <button
                   onClick={onOpenLoginModal}
-                  className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer shadow-sm"
+                  className="es-btn es-btn-primary"
+                  style={{ height: "2rem", padding: "0 0.875rem", fontSize: "0.75rem" }}
                 >
                   <LogIn size={13} />
-                  <span>Login</span>
+                  Sign in
                 </button>
               )}
             </div>
 
-            {/* Mobile Hamburger Toggle Button */}
+            {/* Mobile hamburger */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex lg:hidden items-center justify-center size-9 rounded-xl border border-border/80 bg-secondary/60 text-foreground hover:bg-secondary transition-all cursor-pointer tap-active shadow-xs"
-              aria-label="Toggle Navigation Menu"
+              className="flex lg:hidden tap-active"
+              style={{
+                width: "2.25rem", height: "2.25rem", display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: "9px", border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                background: "oklch(0.118 0.012 240)", color: "oklch(0.970 0.004 240)", cursor: "pointer",
+              }}
+              aria-label="Navigation menu"
             >
-              {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {isMobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* ========================================================================= */}
-      {/* MOBILE SEARCH OVERLAY MODAL                                               */}
-      {/* ========================================================================= */}
+      {/* ─────────────── MOBILE SEARCH OVERLAY ─────────────── */}
       {isMobileSearchOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-background/98 backdrop-blur-xl p-4 rise">
-          <div className="flex items-center gap-2 pb-3 border-b border-border">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 50,
+            display: "flex", flexDirection: "column",
+            background: "oklch(0.085 0.010 240 / 0.98)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            padding: "1rem",
+          }}
+          className="fade-in"
+        >
+          <div style={{ display: "flex", gap: "0.75rem", paddingBottom: "0.75rem", borderBottom: "1px solid oklch(0.220 0.012 240 / 0.40)" }}>
+            <div style={{ position: "relative", flex: 1 }}>
+              <Search size={15} style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: "oklch(0.420 0.012 240)", pointerEvents: "none" }} />
               <input
                 ref={mobileSearchInputRef}
                 type="text"
-                placeholder="Search staff, ID, station..."
+                placeholder="Search staff by name, role, ID…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-11 w-full rounded-xl border border-primary/50 bg-secondary/50 pl-10 pr-9 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                className="es-input"
+                style={{ paddingLeft: "2.25rem", height: "2.75rem", fontSize: "0.9375rem" }}
               />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-3.5 text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  <X size={16} />
-                </button>
-              )}
             </div>
             <button
-              onClick={() => {
-                setIsMobileSearchOpen(false);
-                setSearchQuery("");
+              onClick={() => { setIsMobileSearchOpen(false); setSearchQuery(""); }}
+              style={{
+                padding: "0 0.875rem", borderRadius: "10px", border: "1px solid oklch(0.240 0.012 240 / 0.50)",
+                background: "oklch(0.118 0.012 240)", fontSize: "0.8125rem", fontWeight: 600,
+                color: "oklch(0.560 0.014 240)", cursor: "pointer",
               }}
-              className="px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer rounded-lg bg-secondary/40"
             >
               Cancel
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto pt-3 divide-y divide-border/40">
+          <div style={{ flex: 1, overflowY: "auto", paddingTop: "0.75rem" }}>
             {searchQuery.trim() ? (
               searchResults.length > 0 ? (
                 searchResults.map((emp) => (
                   <div
                     key={emp._id}
-                    onClick={() => {
-                      onViewEmployee(emp);
-                      setIsMobileSearchOpen(false);
-                      setSearchQuery("");
+                    onClick={() => { onViewEmployee(emp); setIsMobileSearchOpen(false); setSearchQuery(""); }}
+                    style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "0.75rem 0.25rem", cursor: "pointer",
+                      borderBottom: "1px solid oklch(0.200 0.010 240 / 0.25)",
                     }}
-                    className="flex items-center justify-between py-3 px-1 active:bg-secondary/40 cursor-pointer"
+                    className="tap-active"
                   >
-                    <div className="flex items-center gap-3">
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                       {emp.image ? (
-                        <img
-                          src={emp.image}
-                          alt={emp.name}
-                          className="size-9 rounded-full object-cover border border-border"
-                        />
+                        <img src={emp.image} alt={emp.name} style={{ width: "2.5rem", height: "2.5rem", borderRadius: "9999px", objectFit: "cover" }} />
                       ) : (
-                        <div className="flex size-9 items-center justify-center rounded-full bg-secondary font-bold text-xs text-foreground">
-                          {emp.firstName?.[0] || emp.name?.[0] || "E"}
-                        </div>
+                        <div className="es-avatar es-avatar-md">{(emp.firstName?.[0] || emp.name?.[0] || "E").toUpperCase()}</div>
                       )}
                       <div>
-                        <p className="text-xs font-bold text-foreground">{emp.name}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {emp.roleTitle} · {emp.shopName}
-                        </p>
+                        <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "oklch(0.970 0.004 240)", margin: 0 }}>{emp.name}</p>
+                        <p style={{ fontSize: "0.75rem", color: "oklch(0.500 0.012 240)", margin: "2px 0 0" }}>{emp.roleTitle} · {emp.shopName}</p>
                       </div>
                     </div>
-                    <div className="text-right font-mono text-[10px]">
-                      <span className="text-primary font-semibold">{emp.employeeId}</span>
-                      <p className="text-muted-foreground">{emp.department}</p>
-                    </div>
+                    <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.680 0.158 155)", fontWeight: 600 }}>
+                      {emp.employeeId}
+                    </span>
                   </div>
                 ))
               ) : (
-                <div className="py-12 text-center text-xs text-muted-foreground">
-                  No employee matching "{searchQuery}"
+                <div style={{ padding: "3rem 1rem", textAlign: "center", fontSize: "0.875rem", color: "oklch(0.420 0.012 240)" }}>
+                  No results for "{searchQuery}"
                 </div>
               )
             ) : (
-              <div className="py-8 text-center text-xs text-muted-foreground">
-                Type an employee name, job title, department, or station code to search.
+              <div style={{ padding: "3rem 1rem", textAlign: "center", fontSize: "0.8125rem", color: "oklch(0.380 0.010 240)" }}>
+                Type a name, title, or employee ID to search
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* LUXURY MOBILE SLIDE-OUT DRAWER / SHEET                                    */}
-      {/* ========================================================================= */}
+      {/* ─────────────── MOBILE DRAWER ─────────────── */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          {/* Backdrop Blur */}
+        <div style={{ position: "fixed", inset: 0, zIndex: 50 }} className="lg:hidden">
+          {/* Backdrop */}
           <div
             onClick={() => setIsMobileMenuOpen(false)}
-            className="absolute inset-0 bg-black/75 backdrop-blur-sm transition-opacity"
+            style={{ position: "absolute", inset: 0, background: "oklch(0 0 0 / 0.65)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}
           />
-
-          {/* Slide-out Drawer Panel */}
-          <div className="absolute inset-y-0 right-0 w-[86vw] max-w-sm bg-card/98 border-l border-border/80 flex flex-col h-full overflow-y-auto shadow-2xl p-5 rise">
-            {/* Drawer Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-border/80">
-              <div className="flex items-center gap-2.5">
-                <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                  <Zap size={16} className="fill-primary-foreground text-primary-foreground" />
+          {/* Drawer */}
+          <div
+            style={{
+              position: "absolute", inset: "0 0 0 auto",
+              width: "min(82vw, 22rem)",
+              background: "oklch(0.098 0.010 240)",
+              borderLeft: "1px solid oklch(0.220 0.012 240 / 0.40)",
+              display: "flex", flexDirection: "column", height: "100%", overflowY: "auto",
+              padding: "1.25rem",
+              boxShadow: "-24px 0 80px oklch(0 0 0 / 0.50)",
+            }}
+            className="slide-up"
+          >
+            {/* Drawer header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: "1rem", borderBottom: "1px solid oklch(0.220 0.012 240 / 0.40)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                <div style={{ width: "2rem", height: "2rem", borderRadius: "8px", background: "oklch(0.680 0.158 155)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Zap size={14} style={{ color: "white", fill: "white" }} />
                 </div>
-                <div>
-                  <h3 className="font-display text-base font-black tracking-tight text-foreground">
-                    ESARTHI
-                  </h3>
-                  <p className="font-mono text-[9px] text-primary uppercase font-bold flex items-center gap-1">
-                    <span className="size-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
-                    ECOPLUG EV Network
-                  </p>
-                </div>
+                <span style={{ fontFamily: '"Outfit", sans-serif', fontSize: "1rem", fontWeight: 800, letterSpacing: "-0.03em", color: "oklch(0.970 0.004 240)" }}>
+                  ESARTHI
+                </span>
               </div>
-
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex size-8 items-center justify-center rounded-xl bg-secondary/80 text-muted-foreground hover:text-foreground cursor-pointer tap-active"
+                style={{ width: "2rem", height: "2rem", borderRadius: "8px", border: "1px solid oklch(0.240 0.012 240 / 0.50)", background: "oklch(0.118 0.012 240)", display: "flex", alignItems: "center", justifyContent: "center", color: "oklch(0.560 0.014 240)", cursor: "pointer" }}
               >
-                <X size={16} />
+                <X size={15} />
               </button>
             </div>
 
-            {/* User Session Banner Card */}
-            <div className="my-4 rounded-xl border border-border/80 bg-secondary/40 p-3.5 space-y-2.5">
+            {/* User card */}
+            <div style={{ margin: "1rem 0", padding: "0.875rem", background: "oklch(0.118 0.012 240)", border: "1px solid oklch(0.240 0.012 240 / 0.45)", borderRadius: "12px" }}>
               {user ? (
                 <>
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-primary/20 text-primary font-display font-bold text-sm border border-primary/30">
-                      {user.name[0]}
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <div style={{ width: "2.5rem", height: "2.5rem", borderRadius: "10px", background: "linear-gradient(135deg, oklch(0.680 0.158 155), oklch(0.580 0.158 170))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8125rem", fontWeight: 700, color: "white", fontFamily: '"Outfit", sans-serif', flexShrink: 0 }}>
+                      {initials(user.name)}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-foreground truncate">{user.name}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
-                      <span className="mt-0.5 inline-block rounded bg-primary/10 border border-primary/25 px-1.5 py-0.2 font-mono text-[9px] font-semibold text-primary">
-                        {user.type === "superadmin" ? "Platform Superadmin" : user.type === "shopadmin" ? "Store Manager" : "Field Specialist"}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "oklch(0.970 0.004 240)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.name}</p>
+                      <p style={{ fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</p>
+                      <span style={{ display: "inline-block", marginTop: "4px", fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", fontWeight: 600, color: "oklch(0.680 0.158 155)", textTransform: "uppercase", letterSpacing: "0.05em", background: "oklch(0.680 0.158 155 / 0.10)", border: "1px solid oklch(0.680 0.158 155 / 0.20)", borderRadius: "4px", padding: "1px 5px" }}>
+                        {user.type === "superadmin" ? "Superadmin" : user.type === "shopadmin" ? "Store Admin" : "Staff"}
                       </span>
                     </div>
                   </div>
-
-                  <div className="pt-2 border-t border-border/60 flex items-center justify-between gap-2">
-                    <button
-                      onClick={onOpenLoginModal}
-                      className="flex-1 py-1.5 text-center rounded-lg border border-border bg-card text-[11px] font-medium text-foreground hover:bg-secondary cursor-pointer transition-colors"
-                    >
-                      Switch Profile
+                  <div style={{ marginTop: "0.75rem", paddingTop: "0.75rem", borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)", display: "flex", gap: "0.5rem" }}>
+                    <button onClick={onOpenLoginModal} style={{ flex: 1, padding: "0.4375rem 0", borderRadius: "8px", border: "1px solid oklch(0.240 0.012 240 / 0.50)", background: "transparent", fontSize: "0.75rem", fontWeight: 600, color: "oklch(0.560 0.014 240)", cursor: "pointer", transition: "all 0.15s ease" }}>
+                      Switch
                     </button>
-                    <button
-                      onClick={() => {
-                        onSelectPersona(null);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="px-3 py-1.5 rounded-lg border border-destructive/30 bg-destructive/10 text-[11px] font-semibold text-destructive hover:bg-destructive/20 cursor-pointer transition-colors"
-                    >
-                      Logout
+                    <button onClick={() => { onSelectPersona(null); setIsMobileMenuOpen(false); }} style={{ flex: 1, padding: "0.4375rem 0", borderRadius: "8px", border: "1px solid oklch(0.580 0.230 27 / 0.25)", background: "oklch(0.580 0.230 27 / 0.10)", fontSize: "0.75rem", fontWeight: 600, color: "oklch(0.680 0.200 27)", cursor: "pointer" }}>
+                      Sign out
                     </button>
                   </div>
                 </>
               ) : (
-                <div className="text-center py-2 space-y-2">
-                  <p className="text-xs text-muted-foreground">You are currently browsing as Guest</p>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontSize: "0.8125rem", color: "oklch(0.420 0.012 240)", marginBottom: "0.75rem" }}>Not signed in</p>
                   <button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      onOpenLoginModal();
-                    }}
-                    className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer"
+                    onClick={() => { setIsMobileMenuOpen(false); onOpenLoginModal(); }}
+                    className="es-btn es-btn-primary"
+                    style={{ width: "100%", justifyContent: "center" }}
                   >
-                    <LogIn size={13} />
-                    Sign In to Account
+                    <LogIn size={13} /> Sign In
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Navigation Menu List */}
-            <div className="space-y-1 py-2">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground px-2">
-                Navigation Modules
-              </span>
-
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNavClick(item.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer tap-active ${
-                      isActive
-                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
-                        : "text-foreground hover:bg-secondary/60"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon size={16} className={isActive ? "text-primary-foreground" : "text-primary"} />
-                      <span>{item.label}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      {item.count !== undefined && (
-                        <span
-                          className={`rounded-full px-2 py-0.5 font-mono text-[10px] ${
-                            isActive
-                              ? "bg-primary-foreground/20 text-primary-foreground"
-                              : "bg-secondary text-muted-foreground"
-                          }`}
-                        >
-                          {item.count}
-                        </span>
-                      )}
-                      {item.badge && (
-                        <span
-                          className={`rounded-full px-2 py-0.5 font-mono text-[9px] font-bold ${
-                            isActive
-                              ? "bg-primary-foreground/25 text-primary-foreground"
-                              : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                      <ChevronRight size={14} className={isActive ? "text-primary-foreground/80" : "text-muted-foreground"} />
-                    </div>
-                  </button>
-                );
-              })}
+            {/* Nav items */}
+            <div style={{ flex: 1 }}>
+              <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "oklch(0.380 0.010 240)", margin: "0 0 0.5rem 0.25rem" }}>
+                Navigation
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = currentTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleNavClick(item.id)}
+                      className="es-nav-item tap-active"
+                      style={{
+                        width: "100%",
+                        justifyContent: "space-between",
+                        ...(isActive ? {
+                          background: "oklch(0.680 0.158 155 / 0.10)",
+                          color: "oklch(0.760 0.150 155)",
+                          border: "1px solid oklch(0.680 0.158 155 / 0.20)",
+                          fontWeight: 600,
+                        } : {}),
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                        <Icon size={15} />
+                        <span>{item.label}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                        {item.count !== undefined && (
+                          <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", background: "oklch(0.155 0.012 240)", color: "oklch(0.420 0.012 240)", borderRadius: "4px", padding: "1px 5px" }}>
+                            {item.count}
+                          </span>
+                        )}
+                        <ChevronRight size={13} style={{ opacity: 0.4 }} />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="pt-3 border-t border-border/80 space-y-2">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground px-2">
+            {/* Quick actions */}
+            <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "oklch(0.380 0.010 240)", margin: "0 0 0.25rem 0.25rem" }}>
                 Quick Actions
-              </span>
-
+              </p>
               <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  if (onOpenAddEmployee) onOpenAddEmployee();
-                }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/10 border border-primary/25 text-xs font-semibold text-primary hover:bg-primary/20 transition-all cursor-pointer tap-active"
+                onClick={() => { setIsMobileMenuOpen(false); onOpenAddEmployee?.(); }}
+                className="es-nav-item tap-active"
+                style={{ width: "100%", background: "oklch(0.680 0.158 155 / 0.08)", color: "oklch(0.680 0.158 155)", border: "1px solid oklch(0.680 0.158 155 / 0.18)" }}
               >
-                <UserPlus size={15} />
-                <span>+ Onboard Technician</span>
+                <UserPlus size={14} />
+                <span>Onboard Employee</span>
               </button>
-
               {user?.type === "superadmin" && (
                 <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    if (onOpenCreateShop) onOpenCreateShop();
-                  }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-secondary/50 border border-border text-xs font-semibold text-foreground hover:bg-secondary transition-all cursor-pointer tap-active"
+                  onClick={() => { setIsMobileMenuOpen(false); onOpenCreateShop?.(); }}
+                  className="es-nav-item tap-active"
+                  style={{ width: "100%" }}
                 >
-                  <Plus size={15} />
-                  <span>+ Provision New Store Hub</span>
+                  <Plus size={14} />
+                  <span>New Shop</span>
                 </button>
               )}
             </div>
 
-            {/* Live Telemetry Info Card */}
-            <div className="mt-auto pt-4 border-t border-border/80">
-              <div className="rounded-xl border border-border/60 bg-secondary/30 p-3 space-y-1.5 font-mono text-[10px]">
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span>Connected Grid Load</span>
-                  <span className="text-amber-400 font-bold">1,380 kW DC</span>
-                </div>
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span>Ultra-Fast Bays</span>
-                  <span className="text-emerald-400 font-bold">38 / 46 Online</span>
-                </div>
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span>Network SLA</span>
-                  <span className="text-foreground font-bold">99.8% Uptime</span>
-                </div>
-              </div>
-              <p className="mt-3 text-center font-mono text-[9px] text-muted-foreground">
-                ESARTHI EV OS v1.4 · Enterprise Architecture
+            {/* Footer */}
+            <div style={{ marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)" }}>
+              <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.5625rem", color: "oklch(0.340 0.010 240)", textAlign: "center" }}>
+                ESARTHI · Workforce Management · v2
               </p>
             </div>
           </div>

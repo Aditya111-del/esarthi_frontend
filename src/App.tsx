@@ -508,19 +508,36 @@ export function App() {
       </main>
 
       {/* Luxury Frosted Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden items-center justify-around border-t border-border/80 bg-background/90 backdrop-blur-xl px-1 py-1.5 safe-bottom shadow-2xl">
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden items-center justify-around px-1 py-1.5 safe-bottom"
+        style={{
+          background: "oklch(0.118 0.012 240 / 0.90)",
+          backdropFilter: "blur(16px)",
+          borderTop: "1px solid oklch(0.220 0.012 240 / 0.50)",
+          boxShadow: "0 -8px 24px oklch(0 0 0 / 0.50)",
+        }}
+      >
         <button
           onClick={() => {
             setCurrentTab("overview");
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-semibold transition-all tap-active cursor-pointer ${
-            currentTab === "overview"
-              ? "text-primary"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
+          className="tap-active"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
+            padding: "0.25rem 0.75rem",
+            fontSize: "0.6875rem",
+            fontWeight: 600,
+            color: currentTab === "overview" ? "oklch(0.760 0.150 155)" : "oklch(0.480 0.012 240)",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
         >
-          <BarChart3 size={18} className={currentTab === "overview" ? "text-primary" : "text-muted-foreground"} />
+          <BarChart3 size={17} />
           <span>Overview</span>
         </button>
 
@@ -529,26 +546,44 @@ export function App() {
             setCurrentTab("roster");
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-semibold transition-all tap-active cursor-pointer ${
-            currentTab === "roster"
-              ? "text-primary"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
+          className="tap-active"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
+            padding: "0.25rem 0.75rem",
+            fontSize: "0.6875rem",
+            fontWeight: 600,
+            color: currentTab === "roster" ? "oklch(0.760 0.150 155)" : "oklch(0.480 0.012 240)",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
         >
-          <Users size={18} className={currentTab === "roster" ? "text-primary" : "text-muted-foreground"} />
+          <Users size={17} />
           <span>Staff</span>
         </button>
 
-        {/* Floating Quick Onboard Action Button */}
+        {/* Floating Quick Onboard Button */}
         <button
           onClick={() => {
             setEditingEmployee(null);
             setIsEmployeeModalOpen(true);
           }}
-          className="flex flex-col items-center justify-center -mt-5 size-11 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/35 tap-active cursor-pointer"
+          className="tap-active es-btn es-btn-primary"
+          style={{
+            width: "2.625rem",
+            height: "2.625rem",
+            borderRadius: "14px",
+            marginTop: "-1.25rem",
+            padding: 0,
+            justifyContent: "center",
+            boxShadow: "0 4px 16px oklch(0.680 0.158 155 / 0.45)",
+          }}
           title="Onboard Technician"
         >
-          <UserPlus size={20} className="fill-primary-foreground text-primary-foreground" />
+          <UserPlus size={18} />
         </button>
 
         <button
@@ -556,13 +591,22 @@ export function App() {
             setCurrentTab("shops");
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-semibold transition-all tap-active cursor-pointer ${
-            currentTab === "shops"
-              ? "text-primary"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
+          className="tap-active"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
+            padding: "0.25rem 0.75rem",
+            fontSize: "0.6875rem",
+            fontWeight: 600,
+            color: currentTab === "shops" ? "oklch(0.760 0.150 155)" : "oklch(0.480 0.012 240)",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
         >
-          <Store size={18} className={currentTab === "shops" ? "text-primary" : "text-muted-foreground"} />
+          <Store size={17} />
           <span>Hubs</span>
         </button>
 
@@ -571,28 +615,55 @@ export function App() {
             setCurrentTab("profile");
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-semibold transition-all tap-active cursor-pointer ${
-            currentTab === "profile"
-              ? "text-primary"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
+          className="tap-active"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
+            padding: "0.25rem 0.75rem",
+            fontSize: "0.6875rem",
+            fontWeight: 600,
+            color: currentTab === "profile" ? "oklch(0.760 0.150 155)" : "oklch(0.480 0.012 240)",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
         >
-          <User size={18} className={currentTab === "profile" ? "text-primary" : "text-muted-foreground"} />
+          <User size={17} />
           <span>Profile</span>
         </button>
       </nav>
 
       {/* Footer */}
-      <footer className="border-t border-border/60 py-6 text-center text-xs text-muted-foreground">
-        <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-[11px]">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-foreground">ESARTHI</span>
-            <span>· Store Operations & Workforce Management System</span>
+      <footer
+        style={{
+          borderTop: "1px solid oklch(0.220 0.012 240 / 0.40)",
+          padding: "1.25rem 1rem",
+          background: "oklch(0.095 0.010 240)",
+        }}
+      >
+        <div
+          className="mx-auto max-w-7xl"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.75rem",
+            fontFamily: '"JetBrains Mono", monospace',
+            fontSize: "0.6875rem",
+            color: "oklch(0.420 0.012 240)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ fontWeight: 700, color: "oklch(0.850 0.005 240)" }}>ESARTHI</span>
+            <span>· Enterprise Workforce Management System</span>
           </div>
-          <div className="flex items-center gap-4 text-muted-foreground">
-            <span>Session: {user ? user.role : "Guest (Logged Out)"}</span>
-            <span>Stores Active: {shops.length}</span>
-            <span>Database: {databaseConnected ? "MongoDB" : "Online"}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span>Active Session: <strong style={{ color: "oklch(0.760 0.150 155)" }}>{user ? user.role : "Guest"}</strong></span>
+            <span>Hubs Online: <strong>{shops.length}</strong></span>
+            <span>Status: <span className="es-dot" style={{ display: "inline-block", verticalAlign: "middle", marginLeft: "2px" }} /> Connected</span>
           </div>
         </div>
       </footer>
@@ -639,44 +710,72 @@ export function App() {
         }}
       />
 
-      {/* Login Modal */}
+      {/* Login / Persona Switcher Modal */}
       {isLoginModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl space-y-5 rise">
-            <div className="flex items-center justify-between border-b border-border pb-3">
+        <div className="es-modal-overlay" onClick={() => setIsLoginModalOpen(false)}>
+          <div
+            className="es-modal"
+            style={{ maxWidth: "28rem" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="es-modal-header">
               <div>
-                <h3 className="font-display text-base font-bold text-foreground">
-                  Sign In to ESARTHI
+                <h3
+                  style={{
+                    fontFamily: '"Outfit", sans-serif',
+                    fontSize: "1.0625rem",
+                    fontWeight: 700,
+                    letterSpacing: "-0.02em",
+                    color: "oklch(0.980 0.005 240)",
+                    margin: 0,
+                  }}
+                >
+                  Switch Session Account
                 </h3>
-                <p className="text-xs text-muted-foreground">
-                  Select an account profile to continue
+                <p style={{ fontSize: "0.75rem", color: "oklch(0.480 0.012 240)", margin: "2px 0 0" }}>
+                  Select an authorized corporate identity to switch view
                 </p>
               </div>
               <button
                 onClick={() => setIsLoginModalOpen(false)}
-                className="rounded-lg p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground cursor-pointer"
+                className="es-btn es-btn-ghost"
+                style={{ width: "1.875rem", height: "1.875rem", padding: 0 }}
               >
-                <X size={16} />
+                <X size={15} />
               </button>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="es-modal-body" style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+              {/* Superadmin Option */}
               <button
                 onClick={() => {
                   handleLogin(defaultSuperadmin);
                   setIsLoginModalOpen(false);
                 }}
-                className="w-full rounded-xl border border-primary/40 bg-primary/10 p-3 text-left transition-all hover:bg-primary/20 cursor-pointer"
+                className="es-card es-card-hover tap-active"
+                style={{
+                  padding: "0.75rem 0.875rem",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  border: "1px solid oklch(0.680 0.158 155 / 0.35)",
+                  background: "linear-gradient(90deg, oklch(0.680 0.158 155 / 0.10) 0%, oklch(0.120 0.012 240) 100%)",
+                }}
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
-                    <ShieldCheck size={14} className="text-primary" /> Platform Superadmin
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontFamily: '"Outfit", sans-serif', fontSize: "0.8125rem", fontWeight: 700, color: "oklch(0.980 0.005 240)", display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                    <ShieldCheck size={14} style={{ color: "oklch(0.680 0.158 155)" }} />
+                    Suraj Sev Sagar
                   </span>
-                  <span className="text-[10px] font-mono text-primary font-semibold">superadmin@esarthi.com</span>
+                  <span className="es-badge es-badge-emerald" style={{ fontSize: "0.5625rem" }}>
+                    SUPERADMIN
+                  </span>
                 </div>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">Suraj Sev Sagar (All Stores & Staff)</p>
+                <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.480 0.012 240)", margin: "2px 0 0" }}>
+                  superadmin@esarthi.com
+                </p>
               </button>
 
+              {/* Shop Admins */}
               {shops.map((shop) => (
                 <button
                   key={shop._id}
@@ -692,31 +791,35 @@ export function App() {
                     });
                     setIsLoginModalOpen(false);
                   }}
-                  className="w-full rounded-xl border border-border bg-secondary/30 p-3 text-left transition-all hover:bg-secondary/60 cursor-pointer"
+                  className="es-card es-card-hover tap-active"
+                  style={{ padding: "0.625rem 0.75rem", textAlign: "left", cursor: "pointer" }}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
-                      <Building2 size={14} className="text-muted-foreground" /> {shop.adminName}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "oklch(0.900 0.005 240)" }}>
+                      {shop.adminName}
                     </span>
-                    <span className="text-[10px] font-mono text-primary font-semibold truncate max-w-[160px]">
-                      {shop.adminEmail}
+                    <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.625rem", color: "oklch(0.760 0.150 155)" }}>
+                      {shop.city}
                     </span>
                   </div>
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">Hub Admin · {shop.name}</p>
+                  <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: "0.6875rem", color: "oklch(0.420 0.012 240)", margin: "2px 0 0" }}>
+                    {shop.adminEmail || `${shop.city.toLowerCase()}.admin@esarthi.com`}
+                  </p>
                 </button>
               ))}
+            </div>
 
-              <div className="pt-2 border-t border-border/60">
-                <button
-                  onClick={() => {
-                    setIsLoginModalOpen(false);
-                    handleLogout();
-                  }}
-                  className="w-full rounded-xl border border-border/80 bg-secondary/40 py-2.5 text-center text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary/80 cursor-pointer transition-colors"
-                >
-                  Exit to Full Login Gateway Page →
-                </button>
-              </div>
+            <div className="es-modal-footer">
+              <button
+                onClick={() => {
+                  setIsLoginModalOpen(false);
+                  handleLogout();
+                }}
+                className="es-btn es-btn-ghost"
+                style={{ width: "100%", justifyContent: "center", fontSize: "0.75rem" }}
+              >
+                Sign Out to Login Gateway →
+              </button>
             </div>
           </div>
         </div>
